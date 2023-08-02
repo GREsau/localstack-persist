@@ -10,6 +10,10 @@ services:
       - "./temp-persisted-data:/persisted-data"
     environment:
       - DEBUG=1
+    networks:
+      default:
+        aliases:
+          - s3.localhost.localstack.cloud
 
   test:
     build:

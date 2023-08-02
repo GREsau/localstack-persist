@@ -2,6 +2,7 @@ import sys
 import boto3
 import io
 import zipfile
+import urllib.request
 
 
 def assert_equal(a, b):
@@ -17,6 +18,9 @@ dynamodb = boto3.resource("dynamodb", endpoint_url=endpoint_url)
 s3 = boto3.resource("s3", endpoint_url=endpoint_url)
 iam = boto3.resource("iam", endpoint_url=endpoint_url)
 lambda_client = boto3.client("lambda", endpoint_url=endpoint_url)
+
+zipbuf = io.BytesIO()
+zipfile.ZipFile(zipbuf, "w").close()
 
 if command == "setup":
     print("Setting up AWS resources...")
@@ -37,8 +41,6 @@ if command == "setup":
 
     role = iam.create_role(RoleName="test-role", AssumeRolePolicyDocument="{}")
 
-    zipbuf = io.BytesIO()
-    zipfile.ZipFile(zipbuf, "w").close()
     lambda_client.create_function(
         FunctionName="test-lambda",
         Role=role.arn,
@@ -64,5 +66,10 @@ elif command == "verify":
 
     lambda_response = lambda_client.get_function(FunctionName="test-lambda")
     assert_equal(lambda_response["Configuration"].get("Role", None), role.arn)
+    lambda_code_location = lambda_response["Code"].get("Location", "")
+    with urllib.request.urlopen(lambda_code_location) as f:
+        assert_equal(f.read(), zipbuf.getvalue())
+
+
 else:
     raise Exception("Unknown command: " + command)
