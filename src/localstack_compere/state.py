@@ -79,7 +79,7 @@ class StateTracker:
 
         try:
             service.lifecycle_hook.on_before_state_load()
-            service.accept_state_visitor(LoadStateVisitor(entry.name))
+            service.accept_state_visitor(LoadStateVisitor())
             service.lifecycle_hook.on_after_state_load()
         except:
             LOG.exception("Error while loading state of service %s", entry.name)
@@ -94,7 +94,7 @@ class StateTracker:
 
         try:
             service.lifecycle_hook.on_before_state_save()
-            service.accept_state_visitor(SaveStateVisitor(service_name))
+            service.accept_state_visitor(SaveStateVisitor())
             service.lifecycle_hook.on_after_state_save()
         except:
             LOG.exception("Error while saving state of service %s", service_name)
