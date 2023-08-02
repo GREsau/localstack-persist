@@ -3,7 +3,7 @@ version: '3.8'
 
 services:
   localstack-compere:
-    image: localstack-compere
+    image: gresau/localstack-compere
     build:
       context: .
     volumes:

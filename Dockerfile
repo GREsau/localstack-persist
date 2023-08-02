@@ -1,4 +1,7 @@
-FROM localstack/localstack:2.2.0
+ARG LOCALSTACK_VERSION=latest
+FROM localstack/localstack:${LOCALSTACK_VERSION}
+
+LABEL maintainer="Graham Esau (hello@graham.cool)"
 
 VOLUME /persisted-data
 
