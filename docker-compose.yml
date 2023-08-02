@@ -1,0 +1,20 @@
+---
+version: '3.8'
+
+services:
+  localstack-compere:
+    image: localstack-compere
+    build:
+      context: .
+    volumes:
+      - "./temp-persisted-data:/var/lib/localstack"
+    environment:
+      - DEBUG=1
+
+  test:
+    build:
+      context: ./test
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
