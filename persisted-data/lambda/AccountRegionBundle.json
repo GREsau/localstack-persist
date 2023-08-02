@@ -9,7 +9,96 @@
       "_service_name": "lambda",
       "_account_id": "000000000000",
       "_region_name": "us-east-1",
-      "attr_event_source_mappings": {}
+      "attr_event_source_mappings": {},
+      "attr_functions": {
+        "test-lambda": {
+          "py/object": "localstack.services.awslambda.invocation.lambda_models.Function",
+          "function_name": "test-lambda",
+          "code_signing_config_arn": null,
+          "aliases": {},
+          "versions": {
+            "$LATEST": {
+              "py/object": "localstack.services.awslambda.invocation.lambda_models.FunctionVersion",
+              "id": {
+                "py/object": "localstack.services.awslambda.invocation.lambda_models.VersionIdentifier",
+                "function_name": "test-lambda",
+                "qualifier": "$LATEST",
+                "region": "us-east-1",
+                "account": "000000000000"
+              },
+              "config": {
+                "py/object": "localstack.services.awslambda.invocation.lambda_models.VersionFunctionConfiguration",
+                "description": "",
+                "role": "arn:aws:iam::000000000000:role/test-role",
+                "timeout": 3,
+                "runtime": "provided",
+                "memory_size": 128,
+                "handler": null,
+                "package_type": "Zip",
+                "environment": null,
+                "architectures": [
+                  "x86_64"
+                ],
+                "internal_revision": "7e9c10fe",
+                "ephemeral_storage": {
+                  "py/object": "localstack.services.awslambda.invocation.lambda_models.LambdaEphemeralStorage",
+                  "size": 512
+                },
+                "snap_start": {
+                  "ApplyOn": "None",
+                  "OptimizationStatus": "Off"
+                },
+                "tracing_config_mode": "PassThrough",
+                "code": {
+                  "py/object": "localstack.services.awslambda.invocation.lambda_models.S3Code",
+                  "id": "test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc",
+                  "account_id": "000000000000",
+                  "s3_bucket": "awslambda-us-east-1-tasks",
+                  "s3_key": "snapshots/000000000000/test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc",
+                  "s3_object_version": null,
+                  "code_sha256": "hznHbmgfkAkjuQDJ3w73XPQh05yrtUZQxLmtGbanbYU=",
+                  "code_size": 22,
+                  "_disk_lock": {
+                    "py/object": "_thread.RLock"
+                  }
+                },
+                "last_modified": "2023-08-02T14:10:37.738824+0000",
+                "state": {
+                  "py/object": "localstack.services.awslambda.invocation.lambda_models.VersionState",
+                  "state": "Failed",
+                  "code": "InternalError",
+                  "reason": "Error while creating lambda: Docker not available"
+                },
+                "image": null,
+                "image_config": null,
+                "runtime_version_config": {
+                  "RuntimeVersionArn": "arn:aws:lambda:us-east-1::runtime:8eeff65f6809a3ce81507fe733fe09b835899b99481ba22fd75b5a7338290ec1"
+                },
+                "last_update": {
+                  "py/object": "localstack.services.awslambda.invocation.lambda_models.UpdateStatus",
+                  "status": "Failed",
+                  "code": null,
+                  "reason": null
+                },
+                "revision_id": "8c405a54-3ae2-4547-889e-9c706ca93984",
+                "layers": [],
+                "dead_letter_arn": null,
+                "vpc_config": null
+              }
+            }
+          },
+          "function_url_configs": {},
+          "permissions": {},
+          "event_invoke_configs": {},
+          "reserved_concurrent_executions": null,
+          "provisioned_concurrency_configs": {},
+          "tags": null,
+          "lock": {
+            "py/object": "_thread.RLock"
+          },
+          "next_version": 1
+        }
+      }
     },
     "__dict__": {
       "store": {
@@ -69,7 +158,7 @@
     },
     "validate": true,
     "lock": {
-      "py/id": 7
+      "py/id": 28
     },
     "_universal": {
       "py/id": 4

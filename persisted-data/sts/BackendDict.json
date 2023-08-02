@@ -1,0 +1,117 @@
+{
+  "py/object": "moto.core.base_backend.BackendDict",
+  "000000000000": {
+    "py/object": "moto.core.base_backend.AccountSpecificBackend",
+    "global": {
+      "py/object": "moto.sts.models.STSBackend",
+      "region_name": "global",
+      "account_id": "000000000000",
+      "assumed_roles": [
+        {
+          "py/object": "moto.sts.models.AssumedRole",
+          "account_id": "000000000000",
+          "session_name": "test-assume-29438805",
+          "role_arn": "arn:aws:iam::000000000000:role/test-role",
+          "policy": null,
+          "expiration": {
+            "py/object": "datetime.datetime",
+            "__reduce__": [
+              {
+                "py/type": "datetime.datetime"
+              },
+              [
+                "B+cIAg4ZJQOFHw=="
+              ]
+            ]
+          },
+          "external_id": null,
+          "access_key": {
+            "py/object": "moto.iam.models.AccessKey",
+            "user_name": null,
+            "access_key_id": "LSIAQAAAAAAAKBHFQC4S",
+            "secret_access_key": "PeWX5eqrxsIHL0iWKgWxnmQnWalDQBI9Bwn+h1C6",
+            "status": "Active",
+            "create_date": {
+              "py/object": "datetime.datetime",
+              "__reduce__": [
+                {
+                  "py/type": "datetime.datetime"
+                },
+                [
+                  "B+cIAg4KJQOFEg=="
+                ]
+              ]
+            },
+            "last_used": null
+          },
+          "access_key_id": "LSIAQAAAAAAAKBHFQC4S",
+          "secret_access_key": "PeWX5eqrxsIHL0iWKgWxnmQnWalDQBI9Bwn+h1C6",
+          "session_token": "FQoGZXIvYXdzEBYaDNG3ffXbl4DgFCCx9jyHIICVQkuIu9Zkt0GzEUqAZd11upgGcU+r+XHm+g/H0YzqVwYp8kpNMntVVvK0en6qU/jk/SiMmXKHIAY8MLNoS01JU2v7Rd85Pg2/ErUfgrD0tGtE2il4lCYqcQD2c1B5A4uxH1PSwWUUKomuB2Ww+knoFAifpyzRY38Aoiok7GVqSnvaxZdbpVR+zd1aopipUsV00El8+EmfaXRrGXHCpU1m4iCnNiLFzIRXS3hrsqA2Gp7ampYcllQT4UCdtl0Vj6K/nmDXd3CdjI4PlqnKHwZhi7LVxSQkTAynyLVSm1xCJYtydQPle1LFmt8doos="
+        },
+        {
+          "py/object": "moto.sts.models.AssumedRole",
+          "account_id": "000000000000",
+          "session_name": "session-5c191230",
+          "role_arn": "arn:aws:iam::000000000000:role/test-role",
+          "policy": null,
+          "expiration": {
+            "py/object": "datetime.datetime",
+            "__reduce__": [
+              {
+                "py/type": "datetime.datetime"
+              },
+              [
+                "B+cIAg8KJQtxYQ=="
+              ]
+            ]
+          },
+          "external_id": null,
+          "access_key": {
+            "py/object": "moto.iam.models.AccessKey",
+            "user_name": null,
+            "access_key_id": "LSIAQAAAAAAAOMAHX2DL",
+            "secret_access_key": "OO8dG23Kq/EnGJtq654iAzglpqd23RCPAMEkDV9t",
+            "status": "Active",
+            "create_date": {
+              "py/object": "datetime.datetime",
+              "__reduce__": [
+                {
+                  "py/type": "datetime.datetime"
+                },
+                [
+                  "B+cIAg4KJQtxWA=="
+                ]
+              ]
+            },
+            "last_used": null
+          },
+          "access_key_id": "LSIAQAAAAAAAOMAHX2DL",
+          "secret_access_key": "OO8dG23Kq/EnGJtq654iAzglpqd23RCPAMEkDV9t",
+          "session_token": "FQoGZXIvYXdzEBYaDsyv6kZmPtBDdEgaMVeKrkPo+GMfjJ6b7I49Cyc/mUyutvdqGoWhScnQgUymzhhgh/xtFw3FWlC8c+IBejMhR8bzw3r6wzxxRA6tA4zUvx+NRR9vAzYQZHIrwE/bc1dK+6vv1u5H6blOT3pndIFORZfDRexxLlxBK7lKoi6YiuEVUKAR6G4RonB3dYY1eetrqTe6pEzJFVMVLaypGiTzz2K6lAv3EQy5WbWDkGeUM1jjY5JGKSczJogFjUWP3ctrvYij3ZACzly4pvflBXNbVPYfBTLNB3J1kqhWMQUpsTRWt7qLPZMEQqxgYUSYEAhSkNb66CLaZd63HAd9t+o="
+        }
+      ]
+    },
+    "__dict__": {
+      "service_name": "sts",
+      "account_id": "000000000000",
+      "backend": {
+        "py/type": "moto.sts.models.STSBackend"
+      },
+      "regions": [
+        "global"
+      ],
+      "_id": "7605dc6c-ca4e-4ea5-aad9-2d86c68cc322"
+    }
+  },
+  "__dict__": {
+    "backend": {
+      "py/type": "moto.sts.models.STSBackend"
+    },
+    "service_name": "sts",
+    "_use_boto3_regions": false,
+    "_additional_regions": [
+      "global"
+    ],
+    "_id": "792240ed-560c-4c1c-9691-899acc46260f"
+  }
+}
