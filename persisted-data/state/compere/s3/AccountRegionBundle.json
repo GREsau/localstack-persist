@@ -3,47 +3,23 @@
   "000000000000": {
     "py/object": "localstack.services.stores.RegionBundle",
     "us-east-1": {
-      "py/object": "localstack.services.dynamodb.models.DynamoDBStore",
+      "py/object": "localstack.services.s3.models.S3Store",
       "_global": {
-        "REPLICAS": {},
-        "TABLE_REGION": {
-          "test-table": "us-east-1"
-        }
+        "bucket_lifecycle_configuration": {},
+        "bucket_notification_configs": {},
+        "bucket_versioning_status": {}
       },
       "_universal": {},
-      "_service_name": "dynamodb",
+      "_service_name": "s3",
       "_account_id": "000000000000",
-      "_region_name": "us-east-1",
-      "attr_table_definitions": {
-        "test-table": {
-          "AttributeDefinitions": [
-            {
-              "AttributeName": "id",
-              "AttributeType": "N"
-            }
-          ],
-          "TableName": "test-table",
-          "KeySchema": [
-            {
-              "AttributeName": "id",
-              "KeyType": "HASH"
-            }
-          ],
-          "ProvisionedThroughput": {
-            "ReadCapacityUnits": 10,
-            "WriteCapacityUnits": 10
-          },
-          "TableId": "40d153bf-1d1b-4711-98e1-5dad47f1006d"
-        }
-      },
-      "attr_table_properties": {}
+      "_region_name": "us-east-1"
     },
     "__dict__": {
       "store": {
-        "py/type": "localstack.services.dynamodb.models.DynamoDBStore"
+        "py/type": "localstack.services.s3.models.S3Store"
       },
       "account_id": "000000000000",
-      "service_name": "dynamodb",
+      "service_name": "s3",
       "validate": true,
       "lock": {
         "py/object": "_thread.RLock"
@@ -85,21 +61,24 @@
         "py/id": 3
       },
       "_universal": {
-        "py/id": 6
+        "py/id": 7
       }
     }
   },
   "__dict__": {
-    "service_name": "dynamodb",
+    "service_name": "s3",
     "store": {
-      "py/type": "localstack.services.dynamodb.models.DynamoDBStore"
+      "py/type": "localstack.services.s3.models.S3Store"
     },
     "validate": true,
     "lock": {
-      "py/id": 16
+      "py/id": 9
     },
     "_universal": {
-      "py/id": 6
+      "py/id": 7
+    },
+    "__orig_class__": {
+      "py/type": "localstack.services.stores.AccountRegionBundle"
     }
   }
 }

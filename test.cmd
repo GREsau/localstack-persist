@@ -4,6 +4,7 @@ rmdir /S /Q .\temp-persisted-data
 
 docker-compose up -d localstack-compere
 docker-compose run --rm test setup || goto :exit
+docker-compose run --rm test verify || goto :exit
 docker-compose restart localstack-compere
 docker-compose run --rm test verify || goto :exit
 docker-compose down

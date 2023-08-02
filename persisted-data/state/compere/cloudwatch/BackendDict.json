@@ -1,1 +1,352 @@
-{"py/object": "moto.core.base_backend.BackendDict", "000000000000": {"py/object": "moto.core.base_backend.AccountSpecificBackend", "us-east-1": {"py/object": "moto.cloudwatch.models.CloudWatchBackend", "region_name": "us-east-1", "account_id": "000000000000", "alarms": {}, "dashboards": {}, "metric_data": [{"py/object": "moto.cloudwatch.models.MetricDatum", "namespace": "AWS/SQS", "name": "ApproximateNumberOfMessagesVisible", "timestamp": {"py/object": "datetime.datetime", "__reduce__": [{"py/type": "datetime.datetime"}, ["B+cIAgk4CwuIXw==", {"py/reduce": [{"py/function": "copyreg._reconstructor"}, {"py/tuple": [{"py/type": "dateutil.tz.tz.tzlocal"}, {"py/type": "datetime.tzinfo"}, {"py/reduce": [{"py/type": "datetime.tzinfo"}, {"py/tuple": []}]}]}, {"_std_offset": {"py/reduce": [{"py/type": "datetime.timedelta"}, {"py/tuple": [0, 0, 0]}]}, "_dst_offset": {"py/id": 11}, "_dst_saved": {"py/reduce": [{"py/type": "datetime.timedelta"}, {"py/tuple": [0, 0, 0]}]}, "_hasdst": false, "_tznames": {"py/tuple": ["UTC", "UTC"]}}]}]]}, "dimensions": [{"py/object": "moto.cloudwatch.models.Dimension", "name": "QueueName", "value": "TestQueue"}], "unit": "Count", "value": 0.0}, {"py/object": "moto.cloudwatch.models.MetricDatum", "namespace": "AWS/SQS", "name": "ApproximateNumberOfMessagesNotVisible", "timestamp": {"py/object": "datetime.datetime", "__reduce__": [{"py/type": "datetime.datetime"}, ["B+cIAgk4DAGlPw==", {"py/reduce": [{"py/function": "copyreg._reconstructor"}, {"py/tuple": [{"py/type": "dateutil.tz.tz.tzlocal"}, {"py/type": "datetime.tzinfo"}, {"py/reduce": [{"py/type": "datetime.tzinfo"}, {"py/tuple": []}]}]}, {"_std_offset": {"py/reduce": [{"py/type": "datetime.timedelta"}, {"py/tuple": [0, 0, 0]}]}, "_dst_offset": {"py/id": 20}, "_dst_saved": {"py/reduce": [{"py/type": "datetime.timedelta"}, {"py/tuple": [0, 0, 0]}]}, "_hasdst": false, "_tznames": {"py/tuple": ["UTC", "UTC"]}}]}]]}, "dimensions": [{"py/object": "moto.cloudwatch.models.Dimension", "name": "QueueName", "value": "TestQueue"}], "unit": "Count", "value": 0.0}, {"py/object": "moto.cloudwatch.models.MetricDatum", "namespace": "AWS/SQS", "name": "ApproximateNumberOfMessagesDelayed", "timestamp": {"py/object": "datetime.datetime", "__reduce__": [{"py/type": "datetime.datetime"}, ["B+cIAgk4DAHZaQ==", {"py/reduce": [{"py/function": "copyreg._reconstructor"}, {"py/tuple": [{"py/type": "dateutil.tz.tz.tzlocal"}, {"py/type": "datetime.tzinfo"}, {"py/reduce": [{"py/type": "datetime.tzinfo"}, {"py/tuple": []}]}]}, {"_std_offset": {"py/reduce": [{"py/type": "datetime.timedelta"}, {"py/tuple": [0, 0, 0]}]}, "_dst_offset": {"py/id": 29}, "_dst_saved": {"py/reduce": [{"py/type": "datetime.timedelta"}, {"py/tuple": [0, 0, 0]}]}, "_hasdst": false, "_tznames": {"py/tuple": ["UTC", "UTC"]}}]}]]}, "dimensions": [{"py/object": "moto.cloudwatch.models.Dimension", "name": "QueueName", "value": "TestQueue"}], "unit": "Count", "value": 0.0}], "paged_metric_data": {}, "tagger": {"py/object": "moto.utilities.tagging_service.TaggingService", "tag_name": "Tags", "key_name": "Key", "value_name": "Value", "tags": {}}}, "__dict__": {"service_name": "cloudwatch", "account_id": "000000000000", "backend": {"py/type": "moto.cloudwatch.models.CloudWatchBackend"}, "regions": ["af-south-1", "ap-east-1", "ap-northeast-1", "ap-northeast-2", "ap-northeast-3", "ap-south-1", "ap-south-2", "ap-southeast-1", "ap-southeast-2", "ap-southeast-3", "ap-southeast-4", "ca-central-1", "eu-central-1", "eu-central-2", "eu-north-1", "eu-south-1", "eu-south-2", "eu-west-1", "eu-west-2", "eu-west-3", "me-central-1", "me-south-1", "sa-east-1", "us-east-1", "us-east-2", "us-west-1", "us-west-2", "cn-north-1", "cn-northwest-1", "us-gov-east-1", "us-gov-west-1", "us-iso-east-1", "us-iso-west-1", "us-isob-east-1"], "_id": "8df9975a-a4f0-48f8-8b52-9a77ee1b3aff"}}, "__dict__": {"backend": {"py/type": "moto.cloudwatch.models.CloudWatchBackend"}, "service_name": "cloudwatch", "_use_boto3_regions": true, "_additional_regions": null, "_id": "c5d7e1e1-785a-41d1-95be-9f5c9aab35f2"}}
+{
+  "py/object": "moto.core.base_backend.BackendDict",
+  "000000000000": {
+    "py/object": "moto.core.base_backend.AccountSpecificBackend",
+    "us-east-1": {
+      "py/object": "moto.cloudwatch.models.CloudWatchBackend",
+      "region_name": "us-east-1",
+      "account_id": "000000000000",
+      "alarms": {},
+      "dashboards": {},
+      "metric_data": [
+        {
+          "py/object": "moto.cloudwatch.models.MetricDatum",
+          "namespace": "AWS/SQS",
+          "name": "ApproximateNumberOfMessagesVisible",
+          "timestamp": {
+            "py/object": "datetime.datetime",
+            "__reduce__": [
+              {
+                "py/type": "datetime.datetime"
+              },
+              [
+                "B+cIAgomJg2sqA==",
+                {
+                  "py/reduce": [
+                    {
+                      "py/function": "copyreg._reconstructor"
+                    },
+                    {
+                      "py/tuple": [
+                        {
+                          "py/type": "dateutil.tz.tz.tzlocal"
+                        },
+                        {
+                          "py/type": "datetime.tzinfo"
+                        },
+                        {
+                          "py/reduce": [
+                            {
+                              "py/type": "datetime.tzinfo"
+                            },
+                            {
+                              "py/tuple": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "_std_offset": {
+                        "py/reduce": [
+                          {
+                            "py/type": "datetime.timedelta"
+                          },
+                          {
+                            "py/tuple": [
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "_dst_offset": {
+                        "py/id": 11
+                      },
+                      "_dst_saved": {
+                        "py/reduce": [
+                          {
+                            "py/type": "datetime.timedelta"
+                          },
+                          {
+                            "py/tuple": [
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "_hasdst": false,
+                      "_tznames": {
+                        "py/tuple": [
+                          "UTC",
+                          "UTC"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          "dimensions": [
+            {
+              "py/object": "moto.cloudwatch.models.Dimension",
+              "name": "QueueName",
+              "value": "test-queue"
+            }
+          ],
+          "unit": "Count",
+          "value": 0.0
+        },
+        {
+          "py/object": "moto.cloudwatch.models.MetricDatum",
+          "namespace": "AWS/SQS",
+          "name": "ApproximateNumberOfMessagesNotVisible",
+          "timestamp": {
+            "py/object": "datetime.datetime",
+            "__reduce__": [
+              {
+                "py/type": "datetime.datetime"
+              },
+              [
+                "B+cIAgomJwAi6Q==",
+                {
+                  "py/reduce": [
+                    {
+                      "py/function": "copyreg._reconstructor"
+                    },
+                    {
+                      "py/tuple": [
+                        {
+                          "py/type": "dateutil.tz.tz.tzlocal"
+                        },
+                        {
+                          "py/type": "datetime.tzinfo"
+                        },
+                        {
+                          "py/reduce": [
+                            {
+                              "py/type": "datetime.tzinfo"
+                            },
+                            {
+                              "py/tuple": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "_std_offset": {
+                        "py/reduce": [
+                          {
+                            "py/type": "datetime.timedelta"
+                          },
+                          {
+                            "py/tuple": [
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "_dst_offset": {
+                        "py/id": 20
+                      },
+                      "_dst_saved": {
+                        "py/reduce": [
+                          {
+                            "py/type": "datetime.timedelta"
+                          },
+                          {
+                            "py/tuple": [
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "_hasdst": false,
+                      "_tznames": {
+                        "py/tuple": [
+                          "UTC",
+                          "UTC"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          "dimensions": [
+            {
+              "py/object": "moto.cloudwatch.models.Dimension",
+              "name": "QueueName",
+              "value": "test-queue"
+            }
+          ],
+          "unit": "Count",
+          "value": 0.0
+        },
+        {
+          "py/object": "moto.cloudwatch.models.MetricDatum",
+          "namespace": "AWS/SQS",
+          "name": "ApproximateNumberOfMessagesDelayed",
+          "timestamp": {
+            "py/object": "datetime.datetime",
+            "__reduce__": [
+              {
+                "py/type": "datetime.datetime"
+              },
+              [
+                "B+cIAgomJwBDfQ==",
+                {
+                  "py/reduce": [
+                    {
+                      "py/function": "copyreg._reconstructor"
+                    },
+                    {
+                      "py/tuple": [
+                        {
+                          "py/type": "dateutil.tz.tz.tzlocal"
+                        },
+                        {
+                          "py/type": "datetime.tzinfo"
+                        },
+                        {
+                          "py/reduce": [
+                            {
+                              "py/type": "datetime.tzinfo"
+                            },
+                            {
+                              "py/tuple": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "_std_offset": {
+                        "py/reduce": [
+                          {
+                            "py/type": "datetime.timedelta"
+                          },
+                          {
+                            "py/tuple": [
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "_dst_offset": {
+                        "py/id": 29
+                      },
+                      "_dst_saved": {
+                        "py/reduce": [
+                          {
+                            "py/type": "datetime.timedelta"
+                          },
+                          {
+                            "py/tuple": [
+                              0,
+                              0,
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "_hasdst": false,
+                      "_tznames": {
+                        "py/tuple": [
+                          "UTC",
+                          "UTC"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          "dimensions": [
+            {
+              "py/object": "moto.cloudwatch.models.Dimension",
+              "name": "QueueName",
+              "value": "test-queue"
+            }
+          ],
+          "unit": "Count",
+          "value": 0.0
+        }
+      ],
+      "paged_metric_data": {},
+      "tagger": {
+        "py/object": "moto.utilities.tagging_service.TaggingService",
+        "tag_name": "Tags",
+        "key_name": "Key",
+        "value_name": "Value",
+        "tags": {}
+      }
+    },
+    "__dict__": {
+      "service_name": "cloudwatch",
+      "account_id": "000000000000",
+      "backend": {
+        "py/type": "moto.cloudwatch.models.CloudWatchBackend"
+      },
+      "regions": [
+        "af-south-1",
+        "ap-east-1",
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-3",
+        "ap-southeast-4",
+        "ca-central-1",
+        "eu-central-1",
+        "eu-central-2",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3",
+        "me-central-1",
+        "me-south-1",
+        "sa-east-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2",
+        "cn-north-1",
+        "cn-northwest-1",
+        "us-gov-east-1",
+        "us-gov-west-1",
+        "us-iso-east-1",
+        "us-iso-west-1",
+        "us-isob-east-1"
+      ],
+      "_id": "b0b4318f-67bf-4267-acb9-b539b3537c34"
+    }
+  },
+  "__dict__": {
+    "backend": {
+      "py/type": "moto.cloudwatch.models.CloudWatchBackend"
+    },
+    "service_name": "cloudwatch",
+    "_use_boto3_regions": true,
+    "_additional_regions": null,
+    "_id": "6ade1a63-f7ea-4e56-b3ff-b73fa1b67dca"
+  }
+}

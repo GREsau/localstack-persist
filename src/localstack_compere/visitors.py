@@ -13,7 +13,7 @@ LOG = logging.getLogger(__name__)
 def get_file_path(state_container: StateContainer):
     ty: type = type(state_container)
 
-    if ty == BackendDict or ty == AccountRegionBundle:
+    if issubclass(ty, (BackendDict, AccountRegionBundle)):
         return os.path.join(
             BASE_DIR, state_container.service_name, ty.__name__ + ".json"
         )
