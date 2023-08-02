@@ -48,8 +48,12 @@ class StateTracker:
                     self._load_service_state(entry)
 
     def save_all_services_state(self):
-        LOG.debug("Saving state of all services...")
+        LOG.debug("Persisting state of all services...")
         with self.cond:
+            if not self.affected_services:
+                LOG.debug("Nothing to persist - no services were changed")
+                return
+
             for service_name in self.affected_services:
                 if should_persist(service_name):
                     self._save_service_state(service_name)
@@ -85,7 +89,7 @@ class StateTracker:
             LOG.exception("Error while loading state of service %s", entry.name)
 
     def _save_service_state(self, service_name: str):
-        LOG.debug("Saving state of service %s...", service_name)
+        LOG.info("Persisting state of service %s...", service_name)
 
         service = SERVICE_PLUGINS.get_service(service_name)
         if not service:
@@ -97,7 +101,7 @@ class StateTracker:
             service.accept_state_visitor(SaveStateVisitor())
             service.lifecycle_hook.on_after_state_save()
         except:
-            LOG.exception("Error while saving state of service %s", service_name)
+            LOG.exception("Error while persisting state of service %s", service_name)
 
 
 STATE_TRACKER = StateTracker()
