@@ -10,7 +10,7 @@ docker-compose down
 
 rmdir /S /Q .\temp-persisted-data
 
-xcopy persisted-data temp-persisted-data /E /I
+xcopy test-persisted-data temp-persisted-data /E /I
 
 docker-compose run --rm test verify || goto :exit
 
