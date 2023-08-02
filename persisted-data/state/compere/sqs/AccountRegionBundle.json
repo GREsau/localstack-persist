@@ -24,9 +24,9 @@
           },
           "receipts": {},
           "attributes": {
-            "CreatedTimestamp": "1690972680",
-            "DelaySeconds": "0",
-            "LastModifiedTimestamp": "1690972680",
+            "CreatedTimestamp": "1690974516",
+            "DelaySeconds": "123",
+            "LastModifiedTimestamp": "1690974516",
             "MaximumMessageSize": "262144",
             "MessageRetentionPeriod": "345600",
             "QueueArn": "arn:aws:sqs:us-east-1:000000000000:test-queue",

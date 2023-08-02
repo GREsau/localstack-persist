@@ -17,7 +17,7 @@ s3 = boto3.resource("s3", endpoint_url=endpoint_url)
 if command == "setup":
     print("Setting up AWS resources...")
 
-    sqs.create_queue(QueueName="test-queue")
+    sqs.create_queue(QueueName="test-queue", Attributes={"DelaySeconds": "123"})
 
     table = dynamodb.create_table(
         TableName="test-table",
@@ -35,6 +35,7 @@ elif command == "verify":
 
     queue = sqs.Queue("test-queue")
     queue.load()
+    assert_equal(queue.attributes["DelaySeconds"], "123")
 
     table = dynamodb.Table("test-table")
     item = table.get_item(Key={"id": 123})["Item"]
