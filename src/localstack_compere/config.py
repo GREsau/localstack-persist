@@ -5,7 +5,7 @@ from localstack import config
 
 LOG = logging.getLogger(__name__)
 
-BASE_DIR = os.path.join(config.dirs.data, "compere")
+BASE_DIR = "/persisted-data"
 
 
 def normalise_service_name(n: str):

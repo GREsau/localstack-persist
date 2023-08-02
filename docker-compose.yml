@@ -7,7 +7,7 @@ services:
     build:
       context: .
     volumes:
-      - "./temp-persisted-data:/var/lib/localstack"
+      - "./temp-persisted-data:/persisted-data"
     environment:
       - DEBUG=1
 

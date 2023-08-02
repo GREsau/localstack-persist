@@ -12,7 +12,6 @@ rmdir /S /Q .\temp-persisted-data
 
 xcopy persisted-data temp-persisted-data /E /I
 
-docker-compose up -d localstack-compere
 docker-compose run --rm test verify || goto :exit
 
 :exit
