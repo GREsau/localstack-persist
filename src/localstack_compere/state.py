@@ -83,7 +83,6 @@ class StateTracker:
 
         try:
             service.accept_state_visitor(LoadStateVisitor())
-            service.lifecycle_hook.on_after_state_load()
             # Do NOT call service.lifecycle_hook.on_after_state_load(), as that would prematurely start the service
         except:
             LOG.exception("Error while loading state of service %s", entry.name)
