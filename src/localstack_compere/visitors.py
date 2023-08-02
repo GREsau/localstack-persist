@@ -14,20 +14,6 @@ from .config import BASE_DIR
 LOG = logging.getLogger(__name__)
 
 
-def get_file_path(state_container: StateContainer):
-    ty: type = type(state_container)
-
-    if issubclass(ty, (BackendDict, AccountRegionBundle)):
-        return os.path.join(
-            BASE_DIR, state_container.service_name, ty.__name__ + ".json"
-        )
-
-    if ty == AssetDirectory:
-        return
-
-    LOG.warning("Unexpected state_container type: %s", ty)
-
-
 def get_json_file_path(state_container: BackendDict | AccountRegionBundle):
     type_name = type(state_container).__name__
 
@@ -38,7 +24,14 @@ def get_asset_dir_path(state_container: AssetDirectory):
     assert state_container.path.startswith(localstack.config.dirs.data)
     relpath = os.path.relpath(state_container.path, localstack.config.dirs.data)
 
-    return os.path.join(BASE_DIR, relpath)
+    return os.path.join(BASE_DIR, relpath, "assets")
+
+
+def rmrf(entry: os.DirEntry):
+    if entry.is_dir(follow_symlinks=False):
+        shutil.rmtree(entry)
+    else:
+        os.remove(entry)
 
 
 class LoadStateVisitor(StateVisitor):
@@ -55,6 +48,7 @@ class LoadStateVisitor(StateVisitor):
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
     def _load_json(self, state_container: StateContainer, file_path: str):
+        # TODO stream JSON from filesystem
         with open(file_path) as file:
             json = file.read()
 
@@ -71,15 +65,30 @@ class SaveStateVisitor(StateVisitor):
             self._save_json(state_container, file_path)
         elif isinstance(state_container, AssetDirectory):
             dir_path = get_asset_dir_path(state_container)
-            # TODO should this delete files from dir_path that aren't in state_container.path?
             if os.path.isdir(state_container.path):
-                shutil.copytree(state_container.path, dir_path, dirs_exist_ok=True)
+                self._sync_directories(state_container.path, dir_path)
         else:
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
     def _save_json(self, state_container: dict, file_path: str):
+        # TODO stream JSON to filesystem
         json = jsonpickle.encode(state_container, keys=True, warn=True)
         if json:
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             with open(file_path, "w") as file:
                 file.write(json)
+
+    @staticmethod
+    def _sync_directories(src: str, dst: str):
+        shutil.copytree(src, dst, dirs_exist_ok=True)
+
+        desired_files = set(os.listdir(src))
+
+        LOG.info(desired_files)  # TEMP TEMP TEMP TEMP TEMP
+
+        with os.scandir(dst) as it:
+            for entry in it:
+                LOG.info("processing %s...", entry.name)  # TEMP TEMP TEMP TEMP TEMP
+                if entry.name not in desired_files:
+                    LOG.info("DELETING %s...", entry.name)  # TEMP TEMP TEMP TEMP TEMP
+                    rmrf(entry)
