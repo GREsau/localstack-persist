@@ -3,9 +3,10 @@ version: '3.8'
 
 services:
   localstack-compere:
-    image: gresau/localstack-compere
     build:
       context: .
+      args:
+        LOCALSTACK_VERSION: ${LOCALSTACK_VERSION:-2.2}
     volumes:
       - "./temp-persisted-data:/persisted-data"
     environment:
