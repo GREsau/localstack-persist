@@ -36,7 +36,7 @@ for k, v in os.environ.items():
     elif v in config.FALSE_STRINGS:
         PERSISTED_SERVICES[service_name] = False
     else:
-        LOG.warn(
+        LOG.warning(
             "Environment variable %s has invalid value '%s' - it will be ignored", k, v
         )
 

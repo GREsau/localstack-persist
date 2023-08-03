@@ -47,6 +47,7 @@ if command == "setup":
         Code={"ZipFile": zipbuf.getvalue()},
         Runtime="provided",
     )
+
 elif command == "verify":
     print("Checking AWS resources still exist...")
 
@@ -69,7 +70,6 @@ elif command == "verify":
     lambda_code_location = lambda_response["Code"].get("Location", "")
     with urllib.request.urlopen(lambda_code_location) as f:
         assert_equal(f.read(), zipbuf.getvalue())
-
 
 else:
     raise Exception("Unknown command: " + command)

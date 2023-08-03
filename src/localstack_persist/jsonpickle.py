@@ -15,6 +15,7 @@ class ConditionHandler(jsonpickle.handlers.BaseHandler):
 ConditionHandler.handles(Condition)
 
 
+# workaround for https://github.com/jsonpickle/jsonpickle/issues/453
 class DictHandler(jsonpickle.handlers.BaseHandler):
     def flatten(self, obj, data):
         for k, v in obj.items():
@@ -23,7 +24,7 @@ class DictHandler(jsonpickle.handlers.BaseHandler):
         return data
 
     def restore(self, data):
-        raise NotImplementedError("%s can not be used for unpickling" % self.__class__)
+        raise NotImplementedError("DictHandler can not be used for unpickling")
 
 
 def fix_dict_pickling():

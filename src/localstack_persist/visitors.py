@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 
@@ -12,6 +13,13 @@ from moto.core import BackendDict
 from .config import BASE_DIR
 
 LOG = logging.getLogger(__name__)
+
+# Track version for future handling of backward (or forward) incompatible changes.
+# This is the "serialisation format" version, which is different to the localstack-persist version.
+SER_VERSION_KEY = "v"
+SER_VERSION = 1
+
+DATA_KEY = "data"
 
 
 def get_json_file_path(state_container: BackendDict | AccountRegionBundle):
@@ -48,17 +56,27 @@ class LoadStateVisitor(StateVisitor):
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
     def _load_json(self, state_container: StateContainer, file_path: str):
-        # TODO stream JSON from filesystem
         with open(file_path) as file:
-            json = file.read()
+            envelope: dict = json.load(file)
 
-        deserialised = jsonpickle.decode(json, keys=True, safe=True)
+        version = envelope.get(SER_VERSION_KEY, None)
+        if version != SER_VERSION:
+            LOG.warning(
+                "Persisted state at %s has unsupported version %s - trying to load it anyway...",
+                file_path,
+                version,
+            )
+
+        unpickler = jsonpickle.Unpickler(keys=True, safe=True, on_missing="warn")
+        deserialised = unpickler.restore(envelope[DATA_KEY], reset=False)
 
         state_container.update(deserialised)
         state_container.__dict__.update(deserialised.__dict__)
 
 
 class SaveStateVisitor(StateVisitor):
+    json_encoder = json.JSONEncoder(check_circular=False, separators=(",", ":"))
+
     def visit(self, state_container: StateContainer):
         if isinstance(state_container, (BackendDict, AccountRegionBundle)):
             file_path = get_json_file_path(state_container)
@@ -71,12 +89,15 @@ class SaveStateVisitor(StateVisitor):
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
     def _save_json(self, state_container: dict, file_path: str):
-        # TODO stream JSON to filesystem
-        json = jsonpickle.encode(state_container, keys=True, warn=True)
-        if json:
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            with open(file_path, "w") as file:
-                file.write(json)
+        pickler = jsonpickle.Pickler(keys=True, warn=True)
+        flattened = pickler.flatten(state_container, reset=False)
+
+        envelope = {SER_VERSION_KEY: SER_VERSION, DATA_KEY: flattened}
+
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, "w") as file:
+            for chunk in self.json_encoder.iterencode(envelope):
+                file.write(chunk)
 
     @staticmethod
     def _sync_directories(src: str, dst: str):

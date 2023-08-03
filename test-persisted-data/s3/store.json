@@ -1,151 +1,154 @@
 {
-  "py/object": "localstack.services.stores.AccountRegionBundle",
-  "000000000000": {
-    "py/object": "localstack.services.stores.RegionBundle",
-    "us-east-1": {
-      "py/object": "localstack.services.s3.models.S3Store",
-      "_global": {
-        "bucket_lifecycle_configuration": {},
-        "bucket_notification_configs": {},
-        "bucket_versioning_status": {}
+  "v": 1,
+  "data": {
+    "py/object": "localstack.services.stores.AccountRegionBundle",
+    "000000000000": {
+      "py/object": "localstack.services.stores.RegionBundle",
+      "us-east-1": {
+        "py/object": "localstack.services.s3.models.S3Store",
+        "_global": {
+          "bucket_lifecycle_configuration": {},
+          "bucket_notification_configs": {},
+          "bucket_versioning_status": {}
+        },
+        "_universal": {},
+        "_service_name": "s3",
+        "_account_id": "000000000000",
+        "_region_name": "us-east-1"
       },
-      "_universal": {},
-      "_service_name": "s3",
-      "_account_id": "000000000000",
-      "_region_name": "us-east-1"
-    },
-    "__dict__": {
-      "store": {
-        "py/type": "localstack.services.s3.models.S3Store"
-      },
-      "account_id": "000000000000",
-      "service_name": "s3",
-      "validate": true,
-      "lock": {
-        "py/object": "_thread.RLock"
-      },
-      "valid_regions": [
-        "af-south-1",
-        "ap-east-1",
-        "ap-northeast-1",
-        "ap-northeast-2",
-        "ap-northeast-3",
-        "ap-south-1",
-        "ap-south-2",
-        "ap-southeast-1",
-        "ap-southeast-2",
-        "ap-southeast-3",
-        "ap-southeast-4",
-        "ca-central-1",
-        "eu-central-1",
-        "eu-central-2",
-        "eu-north-1",
-        "eu-south-1",
-        "eu-south-2",
-        "eu-west-1",
-        "eu-west-2",
-        "eu-west-3",
-        "me-central-1",
-        "me-south-1",
-        "sa-east-1",
-        "us-east-1",
-        "us-east-2",
-        "us-west-1",
-        "us-west-2",
-        "us-gov-east-1",
-        "us-gov-west-1",
-        "cn-north-1",
-        "cn-northwest-1"
-      ],
-      "_global": {
-        "py/id": 3
-      },
-      "_universal": {
-        "py/id": 7
+      "__dict__": {
+        "store": {
+          "py/type": "localstack.services.s3.models.S3Store"
+        },
+        "account_id": "000000000000",
+        "service_name": "s3",
+        "validate": true,
+        "lock": {
+          "py/object": "_thread.RLock"
+        },
+        "valid_regions": [
+          "af-south-1",
+          "ap-east-1",
+          "ap-northeast-1",
+          "ap-northeast-2",
+          "ap-northeast-3",
+          "ap-south-1",
+          "ap-south-2",
+          "ap-southeast-1",
+          "ap-southeast-2",
+          "ap-southeast-3",
+          "ap-southeast-4",
+          "ca-central-1",
+          "eu-central-1",
+          "eu-central-2",
+          "eu-north-1",
+          "eu-south-1",
+          "eu-south-2",
+          "eu-west-1",
+          "eu-west-2",
+          "eu-west-3",
+          "me-central-1",
+          "me-south-1",
+          "sa-east-1",
+          "us-east-1",
+          "us-east-2",
+          "us-west-1",
+          "us-west-2",
+          "us-gov-east-1",
+          "us-gov-west-1",
+          "cn-north-1",
+          "cn-northwest-1"
+        ],
+        "_global": {
+          "py/id": 3
+        },
+        "_universal": {
+          "py/id": 7
+        }
       }
-    }
-  },
-  "949334387222": {
-    "py/object": "localstack.services.stores.RegionBundle",
-    "us-east-1": {
-      "py/object": "localstack.services.s3.models.S3Store",
-      "_global": {
-        "bucket_lifecycle_configuration": {},
-        "bucket_notification_configs": {},
-        "bucket_versioning_status": {}
+    },
+    "949334387222": {
+      "py/object": "localstack.services.stores.RegionBundle",
+      "us-east-1": {
+        "py/object": "localstack.services.s3.models.S3Store",
+        "_global": {
+          "bucket_lifecycle_configuration": {},
+          "bucket_notification_configs": {},
+          "bucket_versioning_status": {}
+        },
+        "_universal": {
+          "py/id": 7
+        },
+        "_service_name": "s3",
+        "_account_id": "949334387222",
+        "_region_name": "us-east-1"
       },
-      "_universal": {
-        "py/id": 7
-      },
-      "_service_name": "s3",
-      "_account_id": "949334387222",
-      "_region_name": "us-east-1"
+      "__dict__": {
+        "store": {
+          "py/type": "localstack.services.s3.models.S3Store"
+        },
+        "account_id": "949334387222",
+        "service_name": "s3",
+        "validate": true,
+        "lock": {
+          "py/id": 9
+        },
+        "valid_regions": [
+          "af-south-1",
+          "ap-east-1",
+          "ap-northeast-1",
+          "ap-northeast-2",
+          "ap-northeast-3",
+          "ap-south-1",
+          "ap-south-2",
+          "ap-southeast-1",
+          "ap-southeast-2",
+          "ap-southeast-3",
+          "ap-southeast-4",
+          "ca-central-1",
+          "eu-central-1",
+          "eu-central-2",
+          "eu-north-1",
+          "eu-south-1",
+          "eu-south-2",
+          "eu-west-1",
+          "eu-west-2",
+          "eu-west-3",
+          "me-central-1",
+          "me-south-1",
+          "sa-east-1",
+          "us-east-1",
+          "us-east-2",
+          "us-west-1",
+          "us-west-2",
+          "us-gov-east-1",
+          "us-gov-west-1",
+          "cn-north-1",
+          "cn-northwest-1"
+        ],
+        "_global": {
+          "py/id": 13
+        },
+        "_universal": {
+          "py/id": 7
+        }
+      }
     },
     "__dict__": {
+      "service_name": "s3",
       "store": {
         "py/type": "localstack.services.s3.models.S3Store"
       },
-      "account_id": "949334387222",
-      "service_name": "s3",
       "validate": true,
       "lock": {
         "py/id": 9
       },
-      "valid_regions": [
-        "af-south-1",
-        "ap-east-1",
-        "ap-northeast-1",
-        "ap-northeast-2",
-        "ap-northeast-3",
-        "ap-south-1",
-        "ap-south-2",
-        "ap-southeast-1",
-        "ap-southeast-2",
-        "ap-southeast-3",
-        "ap-southeast-4",
-        "ca-central-1",
-        "eu-central-1",
-        "eu-central-2",
-        "eu-north-1",
-        "eu-south-1",
-        "eu-south-2",
-        "eu-west-1",
-        "eu-west-2",
-        "eu-west-3",
-        "me-central-1",
-        "me-south-1",
-        "sa-east-1",
-        "us-east-1",
-        "us-east-2",
-        "us-west-1",
-        "us-west-2",
-        "us-gov-east-1",
-        "us-gov-west-1",
-        "cn-north-1",
-        "cn-northwest-1"
-      ],
-      "_global": {
-        "py/id": 13
-      },
       "_universal": {
         "py/id": 7
+      },
+      "__orig_class__": {
+        "py/type": "localstack.services.stores.AccountRegionBundle"
       }
-    }
-  },
-  "__dict__": {
-    "service_name": "s3",
-    "store": {
-      "py/type": "localstack.services.s3.models.S3Store"
-    },
-    "validate": true,
-    "lock": {
-      "py/id": 9
-    },
-    "_universal": {
-      "py/id": 7
-    },
-    "__orig_class__": {
-      "py/type": "localstack.services.stores.AccountRegionBundle"
     }
   }
 }

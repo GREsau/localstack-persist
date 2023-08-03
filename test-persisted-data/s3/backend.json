@@ -1,410 +1,413 @@
 {
-  "py/object": "moto.s3.models.S3BackendDict",
-  "000000000000": {
-    "py/object": "moto.core.base_backend.AccountSpecificBackend",
-    "global": {
-      "py/object": "moto.s3.models.S3Backend",
-      "region_name": "global",
-      "account_id": "000000000000",
-      "buckets": {
-        "test-bucket": {
-          "py/object": "moto.s3.models.FakeBucket",
-          "name": "test-bucket",
-          "account_id": "000000000000",
-          "region_name": "us-east-1",
-          "keys": {
-            "py/object": "moto.s3.utils._VersionedKeyStore",
-            "test-object": {
-              "py/object": "moto.s3.models.FakeKey",
-              "py/state": {
-                "_transitions": [
-                  {
-                    "py/tuple": [
-                      null,
-                      "IN_PROGRESS"
-                    ]
-                  },
-                  {
-                    "py/tuple": [
-                      "IN_PROGRESS",
-                      "RESTORED"
-                    ]
-                  }
-                ],
-                "_status": null,
-                "_tick": 2,
-                "_time_progressed": {
-                  "py/object": "datetime.datetime",
-                  "__reduce__": [
+  "v": 1,
+  "data": {
+    "py/object": "moto.s3.models.S3BackendDict",
+    "000000000000": {
+      "py/object": "moto.core.base_backend.AccountSpecificBackend",
+      "global": {
+        "py/object": "moto.s3.models.S3Backend",
+        "region_name": "global",
+        "account_id": "000000000000",
+        "buckets": {
+          "test-bucket": {
+            "py/object": "moto.s3.models.FakeBucket",
+            "name": "test-bucket",
+            "account_id": "000000000000",
+            "region_name": "us-east-1",
+            "keys": {
+              "py/object": "moto.s3.utils._VersionedKeyStore",
+              "test-object": {
+                "py/object": "moto.s3.models.FakeKey",
+                "py/state": {
+                  "_transitions": [
                     {
-                      "py/type": "datetime.datetime"
-                    },
-                    [
-                      "B+cIAg4KJQGS2w=="
-                    ]
-                  ]
-                },
-                "model_name": "s3::keyrestore",
-                "name": "test-object",
-                "account_id": "000000000000",
-                "last_modified": {
-                  "py/object": "datetime.datetime",
-                  "__reduce__": [
-                    {
-                      "py/type": "datetime.datetime"
-                    },
-                    [
-                      "B+cIAg4KJQGS3g=="
-                    ]
-                  ]
-                },
-                "acl": {
-                  "py/object": "moto.s3.models.FakeAcl",
-                  "grants": [
-                    {
-                      "py/object": "moto.s3.models.FakeGrant",
-                      "grantees": [
-                        {
-                          "py/object": "moto.s3.models.FakeGrantee",
-                          "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
-                          "uri": "",
-                          "display_name": ""
-                        }
-                      ],
-                      "permissions": [
-                        "FULL_CONTROL"
+                      "py/tuple": [
+                        null,
+                        "IN_PROGRESS"
                       ]
-                    }
-                  ]
-                },
-                "website_redirect_location": null,
-                "checksum_algorithm": null,
-                "_storage_class": "STANDARD",
-                "_metadata": {
-                  "py/object": "moto.utilities.utils.LowercaseDict",
-                  "store": {
-                    "content-type": "binary/octet-stream",
-                    "content-md5": "hfMGNWAtwJvYWVem6CosIQ=="
-                  }
-                },
-                "_expiry": null,
-                "_etag": "85f30635602dc09bd85957a6e82a2c21",
-                "_version_id": "null",
-                "_is_versioned": false,
-                "multipart": null,
-                "bucket_name": "test-bucket",
-                "_max_buffer_size": 524288,
-                "disposed": false,
-                "checksum_value": null,
-                "contentsize": 11,
-                "encryption": null,
-                "kms_key_id": null,
-                "bucket_key_enabled": null,
-                "lock_mode": null,
-                "lock_legal_status": null,
-                "lock_until": null,
-                "value": {
-                  "py/b64": "b2JqZWN0IGRhdGE="
-                }
-              }
-            },
-            "__dict__": {}
-          },
-          "multiparts": {
-            "py/object": "moto.s3.models.MultipartDict",
-            "__dict__": {}
-          },
-          "versioning_status": null,
-          "rules": [],
-          "policy": null,
-          "website_configuration": null,
-          "acl": {
-            "py/object": "moto.s3.models.FakeAcl",
-            "grants": [
-              {
-                "py/object": "moto.s3.models.FakeGrant",
-                "grantees": [
-                  {
-                    "py/object": "moto.s3.models.FakeGrantee",
-                    "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
-                    "uri": "",
-                    "display_name": ""
-                  }
-                ],
-                "permissions": [
-                  "FULL_CONTROL"
-                ]
-              }
-            ]
-          },
-          "cors": [],
-          "logging": {},
-          "notification_configuration": null,
-          "accelerate_configuration": null,
-          "payer": "BucketOwner",
-          "creation_date": {
-            "py/object": "datetime.datetime",
-            "__reduce__": [
-              {
-                "py/type": "datetime.datetime"
-              },
-              [
-                "B+cIAg4KJQFsLQ==",
-                {
-                  "py/reduce": [
-                    {
-                      "py/type": "datetime.timezone"
                     },
                     {
                       "py/tuple": [
-                        {
-                          "py/reduce": [
-                            {
-                              "py/type": "datetime.timedelta"
-                            },
-                            {
-                              "py/tuple": [
-                                0,
-                                0,
-                                0
-                              ]
-                            }
-                          ]
-                        }
+                        "IN_PROGRESS",
+                        "RESTORED"
                       ]
                     }
-                  ]
-                }
-              ]
-            ]
-          },
-          "public_access_block": null,
-          "encryption": null,
-          "object_lock_enabled": false,
-          "default_lock_mode": "",
-          "default_lock_days": 0,
-          "default_lock_years": 0,
-          "ownership_rule": null
-        }
-      },
-      "tagger": {
-        "py/object": "moto.utilities.tagging_service.TaggingService",
-        "tag_name": "Tags",
-        "key_name": "Key",
-        "value_name": "Value",
-        "tags": {}
-      }
-    },
-    "__dict__": {
-      "service_name": "s3",
-      "account_id": "000000000000",
-      "backend": {
-        "py/type": "moto.s3.models.S3Backend"
-      },
-      "regions": [
-        "global"
-      ],
-      "_id": "b42af4dc-eae4-4217-8ed4-136dec851636"
-    }
-  },
-  "949334387222": {
-    "py/object": "moto.core.base_backend.AccountSpecificBackend",
-    "global": {
-      "py/object": "moto.s3.models.S3Backend",
-      "region_name": "global",
-      "account_id": "949334387222",
-      "buckets": {
-        "awslambda-us-east-1-tasks": {
-          "py/object": "moto.s3.models.FakeBucket",
-          "name": "awslambda-us-east-1-tasks",
-          "account_id": "949334387222",
-          "region_name": "us-east-1",
-          "keys": {
-            "py/object": "moto.s3.utils._VersionedKeyStore",
-            "snapshots/000000000000/test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc": {
-              "py/object": "moto.s3.models.FakeKey",
-              "py/state": {
-                "_transitions": [
-                  {
-                    "py/tuple": [
-                      null,
-                      "IN_PROGRESS"
+                  ],
+                  "_status": null,
+                  "_tick": 2,
+                  "_time_progressed": {
+                    "py/object": "datetime.datetime",
+                    "__reduce__": [
+                      {
+                        "py/type": "datetime.datetime"
+                      },
+                      [
+                        "B+cIAg4KJQGS2w=="
+                      ]
                     ]
                   },
-                  {
-                    "py/tuple": [
-                      "IN_PROGRESS",
-                      "RESTORED"
-                    ]
-                  }
-                ],
-                "_status": null,
-                "_tick": 8,
-                "_time_progressed": {
-                  "py/object": "datetime.datetime",
-                  "__reduce__": [
-                    {
-                      "py/type": "datetime.datetime"
-                    },
-                    [
-                      "B+cIAg4KJQXSBA=="
-                    ]
-                  ]
-                },
-                "model_name": "s3::keyrestore",
-                "name": "snapshots/000000000000/test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc",
-                "account_id": "949334387222",
-                "last_modified": {
-                  "py/object": "datetime.datetime",
-                  "__reduce__": [
-                    {
-                      "py/type": "datetime.datetime"
-                    },
-                    [
-                      "B+cIAg4KJQXSBw=="
-                    ]
-                  ]
-                },
-                "acl": {
-                  "py/object": "moto.s3.models.FakeAcl",
-                  "grants": [
-                    {
-                      "py/object": "moto.s3.models.FakeGrant",
-                      "grantees": [
-                        {
-                          "py/object": "moto.s3.models.FakeGrantee",
-                          "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
-                          "uri": "",
-                          "display_name": ""
-                        }
-                      ],
-                      "permissions": [
-                        "FULL_CONTROL"
+                  "model_name": "s3::keyrestore",
+                  "name": "test-object",
+                  "account_id": "000000000000",
+                  "last_modified": {
+                    "py/object": "datetime.datetime",
+                    "__reduce__": [
+                      {
+                        "py/type": "datetime.datetime"
+                      },
+                      [
+                        "B+cIAg4KJQGS3g=="
                       ]
+                    ]
+                  },
+                  "acl": {
+                    "py/object": "moto.s3.models.FakeAcl",
+                    "grants": [
+                      {
+                        "py/object": "moto.s3.models.FakeGrant",
+                        "grantees": [
+                          {
+                            "py/object": "moto.s3.models.FakeGrantee",
+                            "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
+                            "uri": "",
+                            "display_name": ""
+                          }
+                        ],
+                        "permissions": [
+                          "FULL_CONTROL"
+                        ]
+                      }
+                    ]
+                  },
+                  "website_redirect_location": null,
+                  "checksum_algorithm": null,
+                  "_storage_class": "STANDARD",
+                  "_metadata": {
+                    "py/object": "moto.utilities.utils.LowercaseDict",
+                    "store": {
+                      "content-type": "binary/octet-stream",
+                      "content-md5": "hfMGNWAtwJvYWVem6CosIQ=="
                     }
-                  ]
-                },
-                "website_redirect_location": null,
-                "checksum_algorithm": null,
-                "_storage_class": "STANDARD",
-                "_metadata": {
-                  "py/object": "moto.utilities.utils.LowercaseDict",
-                  "store": {
-                    "content-type": "binary/octet-stream",
-                    "content-md5": "ds2yutlYLSPB9vTYaCGNbA=="
+                  },
+                  "_expiry": null,
+                  "_etag": "85f30635602dc09bd85957a6e82a2c21",
+                  "_version_id": "null",
+                  "_is_versioned": false,
+                  "multipart": null,
+                  "bucket_name": "test-bucket",
+                  "_max_buffer_size": 524288,
+                  "disposed": false,
+                  "checksum_value": null,
+                  "contentsize": 11,
+                  "encryption": null,
+                  "kms_key_id": null,
+                  "bucket_key_enabled": null,
+                  "lock_mode": null,
+                  "lock_legal_status": null,
+                  "lock_until": null,
+                  "value": {
+                    "py/b64": "b2JqZWN0IGRhdGE="
                   }
-                },
-                "_expiry": null,
-                "_etag": "76cdb2bad9582d23c1f6f4d868218d6c",
-                "_version_id": "null",
-                "_is_versioned": false,
-                "multipart": null,
-                "bucket_name": "awslambda-us-east-1-tasks",
-                "_max_buffer_size": 524288,
-                "disposed": false,
-                "checksum_value": null,
-                "contentsize": 22,
-                "encryption": null,
-                "kms_key_id": null,
-                "bucket_key_enabled": null,
-                "lock_mode": null,
-                "lock_legal_status": null,
-                "lock_until": null,
-                "value": {
-                  "py/b64": "UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA=="
                 }
-              }
-            },
-            "__dict__": {}
-          },
-          "multiparts": {
-            "py/object": "moto.s3.models.MultipartDict",
-            "__dict__": {}
-          },
-          "versioning_status": null,
-          "rules": [],
-          "policy": null,
-          "website_configuration": null,
-          "acl": {
-            "py/object": "moto.s3.models.FakeAcl",
-            "grants": [
-              {
-                "py/object": "moto.s3.models.FakeGrant",
-                "grantees": [
-                  {
-                    "py/object": "moto.s3.models.FakeGrantee",
-                    "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
-                    "uri": "",
-                    "display_name": ""
-                  }
-                ],
-                "permissions": [
-                  "FULL_CONTROL"
-                ]
-              }
-            ]
-          },
-          "cors": [],
-          "logging": {},
-          "notification_configuration": null,
-          "accelerate_configuration": null,
-          "payer": "BucketOwner",
-          "creation_date": {
-            "py/object": "datetime.datetime",
-            "__reduce__": [
-              {
-                "py/type": "datetime.datetime"
               },
-              [
-                "B+cIAg4KJQWiGw==",
+              "__dict__": {}
+            },
+            "multiparts": {
+              "py/object": "moto.s3.models.MultipartDict",
+              "__dict__": {}
+            },
+            "versioning_status": null,
+            "rules": [],
+            "policy": null,
+            "website_configuration": null,
+            "acl": {
+              "py/object": "moto.s3.models.FakeAcl",
+              "grants": [
                 {
-                  "py/id": 32
+                  "py/object": "moto.s3.models.FakeGrant",
+                  "grantees": [
+                    {
+                      "py/object": "moto.s3.models.FakeGrantee",
+                      "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
+                      "uri": "",
+                      "display_name": ""
+                    }
+                  ],
+                  "permissions": [
+                    "FULL_CONTROL"
+                  ]
                 }
               ]
-            ]
-          },
-          "public_access_block": null,
-          "encryption": null,
-          "object_lock_enabled": false,
-          "default_lock_mode": "",
-          "default_lock_days": 0,
-          "default_lock_years": 0,
-          "ownership_rule": null
+            },
+            "cors": [],
+            "logging": {},
+            "notification_configuration": null,
+            "accelerate_configuration": null,
+            "payer": "BucketOwner",
+            "creation_date": {
+              "py/object": "datetime.datetime",
+              "__reduce__": [
+                {
+                  "py/type": "datetime.datetime"
+                },
+                [
+                  "B+cIAg4KJQFsLQ==",
+                  {
+                    "py/reduce": [
+                      {
+                        "py/type": "datetime.timezone"
+                      },
+                      {
+                        "py/tuple": [
+                          {
+                            "py/reduce": [
+                              {
+                                "py/type": "datetime.timedelta"
+                              },
+                              {
+                                "py/tuple": [
+                                  0,
+                                  0,
+                                  0
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            "public_access_block": null,
+            "encryption": null,
+            "object_lock_enabled": false,
+            "default_lock_mode": "",
+            "default_lock_days": 0,
+            "default_lock_years": 0,
+            "ownership_rule": null
+          }
+        },
+        "tagger": {
+          "py/object": "moto.utilities.tagging_service.TaggingService",
+          "tag_name": "Tags",
+          "key_name": "Key",
+          "value_name": "Value",
+          "tags": {}
         }
       },
-      "tagger": {
-        "py/object": "moto.utilities.tagging_service.TaggingService",
-        "tag_name": "Tags",
-        "key_name": "Key",
-        "value_name": "Value",
-        "tags": {}
+      "__dict__": {
+        "service_name": "s3",
+        "account_id": "000000000000",
+        "backend": {
+          "py/type": "moto.s3.models.S3Backend"
+        },
+        "regions": [
+          "global"
+        ],
+        "_id": "b42af4dc-eae4-4217-8ed4-136dec851636"
+      }
+    },
+    "949334387222": {
+      "py/object": "moto.core.base_backend.AccountSpecificBackend",
+      "global": {
+        "py/object": "moto.s3.models.S3Backend",
+        "region_name": "global",
+        "account_id": "949334387222",
+        "buckets": {
+          "awslambda-us-east-1-tasks": {
+            "py/object": "moto.s3.models.FakeBucket",
+            "name": "awslambda-us-east-1-tasks",
+            "account_id": "949334387222",
+            "region_name": "us-east-1",
+            "keys": {
+              "py/object": "moto.s3.utils._VersionedKeyStore",
+              "snapshots/000000000000/test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc": {
+                "py/object": "moto.s3.models.FakeKey",
+                "py/state": {
+                  "_transitions": [
+                    {
+                      "py/tuple": [
+                        null,
+                        "IN_PROGRESS"
+                      ]
+                    },
+                    {
+                      "py/tuple": [
+                        "IN_PROGRESS",
+                        "RESTORED"
+                      ]
+                    }
+                  ],
+                  "_status": null,
+                  "_tick": 8,
+                  "_time_progressed": {
+                    "py/object": "datetime.datetime",
+                    "__reduce__": [
+                      {
+                        "py/type": "datetime.datetime"
+                      },
+                      [
+                        "B+cIAg4KJQXSBA=="
+                      ]
+                    ]
+                  },
+                  "model_name": "s3::keyrestore",
+                  "name": "snapshots/000000000000/test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc",
+                  "account_id": "949334387222",
+                  "last_modified": {
+                    "py/object": "datetime.datetime",
+                    "__reduce__": [
+                      {
+                        "py/type": "datetime.datetime"
+                      },
+                      [
+                        "B+cIAg4KJQXSBw=="
+                      ]
+                    ]
+                  },
+                  "acl": {
+                    "py/object": "moto.s3.models.FakeAcl",
+                    "grants": [
+                      {
+                        "py/object": "moto.s3.models.FakeGrant",
+                        "grantees": [
+                          {
+                            "py/object": "moto.s3.models.FakeGrantee",
+                            "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
+                            "uri": "",
+                            "display_name": ""
+                          }
+                        ],
+                        "permissions": [
+                          "FULL_CONTROL"
+                        ]
+                      }
+                    ]
+                  },
+                  "website_redirect_location": null,
+                  "checksum_algorithm": null,
+                  "_storage_class": "STANDARD",
+                  "_metadata": {
+                    "py/object": "moto.utilities.utils.LowercaseDict",
+                    "store": {
+                      "content-type": "binary/octet-stream",
+                      "content-md5": "ds2yutlYLSPB9vTYaCGNbA=="
+                    }
+                  },
+                  "_expiry": null,
+                  "_etag": "76cdb2bad9582d23c1f6f4d868218d6c",
+                  "_version_id": "null",
+                  "_is_versioned": false,
+                  "multipart": null,
+                  "bucket_name": "awslambda-us-east-1-tasks",
+                  "_max_buffer_size": 524288,
+                  "disposed": false,
+                  "checksum_value": null,
+                  "contentsize": 22,
+                  "encryption": null,
+                  "kms_key_id": null,
+                  "bucket_key_enabled": null,
+                  "lock_mode": null,
+                  "lock_legal_status": null,
+                  "lock_until": null,
+                  "value": {
+                    "py/b64": "UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA=="
+                  }
+                }
+              },
+              "__dict__": {}
+            },
+            "multiparts": {
+              "py/object": "moto.s3.models.MultipartDict",
+              "__dict__": {}
+            },
+            "versioning_status": null,
+            "rules": [],
+            "policy": null,
+            "website_configuration": null,
+            "acl": {
+              "py/object": "moto.s3.models.FakeAcl",
+              "grants": [
+                {
+                  "py/object": "moto.s3.models.FakeGrant",
+                  "grantees": [
+                    {
+                      "py/object": "moto.s3.models.FakeGrantee",
+                      "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
+                      "uri": "",
+                      "display_name": ""
+                    }
+                  ],
+                  "permissions": [
+                    "FULL_CONTROL"
+                  ]
+                }
+              ]
+            },
+            "cors": [],
+            "logging": {},
+            "notification_configuration": null,
+            "accelerate_configuration": null,
+            "payer": "BucketOwner",
+            "creation_date": {
+              "py/object": "datetime.datetime",
+              "__reduce__": [
+                {
+                  "py/type": "datetime.datetime"
+                },
+                [
+                  "B+cIAg4KJQWiGw==",
+                  {
+                    "py/id": 32
+                  }
+                ]
+              ]
+            },
+            "public_access_block": null,
+            "encryption": null,
+            "object_lock_enabled": false,
+            "default_lock_mode": "",
+            "default_lock_days": 0,
+            "default_lock_years": 0,
+            "ownership_rule": null
+          }
+        },
+        "tagger": {
+          "py/object": "moto.utilities.tagging_service.TaggingService",
+          "tag_name": "Tags",
+          "key_name": "Key",
+          "value_name": "Value",
+          "tags": {}
+        }
+      },
+      "__dict__": {
+        "service_name": "s3",
+        "account_id": "949334387222",
+        "backend": {
+          "py/type": "moto.s3.models.S3Backend"
+        },
+        "regions": [
+          "global"
+        ],
+        "_id": "03da69e7-2dc6-4609-810e-fef5770eff0b"
       }
     },
     "__dict__": {
-      "service_name": "s3",
-      "account_id": "949334387222",
       "backend": {
         "py/type": "moto.s3.models.S3Backend"
       },
-      "regions": [
+      "service_name": "s3",
+      "_use_boto3_regions": false,
+      "_additional_regions": [
         "global"
       ],
-      "_id": "03da69e7-2dc6-4609-810e-fef5770eff0b"
-    }
-  },
-  "__dict__": {
-    "backend": {
-      "py/type": "moto.s3.models.S3Backend"
-    },
-    "service_name": "s3",
-    "_use_boto3_regions": false,
-    "_additional_regions": [
-      "global"
-    ],
-    "_id": "d597caf2-29b6-4de3-b413-4061314261bb",
-    "bucket_accounts": {
-      "test-bucket": "000000000000",
-      "awslambda-us-east-1-tasks": "949334387222"
+      "_id": "d597caf2-29b6-4de3-b413-4061314261bb",
+      "bucket_accounts": {
+        "test-bucket": "000000000000",
+        "awslambda-us-east-1-tasks": "949334387222"
+      }
     }
   }
 }
