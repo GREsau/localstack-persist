@@ -1,4 +1,5 @@
 name: Docker push
+run-name: Push docker tag ${{ inputs.localstack-version || 'latest (scheduled)' }}
 permissions:
   contents: read
 
@@ -8,17 +9,19 @@ on:
       version:
         description: Version to set as the published image tag, or "latest"
         type: string
+        required: true
         default: latest
       localstack-version:
         description: Version of localstack to use as base image tag
         type: string
+        required: true
         default: latest
   schedule:
     - cron: "30 18 * * *"
 
 jobs:
   build-and-push:
-    name: Build and publish tag ${{ inputs.localstack-version || 'latest (scheduled)' }}
+    name: Build and push
     runs-on: ubuntu-latest
     env:
       LOCALSTACK_VERSION: ${{ inputs.localstack-version || 'latest' }}
