@@ -15,7 +15,7 @@ on:
         default: latest
 
 jobs:
-  test:
+  buid-and-push:
     runs-on: ubuntu-latest
     env:
       LOCALSTACK_VERSION: ${{ inputs.localstack-version || 'latest' }}
