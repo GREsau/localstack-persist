@@ -13,9 +13,12 @@ on:
         description: Version of localstack to use as base image tag
         type: string
         default: latest
+  schedule:
+    - cron: "30 18 * * *"
 
 jobs:
-  buid-and-push:
+  build-and-push:
+    name: Build and publish tag ${{ inputs.localstack-version || 'latest (scheduled)' }}
     runs-on: ubuntu-latest
     env:
       LOCALSTACK_VERSION: ${{ inputs.localstack-version || 'latest' }}
