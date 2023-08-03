@@ -47,30 +47,7 @@
             "visible": {
               "py/object": "queue.PriorityQueue",
               "maxsize": 0,
-              "queue": [],
-              "mutex": {
-                "py/object": "_thread.lock",
-                "locked": false
-              },
-              "not_empty": {
-                "py/object": "threading.Condition",
-                "lock": {
-                  "py/id": 13
-                }
-              },
-              "not_full": {
-                "py/object": "threading.Condition",
-                "lock": {
-                  "py/id": 13
-                }
-              },
-              "all_tasks_done": {
-                "py/object": "threading.Condition",
-                "lock": {
-                  "py/id": 13
-                }
-              },
-              "unfinished_tasks": 0
+              "queue": []
             }
           }
         },
@@ -134,7 +111,7 @@
       },
       "validate": true,
       "lock": {
-        "py/id": 19
+        "py/id": 15
       },
       "_universal": {
         "py/id": 4

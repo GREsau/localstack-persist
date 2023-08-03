@@ -18,9 +18,13 @@ dynamodb = boto3.resource("dynamodb", endpoint_url=endpoint_url)
 s3 = boto3.resource("s3", endpoint_url=endpoint_url)
 iam = boto3.resource("iam", endpoint_url=endpoint_url)
 lambda_client = boto3.client("lambda", endpoint_url=endpoint_url)
+acm = boto3.client("acm", endpoint_url=endpoint_url)
 
 zipbuf = io.BytesIO()
 zipfile.ZipFile(zipbuf, "w").close()
+
+cert = open("cert.pem", "r").read()
+cert_key = open("key.pem", "r").read()
 
 if command == "setup":
     print("Setting up AWS resources...")
@@ -48,6 +52,8 @@ if command == "setup":
         Runtime="provided",
     )
 
+    acm.import_certificate(Certificate=cert, PrivateKey=cert_key)
+
 elif command == "verify":
     print("Checking AWS resources still exist...")
 
@@ -70,6 +76,9 @@ elif command == "verify":
     lambda_code_location = lambda_response["Code"].get("Location", "")
     with urllib.request.urlopen(lambda_code_location) as f:
         assert_equal(f.read(), zipbuf.getvalue())
+
+    certs = acm.list_certificates()
+    assert_equal(certs["CertificateSummaryList"][0].get("DomainName", None), "test")
 
 else:
     raise Exception("Unknown command: " + command)
