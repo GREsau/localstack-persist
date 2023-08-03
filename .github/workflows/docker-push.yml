@@ -1,5 +1,5 @@
 name: Docker push
-run-name: Push docker tag ${{ inputs.localstack-version || 'latest (scheduled)' }}
+run-name: Push docker tag ${{ inputs.version || 'latest (scheduled)' }}
 permissions:
   contents: read
 
