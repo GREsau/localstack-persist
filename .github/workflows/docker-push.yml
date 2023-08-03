@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Validate major.minor versions match
         run: |
-          if [[ ! ($LOCALSTACK_COMPERE_VERSION =~ ^([0-9]+\.[0-9]+\.)[0-9]+ && $LOCALSTACK_VERSION == ${BASH_REMATCH[1]}*) ]]
+          if [[ ! ($LOCALSTACK_COMPERE_VERSION =~ ^([0-9]+\.[0-9]+) && $LOCALSTACK_VERSION == ${BASH_REMATCH[1]}*) ]]
           then
             echo "major.minor versions of $LOCALSTACK_VERSION and $LOCALSTACK_COMPERE_VERSION do not match!"
             exit 1
