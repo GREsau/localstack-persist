@@ -11,7 +11,7 @@ def assert_equal(a, b):
 
 command = sys.argv[1] if len(sys.argv) > 1 else "verify"
 
-endpoint_url = "http://localstack-compere:4566"
+endpoint_url = "http://localstack-persist:4566"
 
 sqs = boto3.resource("sqs", endpoint_url=endpoint_url)
 dynamodb = boto3.resource("dynamodb", endpoint_url=endpoint_url)

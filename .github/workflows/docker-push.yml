@@ -19,16 +19,16 @@ jobs:
     runs-on: ubuntu-latest
     env:
       LOCALSTACK_VERSION: ${{ inputs.localstack-version || 'latest' }}
-      LOCALSTACK_COMPERE_VERSION: ${{ inputs.version || 'latest' }}
+      LOCALSTACK_PERSIST_VERSION: ${{ inputs.version || 'latest' }}
     steps:
       - name: Validate major.minor versions match
         run: |
-          if [[ ! ($LOCALSTACK_COMPERE_VERSION =~ ^([0-9]+\.[0-9]+) && $LOCALSTACK_VERSION == ${BASH_REMATCH[1]}*) ]]
+          if [[ ! ($LOCALSTACK_PERSIST_VERSION =~ ^([0-9]+\.[0-9]+) && $LOCALSTACK_VERSION == ${BASH_REMATCH[1]}*) ]]
           then
-            echo "major.minor versions of $LOCALSTACK_VERSION and $LOCALSTACK_COMPERE_VERSION do not match!"
+            echo "major.minor versions of $LOCALSTACK_VERSION and $LOCALSTACK_PERSIST_VERSION do not match!"
             exit 1
           fi
-        if: ${{ env.LOCALSTACK_COMPERE_VERSION != 'latest' }}
+        if: ${{ env.LOCALSTACK_PERSIST_VERSION != 'latest' }}
       - uses: actions/checkout@v3
       - run: bash test.sh
       - run: docker compose logs
@@ -49,5 +49,5 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: gresau/localstack-compere:${{ env.LOCALSTACK_COMPERE_VERSION }}
+          tags: gresau/localstack-persist:${{ env.LOCALSTACK_PERSIST_VERSION }}
           build-args: LOCALSTACK_VERSION=${{ env.LOCALSTACK_VERSION }}

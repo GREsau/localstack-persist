@@ -5,7 +5,7 @@ LABEL maintainer="Graham Esau (hello@graham.cool)"
 
 VOLUME /persisted-data
 
-COPY setup.cfg setup.py /localstack-compere/
-COPY src /localstack-compere/src
+COPY setup.cfg setup.py /localstack-persist/
+COPY src /localstack-persist/src
 
-RUN . .venv/bin/activate && pip3 install jsonpickle /localstack-compere && rm -rf /localstack-compere
+RUN . .venv/bin/activate && pip3 install jsonpickle /localstack-persist && rm -rf /localstack-persist
