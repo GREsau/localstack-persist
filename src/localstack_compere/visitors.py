@@ -15,9 +15,9 @@ LOG = logging.getLogger(__name__)
 
 
 def get_json_file_path(state_container: BackendDict | AccountRegionBundle):
-    type_name = type(state_container).__name__
+    file_name = "backend" if isinstance(state_container, BackendDict) else "store"
 
-    return os.path.join(BASE_DIR, state_container.service_name, type_name + ".json")
+    return os.path.join(BASE_DIR, state_container.service_name, file_name + ".json")
 
 
 def get_asset_dir_path(state_container: AssetDirectory):
