@@ -84,11 +84,7 @@ class SaveStateVisitor(StateVisitor):
 
         desired_files = set(os.listdir(src))
 
-        LOG.info(desired_files)  # TEMP TEMP TEMP TEMP TEMP
-
         with os.scandir(dst) as it:
             for entry in it:
-                LOG.info("processing %s...", entry.name)  # TEMP TEMP TEMP TEMP TEMP
                 if entry.name not in desired_files:
-                    LOG.info("DELETING %s...", entry.name)  # TEMP TEMP TEMP TEMP TEMP
                     rmrf(entry)
