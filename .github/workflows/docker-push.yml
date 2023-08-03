@@ -48,6 +48,6 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          push: false # for testing
+          push: true
           tags: gresau/localstack-compere:${{ env.LOCALSTACK_COMPERE_VERSION }}
           build-args: LOCALSTACK_VERSION=${{ env.LOCALSTACK_VERSION }}
