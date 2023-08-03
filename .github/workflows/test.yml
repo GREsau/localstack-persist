@@ -1,4 +1,10 @@
 name: Test
+run-name: |
+  Run tests for ${{
+    (github.event_name == 'push' && format('commit - {0}', github.event.head_commit.message)) ||
+    (github.event_name == 'pull_request' && format('PR #{0} - {1}', github.event.number, github.event.pull_request.title)) ||
+    format('{0} (manually triggered)', github.ref_name)
+  }}
 permissions:
   contents: read
 
@@ -11,7 +17,7 @@ on:
 
 jobs:
   test:
-    name: Test (${{ github.ref_name }})
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
