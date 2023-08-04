@@ -68,7 +68,7 @@ class LoadStateVisitor(StateVisitor):
             )
 
         unpickler = jsonpickle.Unpickler(keys=True, safe=True, on_missing="warn")
-        deserialised = unpickler.restore(envelope[DATA_KEY], reset=False)
+        deserialised = unpickler.restore(envelope[DATA_KEY])
 
         state_container.update(deserialised)
         state_container.__dict__.update(deserialised.__dict__)
@@ -90,7 +90,7 @@ class SaveStateVisitor(StateVisitor):
 
     def _save_json(self, state_container: dict, file_path: str):
         pickler = jsonpickle.Pickler(keys=True, warn=True)
-        flattened = pickler.flatten(state_container, reset=False)
+        flattened = pickler.flatten(state_container)
 
         envelope = {SER_VERSION_KEY: SER_VERSION, DATA_KEY: flattened}
 
