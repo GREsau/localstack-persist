@@ -2,7 +2,7 @@
 
 [LocalStack](https://github.com/localstack/localstack) Community Edition with support for persisted resources.
 
-[![Docker pulls](https://img.shields.io/docker/pulls/gresau/localstack-persist?logo=docker)](https://github.com/GREsau/localstack-persist/actions/workflows/test.yml)
+[![Docker pulls](https://img.shields.io/docker/pulls/gresau/localstack-persist?logo=docker)](https://hub.docker.com/r/gresau/localstack-persist)
 [![CI Build](https://github.com/GREsau/localstack-persist/actions/workflows/test.yml/badge.svg)](https://github.com/GREsau/localstack-persist/actions/workflows/test.yml)
 
 ## Overview
