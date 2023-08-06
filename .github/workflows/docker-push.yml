@@ -40,6 +40,20 @@ jobs:
       - run: docker compose logs
         if: ${{ failure() }}
 
+      - name: Set semver tags
+        id: tags
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            gresau/localstack-persist
+          flavor: |
+            latest=false
+          tags: |
+            type=semver,pattern={{version}},value=${{ env.LOCALSTACK_PERSIST_VERSION }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.LOCALSTACK_PERSIST_VERSION }}
+            type=semver,pattern={{major}},value=${{ env.LOCALSTACK_PERSIST_VERSION }}
+        if: ${{ env.LOCALSTACK_PERSIST_VERSION != 'latest' }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -55,5 +69,5 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: gresau/localstack-persist:${{ env.LOCALSTACK_PERSIST_VERSION }}
+          tags: ${{ steps.tags.outputs.tags || 'gresau/localstack-persist:latest' }}
           build-args: LOCALSTACK_VERSION=${{ env.LOCALSTACK_VERSION }}
