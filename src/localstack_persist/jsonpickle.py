@@ -1,7 +1,8 @@
-import copy
 from queue import PriorityQueue, Full
 from threading import Condition
+from typing import cast
 import jsonpickle
+import jsonpickle.tags
 from moto.acm.models import AWSCertificateManagerBackend, CertBundle
 
 
@@ -37,40 +38,32 @@ class PriorityQueueHandler(jsonpickle.handlers.BaseHandler):
 PriorityQueueHandler.handles(PriorityQueue)
 
 
-# this is really more of a CertBundle handler!
-class AWSCertificateManagerBackendHandler(jsonpickle.handlers.BaseHandler):
-    def flatten(self, obj: AWSCertificateManagerBackend, data: dict):
-        def flatten_cert_bundle(cb: CertBundle):
-            cb = copy.copy(cb)
-            del cb._cert
-            del cb._key
-            return self.context.flatten(cb, reset=False)
-
-        data["region_name"] = obj.region_name
-        data["account_id"] = obj.account_id
-        data["_certificates"] = {
-            k: flatten_cert_bundle(v) for k, v in obj._certificates.items()
-        }
-        data["_idempotency_tokens"] = obj._idempotency_tokens
-
+class CertBundleHandler(jsonpickle.handlers.BaseHandler):
+    def flatten(self, obj: CertBundle, data: dict):
+        data.update(
+            {
+                k: self.context.flatten(v, reset=False)
+                for k, v in obj.__dict__.items()
+                if k != "_cert" and k != "_key"
+            }
+        )
         return data
 
     def restore(self, data: dict):
-        def restore_cert_bundle(cbd: dict):
-            cb: CertBundle = self.context.restore(cbd, reset=False)
-            cb._cert = cb.validate_certificate()
-            cb._key = cb.validate_pk()
-            return cb
-
-        obj = AWSCertificateManagerBackend(data["region_name"], data["account_id"])
-        obj._certificates = {
-            k: restore_cert_bundle(v) for k, v in data["_certificates"].items()
-        }
-        obj._idempotency_tokens = data["_idempotency_tokens"]
+        obj = cast(CertBundle, CertBundle.__new__(CertBundle))
+        obj.__dict__.update(
+            {
+                k: self.context.restore(v, reset=False)
+                for k, v in data.items()
+                if k not in jsonpickle.tags.RESERVED
+            }
+        )
+        obj._cert = obj.validate_certificate()
+        obj._key = obj.validate_pk()
         return obj
 
 
-AWSCertificateManagerBackendHandler.handles(AWSCertificateManagerBackend)
+CertBundleHandler.handles(CertBundle)
 
 
 # workaround for https://github.com/jsonpickle/jsonpickle/issues/453
