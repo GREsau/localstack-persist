@@ -1,5 +1,7 @@
 import logging
 import os
+from importlib import import_module
+import sys
 
 from localstack.aws.handlers import serve_custom_service_request_handlers
 from localstack.services.plugins import SERVICE_PLUGINS
@@ -80,6 +82,20 @@ class StateTracker:
                 entry.name,
             )
             return
+
+        if entry.name == "lambda":
+            # Define localstack.services.awslambda as a backward-compatible alias for localstack.services.lambda_
+            # (and vice-versa for easy forward-compatibility)
+            try:
+                sys.modules.setdefault(
+                    "localstack.services.awslambda",
+                    import_module("localstack.services.lambda_"),
+                )
+            except ModuleNotFoundError:
+                sys.modules.setdefault(
+                    "localstack.services.lambda_",
+                    import_module("localstack.services.awslambda"),
+                )
 
         try:
             service.accept_state_visitor(LoadStateVisitor())
