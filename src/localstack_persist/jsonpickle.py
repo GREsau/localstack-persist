@@ -3,7 +3,7 @@ from threading import Condition
 from typing import cast
 import jsonpickle
 import jsonpickle.tags
-from moto.acm.models import AWSCertificateManagerBackend, CertBundle
+from moto.acm.models import CertBundle
 
 
 class ConditionHandler(jsonpickle.handlers.BaseHandler):
