@@ -20,10 +20,6 @@ iam = boto3.resource("iam", endpoint_url=endpoint_url)
 lambda_client = boto3.client("lambda", endpoint_url=endpoint_url)
 acm = boto3.client("acm", endpoint_url=endpoint_url)
 
-zipbuf = io.BytesIO()
-with zipfile.ZipFile(zipbuf, "w") as zip:
-    zip.write("lambda/bootstrap", "bootstrap")
-
 cert = open("cert.pem", "r").read()
 cert_key = open("key.pem", "r").read()
 
@@ -46,6 +42,9 @@ if command == "setup":
 
     role = iam.create_role(RoleName="test-role", AssumeRolePolicyDocument="{}")
 
+    zipbuf = io.BytesIO()
+    with zipfile.ZipFile(zipbuf, "w") as zip:
+        zip.write("lambda/bootstrap", "bootstrap")
     lambda_client.create_function(
         FunctionName="test-lambda",
         Role=role.arn,
@@ -76,7 +75,8 @@ elif command == "verify":
     assert_equal(lambda_response["Configuration"].get("Role", None), role.arn)
     lambda_code_location = lambda_response["Code"].get("Location", "")
     with urllib.request.urlopen(lambda_code_location) as f:
-        assert_equal(f.read(), zipbuf.getvalue())
+        with zipfile.ZipFile(io.BytesIO(f.read())) as zip:
+            assert_equal(zip.read("bootstrap"), open("lambda/bootstrap", "rb").read())
     lambda_client.get_waiter("function_active_v2").wait(FunctionName="test-lambda")
     lambda_response = lambda_client.invoke(
         FunctionName="test-lambda", Payload="hello world"
