@@ -41,7 +41,7 @@ for k, v in os.environ.items():
         )
 
 
-def should_persist(service_name: str):
+def is_persistence_enabled(service_name: str):
     return PERSISTED_SERVICES.get(
         normalise_service_name(service_name), PERSISTED_SERVICES["default"]
     )
