@@ -34,7 +34,7 @@
                     }
                   ],
                   "_status": null,
-                  "_tick": 2,
+                  "_tick": 0,
                   "_time_progressed": {
                     "py/object": "datetime.datetime",
                     "__reduce__": [
@@ -42,7 +42,7 @@
                         "py/type": "datetime.datetime"
                       },
                       [
-                        "B+cIAg4KJQGS2w=="
+                        "B+cICwgBIgzvCg=="
                       ]
                     ]
                   },
@@ -56,7 +56,7 @@
                         "py/type": "datetime.datetime"
                       },
                       [
-                        "B+cIAg4KJQGS3g=="
+                        "B+cICwgBIgzvDQ=="
                       ]
                     ]
                   },
@@ -151,7 +151,7 @@
                   "py/type": "datetime.datetime"
                 },
                 [
-                  "B+cIAg4KJQFsLQ==",
+                  "B+cICwgBIgzEBQ==",
                   {
                     "py/reduce": [
                       {
@@ -206,7 +206,7 @@
         "regions": [
           "global"
         ],
-        "_id": "b42af4dc-eae4-4217-8ed4-136dec851636"
+        "_id": "743b3741-2e4f-4622-8c04-db9534571fb1"
       }
     },
     "949334387222": {
@@ -223,7 +223,7 @@
             "region_name": "us-east-1",
             "keys": {
               "py/object": "moto.s3.utils._VersionedKeyStore",
-              "snapshots/000000000000/test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc": {
+              "snapshots/000000000000/test-lambda-554acf19-645c-4ef1-a371-578195aa9092": {
                 "py/object": "moto.s3.models.FakeKey",
                 "py/state": {
                   "_transitions": [
@@ -241,7 +241,7 @@
                     }
                   ],
                   "_status": null,
-                  "_tick": 8,
+                  "_tick": 4,
                   "_time_progressed": {
                     "py/object": "datetime.datetime",
                     "__reduce__": [
@@ -249,12 +249,12 @@
                         "py/type": "datetime.datetime"
                       },
                       [
-                        "B+cIAg4KJQXSBA=="
+                        "B+cICwgBIwGbWw=="
                       ]
                     ]
                   },
                   "model_name": "s3::keyrestore",
-                  "name": "snapshots/000000000000/test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc",
+                  "name": "snapshots/000000000000/test-lambda-554acf19-645c-4ef1-a371-578195aa9092",
                   "account_id": "949334387222",
                   "last_modified": {
                     "py/object": "datetime.datetime",
@@ -263,7 +263,7 @@
                         "py/type": "datetime.datetime"
                       },
                       [
-                        "B+cIAg4KJQXSBw=="
+                        "B+cICwgBIwGbXg=="
                       ]
                     ]
                   },
@@ -293,11 +293,11 @@
                     "py/object": "moto.utilities.utils.LowercaseDict",
                     "store": {
                       "content-type": "binary/octet-stream",
-                      "content-md5": "ds2yutlYLSPB9vTYaCGNbA=="
+                      "content-md5": "a1I1piFCpZ0o5y06NZRs2w=="
                     }
                   },
                   "_expiry": null,
-                  "_etag": "76cdb2bad9582d23c1f6f4d868218d6c",
+                  "_etag": "6b5235a62142a59d28e72d3a35946cdb",
                   "_version_id": "null",
                   "_is_versioned": false,
                   "multipart": null,
@@ -305,7 +305,7 @@
                   "_max_buffer_size": 524288,
                   "disposed": false,
                   "checksum_value": null,
-                  "contentsize": 22,
+                  "contentsize": 725,
                   "encryption": null,
                   "kms_key_id": null,
                   "bucket_key_enabled": null,
@@ -313,7 +313,7 @@
                   "lock_legal_status": null,
                   "lock_until": null,
                   "value": {
-                    "py/b64": "UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA=="
+                    "py/b64": "UEsDBBQAAAAAAGI5C1fPzeA7YQIAAGECAAAJAAAAYm9vdHN0cmFwIyEvYmluL3NoCgpzZXQgLWV1byBwaXBlZmFpbAoKd2hpbGUgdHJ1ZQpkbwogIEhFQURFUlM9IiQobWt0ZW1wKSIKICAjIEdldCBhbiBldmVudC4gVGhlIEhUVFAgcmVxdWVzdCB3aWxsIGJsb2NrIHVudGlsIG9uZSBpcyByZWNlaXZlZAogIEVWRU5UX0RBVEE9JChjdXJsIC1zUyAtTEQgIiRIRUFERVJTIiAiaHR0cDovLyR7QVdTX0xBTUJEQV9SVU5USU1FX0FQSX0vMjAxOC0wNi0wMS9ydW50aW1lL2ludm9jYXRpb24vbmV4dCIpCgogICMgRXh0cmFjdCByZXF1ZXN0IElEIGJ5IHNjcmFwaW5nIHJlc3BvbnNlIGhlYWRlcnMgcmVjZWl2ZWQgYWJvdmUKICBSRVFVRVNUX0lEPSQoZ3JlcCAtRmkgTGFtYmRhLVJ1bnRpbWUtQXdzLVJlcXVlc3QtSWQgIiRIRUFERVJTIiB8IHRyIC1kICdbOnNwYWNlOl0nIHwgY3V0IC1kOiAtZjIpCgogICMgRWNobyB0aGUgaW5wdXQgYXMgdXBwZXItY2FzZQogIFJFU1BPTlNFPSR7RVZFTlRfREFUQV5efQoKICAjIFNlbmQgdGhlIHJlc3BvbnNlCiAgY3VybCAiaHR0cDovLyR7QVdTX0xBTUJEQV9SVU5USU1FX0FQSX0vMjAxOC0wNi0wMS9ydW50aW1lL2ludm9jYXRpb24vJFJFUVVFU1RfSUQvcmVzcG9uc2UiICAtZCAiJFJFU1BPTlNFIgpkb25lUEsBAhQDFAAAAAAAYjkLV8/N4DthAgAAYQIAAAkAAAAAAAAAAAAAAO2BAAAAAGJvb3RzdHJhcFBLBQYAAAAAAQABADcAAACIAgAAAAA="
                   }
                 }
               },
@@ -358,7 +358,7 @@
                   "py/type": "datetime.datetime"
                 },
                 [
-                  "B+cIAg4KJQWiGw==",
+                  "B+cICwgBIwFtLg==",
                   {
                     "py/id": 32
                   }
@@ -391,7 +391,7 @@
         "regions": [
           "global"
         ],
-        "_id": "03da69e7-2dc6-4609-810e-fef5770eff0b"
+        "_id": "b2f9dca0-e0ad-4ce3-a011-cce04e260c59"
       }
     },
     "__dict__": {
@@ -403,7 +403,7 @@
       "_additional_regions": [
         "global"
       ],
-      "_id": "d597caf2-29b6-4de3-b413-4061314261bb",
+      "_id": "855881bc-1fef-4d47-bdee-63ff855d9d6b",
       "bucket_accounts": {
         "test-bucket": "000000000000",
         "awslambda-us-east-1-tasks": "949334387222"

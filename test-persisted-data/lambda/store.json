@@ -41,7 +41,7 @@
                   "architectures": [
                     "x86_64"
                   ],
-                  "internal_revision": "7e9c10fe",
+                  "internal_revision": "027aeafe",
                   "ephemeral_storage": {
                     "py/object": "localstack.services.awslambda.invocation.lambda_models.LambdaEphemeralStorage",
                     "size": 512
@@ -53,23 +53,23 @@
                   "tracing_config_mode": "PassThrough",
                   "code": {
                     "py/object": "localstack.services.awslambda.invocation.lambda_models.S3Code",
-                    "id": "test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc",
+                    "id": "test-lambda-554acf19-645c-4ef1-a371-578195aa9092",
                     "account_id": "000000000000",
                     "s3_bucket": "awslambda-us-east-1-tasks",
-                    "s3_key": "snapshots/000000000000/test-lambda-1158d081-1fcd-4735-91c2-2058afefeadc",
+                    "s3_key": "snapshots/000000000000/test-lambda-554acf19-645c-4ef1-a371-578195aa9092",
                     "s3_object_version": null,
-                    "code_sha256": "hznHbmgfkAkjuQDJ3w73XPQh05yrtUZQxLmtGbanbYU=",
-                    "code_size": 22,
+                    "code_sha256": "aIZXqGy/1nmTtAuKV5DIAR6zqKTEYXUDjgZLDNhz+mk=",
+                    "code_size": 725,
                     "_disk_lock": {
                       "py/object": "_thread.RLock"
                     }
                   },
-                  "last_modified": "2023-08-02T14:10:37.738824+0000",
+                  "last_modified": "2023-08-11T08:01:35.471743+0000",
                   "state": {
                     "py/object": "localstack.services.awslambda.invocation.lambda_models.VersionState",
-                    "state": "Failed",
-                    "code": "InternalError",
-                    "reason": "Error while creating lambda: Docker not available"
+                    "state": "Active",
+                    "code": null,
+                    "reason": null
                   },
                   "image": null,
                   "image_config": null,
@@ -78,11 +78,11 @@
                   },
                   "last_update": {
                     "py/object": "localstack.services.awslambda.invocation.lambda_models.UpdateStatus",
-                    "status": "Failed",
+                    "status": "Successful",
                     "code": null,
                     "reason": null
                   },
-                  "revision_id": "8c405a54-3ae2-4547-889e-9c706ca93984",
+                  "revision_id": "f0f1fdb3-1520-4791-9dc4-c473b5018940",
                   "layers": [],
                   "dead_letter_arn": null,
                   "vpc_config": null

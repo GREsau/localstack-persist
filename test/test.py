@@ -21,7 +21,8 @@ lambda_client = boto3.client("lambda", endpoint_url=endpoint_url)
 acm = boto3.client("acm", endpoint_url=endpoint_url)
 
 zipbuf = io.BytesIO()
-zipfile.ZipFile(zipbuf, "w").close()
+with zipfile.ZipFile(zipbuf, "w") as zip:
+    zip.write("lambda/bootstrap", "bootstrap")
 
 cert = open("cert.pem", "r").read()
 cert_key = open("key.pem", "r").read()
@@ -76,6 +77,12 @@ elif command == "verify":
     lambda_code_location = lambda_response["Code"].get("Location", "")
     with urllib.request.urlopen(lambda_code_location) as f:
         assert_equal(f.read(), zipbuf.getvalue())
+    lambda_client.get_waiter("function_active_v2").wait(FunctionName="test-lambda")
+    lambda_response = lambda_client.invoke(
+        FunctionName="test-lambda", Payload="hello world"
+    )
+    assert_equal(lambda_response["ResponseMetadata"]["HTTPStatusCode"], 200)
+    assert_equal(lambda_response["Payload"].read(), b"HELLO WORLD")
 
     certs = acm.list_certificates()
     assert_equal(certs["CertificateSummaryList"][0].get("DomainName", None), "test")

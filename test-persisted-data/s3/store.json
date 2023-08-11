@@ -8,8 +8,7 @@
         "py/object": "localstack.services.s3.models.S3Store",
         "_global": {
           "bucket_lifecycle_configuration": {},
-          "bucket_notification_configs": {},
-          "bucket_versioning_status": {}
+          "bucket_notification_configs": {}
         },
         "_universal": {},
         "_service_name": "s3",
@@ -63,7 +62,7 @@
           "py/id": 3
         },
         "_universal": {
-          "py/id": 7
+          "py/id": 6
         }
       }
     },
@@ -77,7 +76,7 @@
           "bucket_versioning_status": {}
         },
         "_universal": {
-          "py/id": 7
+          "py/id": 6
         },
         "_service_name": "s3",
         "_account_id": "949334387222",
@@ -91,7 +90,7 @@
         "service_name": "s3",
         "validate": true,
         "lock": {
-          "py/id": 9
+          "py/id": 8
         },
         "valid_regions": [
           "af-south-1",
@@ -127,10 +126,10 @@
           "cn-northwest-1"
         ],
         "_global": {
-          "py/id": 13
+          "py/id": 12
         },
         "_universal": {
-          "py/id": 7
+          "py/id": 6
         }
       }
     },
@@ -141,10 +140,10 @@
       },
       "validate": true,
       "lock": {
-        "py/id": 9
+        "py/id": 8
       },
       "_universal": {
-        "py/id": 7
+        "py/id": 6
       },
       "__orig_class__": {
         "py/type": "localstack.services.stores.AccountRegionBundle"

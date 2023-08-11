@@ -80,3 +80,7 @@ class DictHandler(jsonpickle.handlers.BaseHandler):
 
 def fix_dict_pickling():
     jsonpickle.handlers.register(dict, DictHandler, base=True)
+
+
+def unfix_dict_pickling():
+    jsonpickle.handlers.unregister(dict)

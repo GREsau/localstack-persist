@@ -9,6 +9,7 @@ services:
         LOCALSTACK_VERSION: ${LOCALSTACK_VERSION:-2.2}
     volumes:
       - "./temp-persisted-data:/persisted-data"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - DEBUG=1
     networks:
