@@ -11,7 +11,6 @@ from threading import Thread, Condition
 
 from .visitors import LoadStateVisitor, SaveStateVisitor
 from .config import BASE_DIR, is_persistence_enabled
-from .jsonpickle import fix_dict_pickling, unfix_dict_pickling
 
 LOG = logging.getLogger(__name__)
 
@@ -64,6 +63,7 @@ class StateTracker:
 
         with os.scandir(BASE_DIR) as it:
             for entry in it:
+                # lambda is a special case, as it requires on_after_state_load() which starts some services
                 if is_persistence_enabled(entry.name) and entry.name != "lambda":
                     if not entry.is_dir():
                         LOG.warning("Expected %s to be a directory", entry.path)
@@ -129,12 +129,8 @@ class StateTracker:
     def _init_lambda(self):
         with self.cond:
             if "lambda" not in self.loaded_services:
-                unfix_dict_pickling()
-                try:
-                    self._setup_lambda_compatibility()
-                    self._load_service_state("lambda", invoke_hooks=True)
-                finally:
-                    fix_dict_pickling()
+                self._setup_lambda_compatibility()
+                self._load_service_state("lambda", invoke_hooks=True)
 
     @staticmethod
     def _setup_lambda_compatibility():

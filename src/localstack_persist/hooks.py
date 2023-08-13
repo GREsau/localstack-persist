@@ -2,16 +2,16 @@ import logging
 
 from localstack.runtime import hooks
 
-from .jsonpickle import fix_dict_pickling
 from .state import STATE_TRACKER
+from .jsonpickle import register_handlers
 
 LOG = logging.getLogger(__name__)
 
 
 @hooks.on_infra_start(priority=1)
 def on_infra_start():
+    register_handlers()
     STATE_TRACKER.load_all_services_state()
-    fix_dict_pickling()
     STATE_TRACKER.start()
 
 

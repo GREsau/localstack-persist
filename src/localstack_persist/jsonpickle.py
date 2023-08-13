@@ -16,9 +16,6 @@ class ConditionHandler(jsonpickle.handlers.BaseHandler):
         return Condition(lock)
 
 
-ConditionHandler.handles(Condition)
-
-
 class PriorityQueueHandler(jsonpickle.handlers.BaseHandler):
     def flatten(self, obj: PriorityQueue, data: dict):
         data["maxsize"] = obj.maxsize
@@ -33,9 +30,6 @@ class PriorityQueueHandler(jsonpickle.handlers.BaseHandler):
             except Full:
                 break
         return pq
-
-
-PriorityQueueHandler.handles(PriorityQueue)
 
 
 class CertBundleHandler(jsonpickle.handlers.BaseHandler):
@@ -63,24 +57,7 @@ class CertBundleHandler(jsonpickle.handlers.BaseHandler):
         return obj
 
 
-CertBundleHandler.handles(CertBundle)
-
-
-# workaround for https://github.com/jsonpickle/jsonpickle/issues/453
-class DictHandler(jsonpickle.handlers.BaseHandler):
-    def flatten(self, obj, data):
-        for k, v in obj.items():
-            data[k] = self.context.flatten(v, reset=False)
-        data["__dict__"] = self.context.flatten(obj.__dict__, reset=False)
-        return data
-
-    def restore(self, data):
-        raise NotImplementedError("DictHandler can not be used for unpickling")
-
-
-def fix_dict_pickling():
-    jsonpickle.handlers.register(dict, DictHandler, base=True)
-
-
-def unfix_dict_pickling():
-    jsonpickle.handlers.unregister(dict)
+def register_handlers():
+    CertBundleHandler.handles(CertBundle)
+    ConditionHandler.handles(Condition)
+    PriorityQueueHandler.handles(PriorityQueue)
