@@ -67,7 +67,7 @@ class LoadStateVisitor(StateVisitor):
                 version,
             )
 
-        unpickler = jsonpickle.Unpickler(keys=True, safe=True, on_missing="warn")
+        unpickler = jsonpickle.Unpickler(keys=True, safe=True, on_missing="error")
         deserialised = unpickler.restore(envelope[DATA_KEY])
 
         state_container.update(deserialised)
