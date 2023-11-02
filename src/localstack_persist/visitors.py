@@ -8,6 +8,8 @@ import logging
 import localstack.config
 from localstack.services.stores import AccountRegionBundle
 from localstack.state import AssetDirectory, StateContainer, StateVisitor
+from localstack.services.s3.v3.storage.core import S3ObjectStore
+from localstack.services.s3.v3.provider import DEFAULT_S3_TMP_DIR
 from moto.core import BackendDict
 
 from .config import BASE_DIR
@@ -22,13 +24,22 @@ SER_VERSION = 1
 DATA_KEY = "data"
 
 
-def get_json_file_path(state_container: BackendDict | AccountRegionBundle):
+def get_json_file_path(
+    state_container: BackendDict | AccountRegionBundle | S3ObjectStore,
+):
+    if isinstance(state_container, S3ObjectStore):
+        return os.path.join(BASE_DIR, "s3", "objects.json")
+
     file_name = "backend" if isinstance(state_container, BackendDict) else "store"
 
     return os.path.join(BASE_DIR, state_container.service_name, file_name + ".json")
 
 
 def get_asset_dir_path(state_container: AssetDirectory):
+    if state_container.path == DEFAULT_S3_TMP_DIR:
+        # Skip this directory - we'll later persist it to JSON via the S3ObjectStore
+        return None
+
     assert state_container.path.startswith(localstack.config.dirs.data)
     relpath = os.path.relpath(state_container.path, localstack.config.dirs.data)
 
@@ -43,19 +54,23 @@ def rmrf(entry: os.DirEntry):
 
 
 class LoadStateVisitor(StateVisitor):
-    def visit(self, state_container: StateContainer):
-        if isinstance(state_container, (BackendDict, AccountRegionBundle)):
+    def visit(self, state_container: StateContainer | S3ObjectStore):
+        if isinstance(
+            state_container, (BackendDict, AccountRegionBundle, S3ObjectStore)
+        ):
             file_path = get_json_file_path(state_container)
             if os.path.isfile(file_path):
                 self._load_json(state_container, file_path)
         elif isinstance(state_container, AssetDirectory):
             dir_path = get_asset_dir_path(state_container)
-            if os.path.isdir(dir_path):
+            if dir_path and os.path.isdir(dir_path):
                 shutil.copytree(dir_path, state_container.path, dirs_exist_ok=True)
         else:
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
-    def _load_json(self, state_container: StateContainer, file_path: str):
+    def _load_json(
+        self, state_container: StateContainer | S3ObjectStore, file_path: str
+    ):
         with open(file_path) as file:
             envelope: dict = json.load(file)
 
@@ -70,25 +85,34 @@ class LoadStateVisitor(StateVisitor):
         unpickler = jsonpickle.Unpickler(keys=True, safe=True, on_missing="error")
         deserialised = unpickler.restore(envelope[DATA_KEY])
 
-        state_container.update(deserialised)
+        if type(state_container) != type(deserialised):
+            LOG.warning("Unexpected state_container type: %s", type(state_container))
+            return
+
+        if isinstance(state_container, dict) and isinstance(deserialised, dict):
+            state_container.update(deserialised)
         state_container.__dict__.update(deserialised.__dict__)
 
 
 class SaveStateVisitor(StateVisitor):
     json_encoder = json.JSONEncoder(check_circular=False, separators=(",", ":"))
 
-    def visit(self, state_container: StateContainer):
-        if isinstance(state_container, (BackendDict, AccountRegionBundle)):
+    def visit(self, state_container: StateContainer | S3ObjectStore):
+        if isinstance(
+            state_container, (BackendDict, AccountRegionBundle, S3ObjectStore)
+        ):
             file_path = get_json_file_path(state_container)
             self._save_json(state_container, file_path)
         elif isinstance(state_container, AssetDirectory):
             dir_path = get_asset_dir_path(state_container)
-            if os.path.isdir(state_container.path):
+            if dir_path and os.path.isdir(state_container.path):
                 self._sync_directories(state_container.path, dir_path)
         else:
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
-    def _save_json(self, state_container: dict, file_path: str):
+    def _save_json(
+        self, state_container: StateContainer | S3ObjectStore, file_path: str
+    ):
         pickler = jsonpickle.Pickler(keys=True, warn=True)
         flattened = pickler.flatten(state_container)
 

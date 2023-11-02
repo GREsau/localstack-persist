@@ -1,16 +1,14 @@
 import logging
 import os
-from importlib import import_module
-import sys
 
 from localstack.aws.handlers import serve_custom_service_request_handlers
-from localstack.services.plugins import SERVICE_PLUGINS
-from localstack.aws.chain import Handler as OnRequestHandler
+from localstack.services.plugins import SERVICE_PLUGINS, Service
 from localstack.aws.api import RequestContext
 from threading import Thread, Condition
 
 from .visitors import LoadStateVisitor, SaveStateVisitor
 from .config import BASE_DIR, is_persistence_enabled
+from .prepare_service import prepare_service
 
 LOG = logging.getLogger(__name__)
 
@@ -43,6 +41,8 @@ class StateTracker:
 
         if not is_persistence_enabled(context.service.service_name):
             return
+
+        prepare_service(context.service.service_name)
 
         if context.service.service_name == "lambda":
             self._init_lambda()
@@ -92,6 +92,7 @@ class StateTracker:
 
     def _load_service_state(self, service_name: str, invoke_hooks=False):
         LOG.info("Loading persisted state of service %s...", service_name)
+        prepare_service(service_name)
         self.loaded_services.add(service_name)
 
         service = SERVICE_PLUGINS.get_service(service_name)
@@ -105,7 +106,7 @@ class StateTracker:
         try:
             if invoke_hooks:
                 service.lifecycle_hook.on_before_state_load()
-            service.accept_state_visitor(LoadStateVisitor())
+            self._invoke_visitor(LoadStateVisitor(), service)
             if invoke_hooks:
                 service.lifecycle_hook.on_after_state_load()
         except:
@@ -121,31 +122,21 @@ class StateTracker:
 
         try:
             service.lifecycle_hook.on_before_state_save()
-            service.accept_state_visitor(SaveStateVisitor())
+            self._invoke_visitor(SaveStateVisitor(), service)
             service.lifecycle_hook.on_after_state_save()
         except:
             LOG.exception("Error while persisting state of service %s", service_name)
 
+    @staticmethod
+    def _invoke_visitor(visitor: SaveStateVisitor | LoadStateVisitor, service: Service):
+        service.accept_state_visitor(visitor)
+        if service.name() == "s3" and hasattr(service._provider, "_storage_backend"):
+            visitor.visit(getattr(service._provider, "_storage_backend"))
+
     def _init_lambda(self):
         with self.cond:
             if "lambda" not in self.loaded_services:
-                self._setup_lambda_compatibility()
                 self._load_service_state("lambda", invoke_hooks=True)
-
-    @staticmethod
-    def _setup_lambda_compatibility():
-        # Define localstack.services.awslambda as a backward-compatible alias for localstack.services.lambda_
-        # (and vice-versa for easy forward-compatibility)
-        try:
-            sys.modules.setdefault(
-                "localstack.services.awslambda",
-                import_module("localstack.services.lambda_"),
-            )
-        except ModuleNotFoundError:
-            sys.modules.setdefault(
-                "localstack.services.lambda_",
-                import_module("localstack.services.awslambda"),
-            )
 
 
 STATE_TRACKER = StateTracker()
