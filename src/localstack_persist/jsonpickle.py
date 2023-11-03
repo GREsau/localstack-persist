@@ -1,4 +1,5 @@
 from queue import PriorityQueue, Full
+from tempfile import SpooledTemporaryFile
 from threading import Condition
 from typing import cast
 import datetime
@@ -11,7 +12,9 @@ from localstack.services.s3.v3.storage.ephemeral import (
     S3_MAX_FILE_SIZE_BYTES,
 )
 from localstack.services.s3.v3.provider import DEFAULT_S3_TMP_DIR
+from localstack.utils.files import mkdir
 import base64
+import os
 
 
 class ConditionHandler(jsonpickle.handlers.BaseHandler):
@@ -90,9 +93,19 @@ class DatetimeHandler(jsonpickle.handlers.BaseHandler):
         return cls.fromisoformat(data["isoformat"])
 
 
+def get_dir(temp_file: SpooledTemporaryFile):
+    if (args := getattr(temp_file, "_TemporaryFileArgs", None)) and "dir" in args:
+        return args["dir"]
+
+    if filename := getattr(getattr(temp_file._file, "file", None), "name", None):
+        return os.path.dirname(filename)
+
+    return None
+
+
 class LockedSpooledTemporaryFileHandler(jsonpickle.handlers.BaseHandler):
     def flatten(self, obj: LockedSpooledTemporaryFile, data: dict):
-        pos = obj.tell()
+        data["pos"] = pos = obj.tell()
         obj.seek(0)
         contents: bytes = obj.read()
         obj.seek(pos)
@@ -100,13 +113,16 @@ class LockedSpooledTemporaryFileHandler(jsonpickle.handlers.BaseHandler):
             data["text"] = contents.decode("ascii")
         except:
             data["b64"] = base64.b64encode(contents).decode()
-        data["pos"] = pos
+
+        if dir := get_dir(obj):
+            data["dir"] = dir
+
         return data
 
     def restore(self, data: dict):
-        obj = LockedSpooledTemporaryFile(
-            dir=DEFAULT_S3_TMP_DIR, max_size=S3_MAX_FILE_SIZE_BYTES
-        )
+        dir = data.get("dir") or DEFAULT_S3_TMP_DIR
+        mkdir(dir)
+        obj = LockedSpooledTemporaryFile(dir=dir, max_size=S3_MAX_FILE_SIZE_BYTES)
         if "text" in data:
             obj.write(data["text"].encode())
         else:

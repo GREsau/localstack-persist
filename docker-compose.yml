@@ -12,8 +12,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - DEBUG=1
-      # TODO add test coverage of v3 S3 provider
-      # - PROVIDER_OVERRIDE_S3=v3
+      - PROVIDER_OVERRIDE_S3=${PROVIDER_OVERRIDE_S3-}
     networks:
       default:
         aliases:

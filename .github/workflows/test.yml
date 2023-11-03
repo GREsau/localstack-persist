@@ -18,6 +18,11 @@ on:
 jobs:
   test:
     name: Test
+    strategy:
+      matrix:
+        PROVIDER_OVERRIDE_S3: ["", "v3"]
+    env:
+      PROVIDER_OVERRIDE_S3: ${{ matrix.PROVIDER_OVERRIDE_S3 }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

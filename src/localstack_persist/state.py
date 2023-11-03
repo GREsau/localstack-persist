@@ -4,6 +4,8 @@ import os
 from localstack.aws.handlers import serve_custom_service_request_handlers
 from localstack.services.plugins import SERVICE_PLUGINS, Service
 from localstack.aws.api import RequestContext
+from localstack.services.s3.v3.provider import S3Provider as S3V3Provider
+from localstack.services.s3.v3.storage.ephemeral import EphemeralS3ObjectStore
 from threading import Thread, Condition
 
 from .visitors import LoadStateVisitor, SaveStateVisitor
@@ -130,8 +132,10 @@ class StateTracker:
     @staticmethod
     def _invoke_visitor(visitor: SaveStateVisitor | LoadStateVisitor, service: Service):
         service.accept_state_visitor(visitor)
-        if service.name() == "s3" and hasattr(service._provider, "_storage_backend"):
-            visitor.visit(getattr(service._provider, "_storage_backend"))
+        if (backend := getattr(service._provider, "_storage_backend", None)) and (
+            isinstance(backend, EphemeralS3ObjectStore)
+        ):
+            visitor.visit(backend)
 
     def _init_lambda(self):
         with self.cond:
