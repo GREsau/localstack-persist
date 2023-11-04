@@ -1,6 +1,7 @@
 from importlib import import_module
 from collections.abc import Callable
 from localstack.services.s3.v3.storage.ephemeral import EphemeralS3ObjectStore
+from localstack.services.plugins import SERVICE_PLUGINS, ServiceLifecycleHook
 import sys
 
 
@@ -9,6 +10,8 @@ def prepare_service(service_name: str):
         prepare_lambda()
     elif service_name == "s3":
         prepare_s3()
+    elif service_name == "opensearch":
+        prepare_opensearch()
 
 
 def once(f: Callable):
@@ -48,3 +51,18 @@ def prepare_s3():
     EphemeralS3ObjectStore._key_from_s3_object = staticmethod(
         lambda s3_object: f"{s3_object.key}?{s3_object.version_id or 'null'}"
     )
+
+
+@once
+def prepare_opensearch():
+    # OpensearchProvider doesn't inherit ServiceLifecycleHook, but it probably should
+    opensearch_service = SERVICE_PLUGINS.get_service("opensearch")
+    assert opensearch_service
+    provider = opensearch_service._provider
+
+    if isinstance(provider, ServiceLifecycleHook):
+        return
+
+    for attr in dir(ServiceLifecycleHook):
+        if attr.startswith("on_") and (method := getattr(provider, attr, None)):
+            setattr(opensearch_service.lifecycle_hook, attr, method)

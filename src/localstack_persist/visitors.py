@@ -1,7 +1,7 @@
 import json
 import os
 import shutil
-from typing import Optional, Any
+from typing import Dict, Optional, Any
 
 import jsonpickle
 import logging
@@ -13,6 +13,10 @@ from localstack.services.s3.v3.storage.ephemeral import EphemeralS3ObjectStore
 from localstack.services.s3.v3.provider import DEFAULT_S3_TMP_DIR
 from localstack.services.s3.v3.models import S3Store as V3S3Store
 from localstack.services.s3.models import S3Store as LegacyS3Store
+from localstack.services.opensearch.models import OpenSearchStore
+from watchdog.observers import Observer
+from watchdog.observers.api import BaseObserver
+from watchdog.events import FileSystemEventHandler
 
 from moto.core import BackendDict
 from moto.s3.models import s3_backends
@@ -51,6 +55,8 @@ def get_asset_dir_path(state_container: AssetDirectory):
     assert state_container.path.startswith(localstack.config.dirs.data)
     relpath = os.path.relpath(state_container.path, localstack.config.dirs.data)
 
+    # TODO ensure the path contains the service name (currently not the case for "elasticsearch" directory)
+
     return os.path.join(BASE_DIR, relpath, "assets")
 
 
@@ -78,15 +84,23 @@ def are_same_type(t1: type, t2: type) -> bool:
 
 
 class LoadStateVisitor(StateVisitor):
-    _s3_objects: Optional[EphemeralS3ObjectStore]
+    def __init__(self, service_name: str) -> None:
+        super().__init__()
+        self.service_name = service_name
+        self._s3_objects: Optional[EphemeralS3ObjectStore] = None
 
     def visit(self, state_container: StateContainer | EphemeralS3ObjectStore):
         if isinstance(state_container, JsonSerializableState):
             self._load_json(state_container)
         elif isinstance(state_container, AssetDirectory):
             dir_path = get_asset_dir_path(state_container)
-            if dir_path and os.path.isdir(dir_path):
+            if not dir_path:
+                return
+            if os.path.isdir(dir_path):
                 shutil.copytree(dir_path, state_container.path, dirs_exist_ok=True)
+            os.makedirs(state_container.path, exist_ok=True)
+            start_watcher(self.service_name, state_container.path)
+
         else:
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
@@ -94,9 +108,7 @@ class LoadStateVisitor(StateVisitor):
         file_path = get_json_file_path(state_container)
         if not os.path.isfile(file_path):
             # Are we trying to load an S3ObjectStore for the V3 provider which we just migrated to?
-            if getattr(self, "_s3_objects", None) and type(state_container) == type(
-                self._s3_objects
-            ):
+            if self._s3_objects and type(state_container) == EphemeralS3ObjectStore:
                 state_container.__dict__.update(self._s3_objects.__dict__)
             return
 
@@ -136,6 +148,19 @@ class LoadStateVisitor(StateVisitor):
             )
             return
 
+        # localstack doesn't set DomainEndpointOptions in the store, so we rebuild it from the Endpoint.
+        # Also set Processing because after loading state, it will take some time for opensearch/elasticsearch to start.
+        if deserialised_type == AccountRegionBundle[OpenSearchStore]:
+            for region_bundle in deserialised.values():  # type: ignore
+                store: OpenSearchStore
+                for store in region_bundle.values():
+                    for domain in store.opensearch_domains.values():
+                        domain["Processing"] = True
+                        if endpoint := domain.get("Endpoint"):
+                            endpoint_options = domain.get("DomainEndpointOptions") or {}
+                            endpoint_options["CustomEndpointEnabled"] = True
+                            endpoint_options["CustomEndpoint"] = endpoint
+
         if isinstance(state_container, dict) and isinstance(deserialised, dict):
             state_container.update(deserialised)
         state_container.__dict__.update(deserialised.__dict__)
@@ -144,13 +169,22 @@ class LoadStateVisitor(StateVisitor):
 class SaveStateVisitor(StateVisitor):
     json_encoder = json.JSONEncoder(check_circular=False, separators=(",", ":"))
 
+    def __init__(self, service_name: str) -> None:
+        super().__init__()
+        self.service_name = service_name
+
     def visit(self, state_container: StateContainer | EphemeralS3ObjectStore):
         if isinstance(state_container, JsonSerializableState):
             self._save_json(state_container)
         elif isinstance(state_container, AssetDirectory):
             dir_path = get_asset_dir_path(state_container)
-            if dir_path and os.path.isdir(state_container.path):
+            if not dir_path:
+                return
+            if os.path.isdir(state_container.path):
                 self._sync_directories(state_container.path, dir_path)
+            else:
+                os.makedirs(state_container.path, exist_ok=True)
+            start_watcher(self.service_name, state_container.path)
         else:
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
@@ -176,3 +210,38 @@ class SaveStateVisitor(StateVisitor):
             for entry in it:
                 if entry.name not in desired_files:
                     rmrf(entry)
+
+
+class AffectedServiceHandler(FileSystemEventHandler):
+    def __init__(self, service_name: str) -> None:
+        super().__init__()
+        self.service_name = service_name
+
+    # FIXME this runs for just opening/closing files
+    def on_any_event(self, event):
+        # circular dependency :(
+        from .state import STATE_TRACKER
+
+        STATE_TRACKER.add_affected_service(self.service_name)
+
+
+path_watchers: Dict[str, AffectedServiceHandler] = {}
+observer: Optional[BaseObserver] = None
+
+
+def start_watcher(service_name: str, path: str):
+    if path in path_watchers:
+        return
+
+    global observer
+    old_observer = observer
+    observer = Observer()
+
+    path_watchers[path] = AffectedServiceHandler(service_name)
+
+    for watcher_path, watcher in path_watchers.items():
+        observer.schedule(watcher, watcher_path, True)
+
+    observer.start()
+    if old_observer:
+        old_observer.stop()
