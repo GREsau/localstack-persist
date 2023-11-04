@@ -18,13 +18,9 @@ LOG = logging.getLogger(__name__)
 IDEMPOTENT_VERBS = ["GET", "HEAD", "QUERY", "LIST", "DESCRIBE"]
 
 
-def skip_eager_load(service_name: str):
-    # Eagerly loading lambda state will start both lambda and some other services,
-    # so we lazily load it to improve startup performance.
-    # There is no service with the name "elasticsearch" (but there is "es"). The
-    # "elasticsearch" directory comes from the "opensearch" service, but that also
-    # has an "opensearch" directory, so we just ignore the "elasticsearch" dir.
-    return service_name == "lambda" or service_name == "elasticsearch"
+def lazy_load(service_name: str):
+    # Lambda relies on other services being ready
+    return service_name == "lambda"
 
 
 def invoke_hooks(service_name: str):
@@ -64,7 +60,7 @@ class StateTracker:
         prepare_service(service_name)
 
         # Does the service need lazy loading of state?
-        if skip_eager_load(service_name):
+        if lazy_load(service_name):
             with self.cond:
                 if service_name not in self.loaded_services:
                     self._load_service_state(service_name)
@@ -84,9 +80,7 @@ class StateTracker:
 
         with os.scandir(BASE_DIR) as it:
             for entry in it:
-                if is_persistence_enabled(entry.name) and not skip_eager_load(
-                    entry.name
-                ):
+                if is_persistence_enabled(entry.name) and not lazy_load(entry.name):
                     if not entry.is_dir():
                         LOG.warning("Expected %s to be a directory", entry.path)
                         continue

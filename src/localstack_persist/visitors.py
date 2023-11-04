@@ -55,9 +55,10 @@ def get_asset_dir_path(state_container: AssetDirectory):
     assert state_container.path.startswith(localstack.config.dirs.data)
     relpath = os.path.relpath(state_container.path, localstack.config.dirs.data)
 
-    # TODO ensure the path contains the service name (currently not the case for "elasticsearch" directory)
-
-    return os.path.join(BASE_DIR, relpath, "assets")
+    if relpath.startswith(state_container.service_name):
+        return os.path.join(BASE_DIR, relpath, "assets")
+    else:
+        return os.path.join(BASE_DIR, state_container.service_name, relpath, "assets")
 
 
 def rmrf(entry: os.DirEntry):
@@ -78,8 +79,8 @@ def state_type(state: Any) -> type:
 def are_same_type(t1: type, t2: type) -> bool:
     return t1 == t2 or (
         t1.__name__ == t2.__name__
-        and str(t1).replace("awslambda", "lambda_")
-        == str(t2).replace("awslambda", "lambda_")
+        and str(t1).replace(".awslambda.", ".lambda_.")
+        == str(t2).replace(".awslambda.", ".lambda_.")
     )
 
 
@@ -217,8 +218,19 @@ class AffectedServiceHandler(FileSystemEventHandler):
         super().__init__()
         self.service_name = service_name
 
-    # FIXME this runs for just opening/closing files
-    def on_any_event(self, event):
+    def on_created(self, event):
+        self._handle_event()
+
+    def on_deleted(self, event):
+        self._handle_event()
+
+    def on_modified(self, event):
+        self._handle_event()
+
+    def on_moved(self, event):
+        self._handle_event()
+
+    def _handle_event(self):
         # circular dependency :(
         from .state import STATE_TRACKER
 
