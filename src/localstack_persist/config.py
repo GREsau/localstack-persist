@@ -9,7 +9,7 @@ BASE_DIR = "/persisted-data"
 
 
 def normalise_service_name(n: str):
-    return (
+    service_name = (
         n.strip()
         .lower()
         .replace(
@@ -21,6 +21,9 @@ def normalise_service_name(n: str):
             "",
         )
     )
+    if service_name == "elasticsearch":
+        return "es"
+    return service_name
 
 
 PERSISTED_SERVICES = {"default": True}
@@ -42,6 +45,10 @@ for k, v in os.environ.items():
 
 
 def is_persistence_enabled(service_name: str):
-    return PERSISTED_SERVICES.get(
-        normalise_service_name(service_name), PERSISTED_SERVICES["default"]
-    )
+    service_name = normalise_service_name(service_name)
+
+    # elasticsearch requires opensearch
+    if service_name == "opensearch" and is_persistence_enabled("es"):
+        return True
+
+    return PERSISTED_SERVICES.get(service_name, PERSISTED_SERVICES["default"])
