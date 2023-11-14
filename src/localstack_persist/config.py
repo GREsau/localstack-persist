@@ -2,6 +2,7 @@ import os
 
 import logging
 from localstack import config
+from localstack.utils.bootstrap import resolve_apis
 
 LOG = logging.getLogger(__name__)
 
@@ -36,6 +37,8 @@ for k, v in os.environ.items():
 
     if v in config.TRUE_STRINGS:
         PERSISTED_SERVICES[service_name] = True
+        for dependency in resolve_apis([service_name]):
+            PERSISTED_SERVICES.setdefault(dependency, True)
     elif v in config.FALSE_STRINGS:
         PERSISTED_SERVICES[service_name] = False
     else:
@@ -46,9 +49,4 @@ for k, v in os.environ.items():
 
 def is_persistence_enabled(service_name: str):
     service_name = normalise_service_name(service_name)
-
-    # elasticsearch requires opensearch
-    if service_name == "opensearch" and is_persistence_enabled("es"):
-        return True
-
     return PERSISTED_SERVICES.get(service_name, PERSISTED_SERVICES["default"])
