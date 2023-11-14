@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.3.3] - 2023-11-14
+
+_Based on [LocalStack 2.3.2](https://github.com/localstack/localstack/releases/tag/v2.3.2)_
+
+### Fixed
+
+- Persistence of Elasticsearch (and Opensearch)
+- Explicitly enabling persistence of a particular service will now also enable persistence for services that it depends on (unless they have persistence explicitly disabled)
+
 ## [2.3.2] - 2023-11-03
 
 _Based on [LocalStack 2.3.2](https://github.com/localstack/localstack/releases/tag/v2.3.2)_

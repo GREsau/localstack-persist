@@ -55,6 +55,7 @@ The following services have basic save/restore functionality verified by automat
 
 - ACM
 - DynamoDB
+- Elasticsearch
 - IAM
 - Lambda
 - SQS
