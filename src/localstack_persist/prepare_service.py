@@ -55,7 +55,7 @@ def prepare_s3():
 
 @once
 def prepare_opensearch():
-    # OpensearchProvider doesn't inherit ServiceLifecycleHook, but it probably should
+    # OpensearchProvider doesn't inherit ServiceLifecycleHook, but it probably should - fixed in v3
     opensearch_service = SERVICE_PLUGINS.get_service("opensearch")
     assert opensearch_service
     provider = opensearch_service._provider
