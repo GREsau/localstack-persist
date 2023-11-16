@@ -6,7 +6,7 @@ services:
     build:
       context: .
       args:
-        LOCALSTACK_VERSION: ${LOCALSTACK_VERSION:-2.3}
+        LOCALSTACK_VERSION: ${LOCALSTACK_VERSION:-3}
     volumes:
       - "./temp-persisted-data:/persisted-data"
       - "/var/run/docker.sock:/var/run/docker.sock"

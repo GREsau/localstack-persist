@@ -149,18 +149,13 @@ class LoadStateVisitor(StateVisitor):
             )
             return
 
-        # localstack doesn't set DomainEndpointOptions in the store (fixed in v3), so we rebuild it from the Endpoint.
-        # Also set Processing because after loading state, it will take some time for opensearch/elasticsearch to start.
+        # Set Processing because after loading state, it will take some time for opensearch/elasticsearch to start.
         if deserialised_type == AccountRegionBundle[OpenSearchStore]:
             for region_bundle in deserialised.values():  # type: ignore
                 store: OpenSearchStore
                 for store in region_bundle.values():
                     for domain in store.opensearch_domains.values():
                         domain["Processing"] = True
-                        if endpoint := domain.get("Endpoint"):
-                            endpoint_options = domain.get("DomainEndpointOptions") or {}
-                            endpoint_options["CustomEndpointEnabled"] = True
-                            endpoint_options["CustomEndpoint"] = endpoint
 
         if isinstance(state_container, dict) and isinstance(deserialised, dict):
             state_container.update(deserialised)

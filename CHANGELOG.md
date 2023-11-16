@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.0] - 2023-11-16
+
+_Based on [LocalStack 3.0.0](https://github.com/localstack/localstack/releases/tag/v3.0.0)_
+
+No changes are in this version other than update of localstack, however please be aware of changes you may encounter due to the new native `v3` provider for S3 (available since localstack 2.3.0, and supported by localstack-persist since 2.3.2):
+
+- The `v3` S3 provider is now used by default, which stores data in a different format than the previous `v2` provider. When first using the `v3` provider, any existing (`v2`-format) persisted S3 _objects_ will be automatically migrated to the new `v3` format. However, other S3 data (e.g. unfinished multipart uploads, CORS rules) will not be migrated and will be lost when switching to the `v3` provider. S3 data that was persisted using the `v3` provider cannot be loaded when using the `v2` provider. You can stay on the `v2` provider in 3.0.0+ by setting the config `PROVIDER_OVERRIDE_S3=v2`, but this is likely to be removed in a future major version of localstack.
+
 ## [2.3.3] - 2023-11-14
 
 _Based on [LocalStack 2.3.2](https://github.com/localstack/localstack/releases/tag/v2.3.2)_

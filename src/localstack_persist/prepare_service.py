@@ -10,8 +10,6 @@ def prepare_service(service_name: str):
         prepare_lambda()
     elif service_name == "s3":
         prepare_s3()
-    elif service_name == "opensearch":
-        prepare_opensearch()
 
 
 def once(f: Callable):
@@ -29,17 +27,10 @@ def once(f: Callable):
 @once
 def prepare_lambda():
     # Define localstack.services.awslambda as a backward-compatible alias for localstack.services.lambda_
-    # (and vice-versa for easy forward-compatibility)
-    try:
-        sys.modules.setdefault(
-            "localstack.services.awslambda",
-            import_module("localstack.services.lambda_"),
-        )
-    except ModuleNotFoundError:
-        sys.modules.setdefault(
-            "localstack.services.lambda_",
-            import_module("localstack.services.awslambda"),
-        )
+    sys.modules.setdefault(
+        "localstack.services.awslambda",
+        import_module("localstack.services.lambda_"),
+    )
 
 
 @once
@@ -51,18 +42,3 @@ def prepare_s3():
     EphemeralS3ObjectStore._key_from_s3_object = staticmethod(
         lambda s3_object: f"{s3_object.key}?{s3_object.version_id or 'null'}"
     )
-
-
-@once
-def prepare_opensearch():
-    # OpensearchProvider doesn't inherit ServiceLifecycleHook, but it probably should - fixed in v3
-    opensearch_service = SERVICE_PLUGINS.get_service("opensearch")
-    assert opensearch_service
-    provider = opensearch_service._provider
-
-    if isinstance(provider, ServiceLifecycleHook):
-        return
-
-    for attr in dir(ServiceLifecycleHook):
-        if attr.startswith("on_") and (method := getattr(provider, attr, None)):
-            setattr(opensearch_service.lifecycle_hook, attr, method)
