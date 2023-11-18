@@ -23,7 +23,7 @@ def lazy_load(service_name: str):
     return service_name == "lambda"
 
 
-def invoke_hooks(service_name: str):
+def invoke_load_hooks(service_name: str):
     # Both lambda and opensearch must intialise their runtimes after loading state.
     return service_name == "lambda" or service_name == "opensearch"
 
@@ -93,15 +93,22 @@ class StateTracker:
                 LOG.debug("Nothing to persist - no services were changed")
                 return
 
-            LOG.debug("Persisting state of services: %s", self.affected_services)
-
-            for service_name in self.affected_services:
-                if is_persistence_enabled(service_name):
-                    self._save_service_state(service_name)
-
-            LOG.debug("Finished persisting %d services.", len(self.affected_services))
-
+            affected_services = list(self.affected_services)
             self.affected_services.clear()
+
+            LOG.debug("Persisting state of services: %s", affected_services)
+
+            for service_name in affected_services:
+                if is_persistence_enabled(service_name):
+                    try:
+                        self._save_service_state(service_name)
+                    except:
+                        LOG.exception(
+                            "Error while persisting state of service %s", service_name
+                        )
+                        self.affected_services.add(service_name)
+
+            LOG.debug("Finished persisting %d services.", len(affected_services))
 
     def add_affected_service(self, service_name: str):
         with self.cond:
@@ -126,7 +133,7 @@ class StateTracker:
             )
             return
 
-        should_invoke_hooks = invoke_hooks(service_name)
+        should_invoke_hooks = invoke_load_hooks(service_name)
         try:
             if should_invoke_hooks:
                 service.lifecycle_hook.on_before_state_load()
@@ -144,12 +151,9 @@ class StateTracker:
             LOG.error("No service %s found in service manager", service_name)
             return
 
-        try:
-            service.lifecycle_hook.on_before_state_save()
-            self._invoke_visitor(SaveStateVisitor(service_name), service)
-            service.lifecycle_hook.on_after_state_save()
-        except:
-            LOG.exception("Error while persisting state of service %s", service_name)
+        service.lifecycle_hook.on_before_state_save()
+        self._invoke_visitor(SaveStateVisitor(service_name), service)
+        service.lifecycle_hook.on_after_state_save()
 
     @staticmethod
     def _invoke_visitor(visitor: SaveStateVisitor | LoadStateVisitor, service: Service):
