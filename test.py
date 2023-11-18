@@ -5,25 +5,24 @@ import os
 import shutil
 
 
-def docker_compose(cmd: str):
-    subprocess.run("docker compose " + cmd, check=True, shell=True)
+def sh(cmd: str):
+    subprocess.run(cmd, check=True, shell=True)
 
 
 if os.path.exists("temp-persisted-data"):
     shutil.rmtree("temp-persisted-data")
 
-docker_compose("build")
-docker_compose("run --rm test setup")
+sh("docker compose build")
+sh("docker compose run --rm test setup")
 
-print("Ensure resources were created...")
-docker_compose("run --rm test verify")
-docker_compose("stop")
-print("Ensure changes were persisted and can be loaded...")
-docker_compose("run --rm test verify")
-docker_compose("stop")
+print("Ensure resources were created...", flush=True)
+sh("docker compose run --rm test verify")
+sh("docker compose stop")
+print("Ensure changes were persisted and can be loaded...", flush=True)
+sh("docker compose run --rm test verify")
+sh("docker compose stop")
 
-for subdir in os.listdir("temp-persisted-data"):
-    shutil.rmtree(os.path.join("temp-persisted-data", subdir))
+shutil.rmtree("temp-persisted-data")
 shutil.copytree("test-persisted-data", "temp-persisted-data")
 
 if os.name != "nt":
@@ -32,8 +31,11 @@ if os.name != "nt":
     for dir in glob.glob("temp-persisted-data/**/*\uf03a*", recursive=True):
         shutil.move(dir, dir.replace("\uf03a", ":"))
 
-print("Ensure changes from previous runs can be loaded (backward-compatibility)...")
-docker_compose("run --rm test verify")
-docker_compose("down")
+print(
+    "Ensure changes from previous runs can be loaded (backward-compatibility)...",
+    flush=True,
+)
+sh("docker compose run --rm test verify")
+sh("docker compose down")
 
 print("Tests passed!")
