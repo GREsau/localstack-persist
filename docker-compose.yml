@@ -12,7 +12,6 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - DEBUG=1
-      - PROVIDER_OVERRIDE_S3=${PROVIDER_OVERRIDE_S3-}
     networks:
       default:
         aliases:
