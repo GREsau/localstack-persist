@@ -23,7 +23,7 @@ sh("docker compose run --rm test verify")
 sh("docker compose stop")
 
 shutil.rmtree("temp-persisted-data")
-shutil.copytree("test-persisted-data", "temp-persisted-data")
+shutil.copytree("test-persisted-data/v2", "temp-persisted-data")
 
 if os.name != "nt":
     # Windows doesn't support colons in filenames, so they're checked-in to git with a replacement character (\uf03a).

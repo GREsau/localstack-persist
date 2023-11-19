@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "data": {
+    "py/object": "moto.core.base_backend.BackendDict",
+    "__dict__": {
+      "backend": {
+        "py/type": "moto.sqs.models.SQSBackend"
+      },
+      "service_name": "sqs",
+      "_use_boto3_regions": true,
+      "_additional_regions": null,
+      "_id": "c9fb5fec-051e-4b5c-9b83-88b0a0e8753a"
+    }
+  }
+}

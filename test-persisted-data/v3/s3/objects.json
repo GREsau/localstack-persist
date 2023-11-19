@@ -1,0 +1,42 @@
+{
+  "v": 1,
+  "data": {
+    "py/object": "localstack.services.s3.v3.storage.ephemeral.EphemeralS3ObjectStore",
+    "_filesystem": {
+      "py/object": "collections.defaultdict",
+      "test-bucket": {
+        "keys": {
+          "test-object?null": {
+            "py/object": "localstack.services.s3.v3.storage.ephemeral.LockedSpooledTemporaryFile",
+            "pos": 0,
+            "text": "object data",
+            "dir": "/tmp/localstack-s3-storage/test-bucket"
+          }
+        },
+        "multiparts": {}
+      },
+      "awslambda-us-east-1-tasks": {
+        "keys": {
+          "snapshots/000000000000/test-lambda-7ef9d373-35c5-4559-b13f-559bdc99d244?null": {
+            "py/object": "localstack.services.s3.v3.storage.ephemeral.LockedSpooledTemporaryFile",
+            "pos": 725,
+            "b64": "UEsDBBQAAAAAAGI5C1fPzeA7YQIAAGECAAAJAAAAYm9vdHN0cmFwIyEvYmluL3NoCgpzZXQgLWV1byBwaXBlZmFpbAoKd2hpbGUgdHJ1ZQpkbwogIEhFQURFUlM9IiQobWt0ZW1wKSIKICAjIEdldCBhbiBldmVudC4gVGhlIEhUVFAgcmVxdWVzdCB3aWxsIGJsb2NrIHVudGlsIG9uZSBpcyByZWNlaXZlZAogIEVWRU5UX0RBVEE9JChjdXJsIC1zUyAtTEQgIiRIRUFERVJTIiAiaHR0cDovLyR7QVdTX0xBTUJEQV9SVU5USU1FX0FQSX0vMjAxOC0wNi0wMS9ydW50aW1lL2ludm9jYXRpb24vbmV4dCIpCgogICMgRXh0cmFjdCByZXF1ZXN0IElEIGJ5IHNjcmFwaW5nIHJlc3BvbnNlIGhlYWRlcnMgcmVjZWl2ZWQgYWJvdmUKICBSRVFVRVNUX0lEPSQoZ3JlcCAtRmkgTGFtYmRhLVJ1bnRpbWUtQXdzLVJlcXVlc3QtSWQgIiRIRUFERVJTIiB8IHRyIC1kICdbOnNwYWNlOl0nIHwgY3V0IC1kOiAtZjIpCgogICMgRWNobyB0aGUgaW5wdXQgYXMgdXBwZXItY2FzZQogIFJFU1BPTlNFPSR7RVZFTlRfREFUQV5efQoKICAjIFNlbmQgdGhlIHJlc3BvbnNlCiAgY3VybCAiaHR0cDovLyR7QVdTX0xBTUJEQV9SVU5USU1FX0FQSX0vMjAxOC0wNi0wMS9ydW50aW1lL2ludm9jYXRpb24vJFJFUVVFU1RfSUQvcmVzcG9uc2UiICAtZCAiJFJFU1BPTlNFIgpkb25lUEsBAhQDFAAAAAAAYjkLV8/N4DthAgAAYQIAAAkAAAAAAAAAAAAAAO2BAAAAAGJvb3RzdHJhcFBLBQYAAAAAAQABADcAAACIAgAAAAA=",
+            "dir": "/tmp/localstack-s3-storage/awslambda-us-east-1-tasks"
+          }
+        },
+        "multiparts": {}
+      },
+      "default_factory": {
+        "py/object": "jsonpickle.handlers.CloneFactory",
+        "exemplar": {
+          "keys": {},
+          "multiparts": {}
+        }
+      }
+    },
+    "root_directory": "/tmp/localstack-s3-storage",
+    "_lock_multipart_create": {
+      "py/object": "_thread.RLock"
+    }
+  }
+}
