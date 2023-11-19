@@ -23,6 +23,7 @@ from .config import BASE_DIR
 
 JsonSerializableState = BackendDict | AccountRegionBundle
 
+logging.getLogger("watchdog").setLevel(logging.INFO)
 LOG = logging.getLogger(__name__)
 
 # Track version for future handling of backward (or forward) incompatible changes.
