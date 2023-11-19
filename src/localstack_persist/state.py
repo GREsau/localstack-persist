@@ -1,12 +1,9 @@
 import logging
 import os
-import concurrent.futures
 
 from localstack.aws.handlers import serve_custom_service_request_handlers
-from localstack.services.plugins import SERVICE_PLUGINS, Service
+from localstack.services.plugins import SERVICE_PLUGINS
 from localstack.aws.api import RequestContext
-from localstack.services.s3.v3.provider import S3Provider as S3V3Provider
-from localstack.services.s3.v3.storage.ephemeral import EphemeralS3ObjectStore
 from threading import Thread, Condition
 
 from .visitors import LoadStateVisitor, SaveStateVisitor
@@ -137,7 +134,7 @@ class StateTracker:
         try:
             if should_invoke_hooks:
                 service.lifecycle_hook.on_before_state_load()
-            self._invoke_visitor(LoadStateVisitor(service_name), service)
+            service.accept_state_visitor(LoadStateVisitor(service_name))
             if should_invoke_hooks:
                 service.lifecycle_hook.on_after_state_load()
         except:
@@ -152,16 +149,8 @@ class StateTracker:
             return
 
         service.lifecycle_hook.on_before_state_save()
-        self._invoke_visitor(SaveStateVisitor(service_name), service)
+        service.accept_state_visitor(SaveStateVisitor(service_name))
         service.lifecycle_hook.on_after_state_save()
-
-    @staticmethod
-    def _invoke_visitor(visitor: SaveStateVisitor | LoadStateVisitor, service: Service):
-        service.accept_state_visitor(visitor)
-        if (backend := getattr(service._provider, "_storage_backend", None)) and (
-            isinstance(backend, EphemeralS3ObjectStore)
-        ):
-            visitor.visit(backend)
 
 
 STATE_TRACKER = StateTracker()

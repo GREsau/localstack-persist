@@ -82,8 +82,6 @@ if command == "setup":
     with urllib.request.urlopen(put_index_req) as res:
         pass
 
-    s3.create_bucket(Bucket="test-bucket")
-
 elif command == "verify":
     print("Checking AWS resources still exist...")
 

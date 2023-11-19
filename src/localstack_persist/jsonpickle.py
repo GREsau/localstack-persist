@@ -1,5 +1,4 @@
 from queue import PriorityQueue, Full
-from tempfile import SpooledTemporaryFile
 from threading import Condition
 from typing import cast
 import datetime
@@ -7,14 +6,6 @@ import jsonpickle
 import jsonpickle.tags
 from jsonpickle.handlers import DatetimeHandler as DefaultDatetimeHandler
 from moto.acm.models import CertBundle
-from localstack.services.s3.v3.storage.ephemeral import (
-    LockedSpooledTemporaryFile,
-    S3_MAX_FILE_SIZE_BYTES,
-)
-from localstack.services.s3.v3.provider import DEFAULT_S3_TMP_DIR
-from localstack.utils.files import mkdir
-import base64
-import os
 
 
 class ConditionHandler(jsonpickle.handlers.BaseHandler):
@@ -93,44 +84,6 @@ class DatetimeHandler(jsonpickle.handlers.BaseHandler):
         return cls.fromisoformat(data["isoformat"])
 
 
-def get_dir(temp_file: SpooledTemporaryFile):
-    if (args := getattr(temp_file, "_TemporaryFileArgs", None)) and "dir" in args:
-        return args["dir"]
-
-    if filename := getattr(getattr(temp_file._file, "file", None), "name", None):
-        return os.path.dirname(filename)
-
-    return None
-
-
-class LockedSpooledTemporaryFileHandler(jsonpickle.handlers.BaseHandler):
-    def flatten(self, obj: LockedSpooledTemporaryFile, data: dict):
-        data["pos"] = pos = obj.tell()
-        obj.seek(0)
-        contents: bytes = obj.read()
-        obj.seek(pos)
-        try:
-            data["text"] = contents.decode("ascii")
-        except:
-            data["b64"] = base64.b64encode(contents).decode()
-
-        if dir := get_dir(obj):
-            data["dir"] = dir
-
-        return data
-
-    def restore(self, data: dict):
-        dir = data.get("dir") or DEFAULT_S3_TMP_DIR
-        mkdir(dir)
-        obj = LockedSpooledTemporaryFile(dir=dir, max_size=S3_MAX_FILE_SIZE_BYTES)
-        if "text" in data:
-            obj.write(data["text"].encode())
-        else:
-            obj.write(base64.b64decode(data["b64"]))
-        obj.seek(data["pos"])
-        return obj
-
-
 def register_handlers():
     CertBundleHandler.handles(CertBundle)
     ConditionHandler.handles(Condition)
@@ -138,4 +91,3 @@ def register_handlers():
     DatetimeHandler.handles(datetime.datetime)
     DatetimeHandler.handles(datetime.date)
     DatetimeHandler.handles(datetime.time)
-    LockedSpooledTemporaryFileHandler.handles(LockedSpooledTemporaryFile)

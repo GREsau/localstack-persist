@@ -1,8 +1,9 @@
 from importlib import import_module
 from collections.abc import Callable
-from localstack.services.s3.v3.storage.ephemeral import EphemeralS3ObjectStore
-from localstack.services.plugins import SERVICE_PLUGINS, ServiceLifecycleHook
+import os
 import sys
+from localstack.services.plugins import SERVICE_PLUGINS
+from .config import BASE_DIR
 
 
 def prepare_service(service_name: str):
@@ -35,10 +36,15 @@ def prepare_lambda():
 
 @once
 def prepare_s3():
-    # The original implementation of _key_from_s3_object calls hash(), which is not stable between different
-    # process executions, which breaks our persistence. To work-around this, we patch that function to instead
-    # use a stable "hash" function. MD5/SHA etc. would be fine, but for simplicity and debuggability we just
-    # use the identity function (i.e. don't hash it at all)
-    EphemeralS3ObjectStore._key_from_s3_object = staticmethod(
-        lambda s3_object: f"{s3_object.key}?{s3_object.version_id or 'null'}"
-    )
+    from .s3.storage import PersistedS3ObjectStore
+
+    service = SERVICE_PLUGINS.get_service("s3")
+    store = PersistedS3ObjectStore()
+    service._provider._storage_backend = store  # type: ignore
+
+    # localstack-persist 3.0.0 persisted S3 objects in a JSON file - migrate that file to new format if necessary
+    old_objects_path = os.path.join(BASE_DIR, "s3", "objects.json")
+    if not os.path.exists(store.root_directory) and os.path.isfile(old_objects_path):
+        from .s3.migrate_ephemeral_object_store import migrate_ephemeral_object_store
+
+        migrate_ephemeral_object_store(old_objects_path, store)

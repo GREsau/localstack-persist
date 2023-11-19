@@ -1,19 +1,19 @@
-from typing import Tuple, cast
+from typing import cast
 from localstack.services.stores import AccountRegionBundle
 from moto.s3.models import S3BackendDict, S3Backend, FakeKey
 from localstack.services.s3.v3.models import S3Store, S3Bucket, S3Object, StorageClass
-from localstack.services.s3.v3.storage.ephemeral import EphemeralS3ObjectStore
 from localstack.services.s3.utils import get_owner_for_account_id, get_canned_acl
-from localstack.services.s3.v3.provider import DEFAULT_S3_TMP_DIR
 from localstack.aws.api.s3 import BucketCannedACL
 import io
 
+from .storage import PersistedS3ObjectStore
 
-def migrate(
+
+def migrate_to_v3(
     backends: S3BackendDict,
-) -> Tuple[AccountRegionBundle[S3Store], EphemeralS3ObjectStore]:
+) -> AccountRegionBundle[S3Store]:
     account_region_bundle = AccountRegionBundle[S3Store]("s3", S3Store)
-    objects = EphemeralS3ObjectStore(root_directory=DEFAULT_S3_TMP_DIR)
+    objects = PersistedS3ObjectStore()
 
     for account_id, account_backend in backends.items():
         region_bundle = account_region_bundle[account_id]
@@ -65,9 +65,9 @@ def migrate(
                     owner=s3_bucket.owner,
                 )
 
-                s3_stored_object = objects.open(fake_bucket.name, s3_object)
-                s3_stored_object.write(io.BytesIO(fake_key.value))
+                with objects.open(fake_bucket.name, s3_object) as s3_stored_object:
+                    s3_stored_object.write(io.BytesIO(fake_key.value))
 
                 s3_bucket.objects.set(fake_key.name, s3_object)
 
-    return (account_region_bundle, objects)
+    return account_region_bundle
