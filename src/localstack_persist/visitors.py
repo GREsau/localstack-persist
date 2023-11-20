@@ -1,7 +1,7 @@
 import json
 import os
 import shutil
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, TypeAlias
 
 import jsonpickle
 import logging
@@ -21,7 +21,7 @@ from moto.s3.models import s3_backends
 
 from .config import BASE_DIR
 
-JsonSerializableState = BackendDict | AccountRegionBundle
+JsonSerializableState: TypeAlias = BackendDict | AccountRegionBundle
 
 logging.getLogger("watchdog").setLevel(logging.INFO)
 LOG = logging.getLogger(__name__)
@@ -54,7 +54,7 @@ def get_asset_dir_path(state_container: AssetDirectory):
 
 def state_type(state: Any) -> type:
     return (
-        AccountRegionBundle[state.store]
+        AccountRegionBundle[state.store]  # type: ignore[return-value]
         if isinstance(state, AccountRegionBundle)
         else type(state)
     )
@@ -74,7 +74,7 @@ class LoadStateVisitor(StateVisitor):
         self.service_name = service_name
 
     def visit(self, state_container: StateContainer):
-        if isinstance(state_container, JsonSerializableState):
+        if isinstance(state_container, BackendDict | AccountRegionBundle):
             self._load_json(state_container)
         elif isinstance(state_container, AssetDirectory):
             if state_container.path.startswith(BASE_DIR):
@@ -158,7 +158,7 @@ class SaveStateVisitor(StateVisitor):
         self.service_name = service_name
 
     def visit(self, state_container: StateContainer):
-        if isinstance(state_container, JsonSerializableState):
+        if isinstance(state_container, BackendDict | AccountRegionBundle):
             self._save_json(state_container)
         elif isinstance(state_container, AssetDirectory):
             if state_container.path.startswith(BASE_DIR):

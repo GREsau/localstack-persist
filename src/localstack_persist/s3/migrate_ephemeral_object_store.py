@@ -48,15 +48,15 @@ def migrate_ephemeral_object_store(file_path: str, store: PersistedS3ObjectStore
 
     for bucket, files in ephemeral_store._filesystem.items():
         store.create_bucket(bucket)
-        for key, file in files["keys"].items():
+        for key, obj_data in files["keys"].items():
             [key, version] = key.rsplit("?", 1)
             with store.open(bucket, S3Object(key, version_id=version)) as new_object:
-                new_object.write(file)
+                new_object.write(obj_data)
 
         for id, multipart in files["multiparts"].items():
             new_multipart = store.get_multipart(
                 bucket, cast(S3Multipart, StubS3Multipart(id))
             )
-            for part_number, file in multipart.parts.items():
+            for part_number, part_data in multipart.parts.items():
                 with new_multipart.open(S3Part(part_number)) as new_part:
-                    new_part.write(file)
+                    new_part.write(part_data)

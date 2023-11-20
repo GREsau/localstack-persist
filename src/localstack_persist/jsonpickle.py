@@ -1,8 +1,8 @@
 from queue import PriorityQueue, Full
 from threading import Condition
-from typing import cast
+from typing import Any, cast
 import datetime
-import jsonpickle
+import jsonpickle.handlers
 import jsonpickle.tags
 from jsonpickle.handlers import DatetimeHandler as DefaultDatetimeHandler
 from moto.acm.models import CertBundle
@@ -25,7 +25,7 @@ class PriorityQueueHandler(jsonpickle.handlers.BaseHandler):
         return data
 
     def restore(self, data: dict):
-        pq = PriorityQueue(data["maxsize"])
+        pq = PriorityQueue[Any](data["maxsize"])
         for item in self.context.restore(data["queue"], reset=False):
             try:
                 pq.put_nowait(item)
@@ -72,6 +72,7 @@ class DatetimeHandler(jsonpickle.handlers.BaseHandler):
             return DefaultDatetimeHandler(self.context).restore(data)
 
         cls_name: str = data[jsonpickle.tags.OBJECT]
+        cls: type[datetime.datetime | datetime.date | datetime.time]
         if cls_name.endswith("datetime"):
             cls = datetime.datetime
         elif cls_name.endswith("date"):

@@ -24,3 +24,12 @@ jobs:
       - run: sudo python3 test.py
       - run: docker compose logs
         if: ${{ failure() }}
+
+  type-check:
+    name: Type check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: pip3 install mypy localstack watchdog==3.0.0
+      - run: "touch $(pip3 show localstack | sed -n 's/Location: //p')/localstack/py.typed"
+      - run: mypy src
