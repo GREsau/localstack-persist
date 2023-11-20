@@ -52,13 +52,6 @@ def get_asset_dir_path(state_container: AssetDirectory):
         return os.path.join(BASE_DIR, state_container.service_name, relpath, "assets")
 
 
-def rmrf(entry: os.DirEntry):
-    if entry.is_dir(follow_symlinks=False):
-        shutil.rmtree(entry)
-    else:
-        os.remove(entry)
-
-
 def state_type(state: Any) -> type:
     return (
         AccountRegionBundle[state.store]
@@ -89,7 +82,12 @@ class LoadStateVisitor(StateVisitor):
                 return
             dir_path = get_asset_dir_path(state_container)
             if os.path.isdir(dir_path):
-                shutil.copytree(dir_path, state_container.path, dirs_exist_ok=True)
+                shutil.copytree(
+                    dir_path,
+                    state_container.path,
+                    dirs_exist_ok=True,
+                    copy_function=shutil.copy,
+                )
             os.makedirs(state_container.path, exist_ok=True)
             start_watcher(self.service_name, state_container.path)
 
@@ -189,14 +187,23 @@ class SaveStateVisitor(StateVisitor):
 
     @staticmethod
     def _sync_directories(src: str, dst: str):
-        shutil.copytree(src, dst, dirs_exist_ok=True)
+        def delete_extra_files(src: str, dst: str):
+            desired_files = set(os.listdir(src))
+            with os.scandir(dst) as it:
+                dst_entries = list(it)
 
-        desired_files = set(os.listdir(src))
+            for entry in dst_entries:
+                should_delete = entry.name not in desired_files
+                is_dir = entry.is_dir(follow_symlinks=False)
+                if should_delete and is_dir:
+                    shutil.rmtree(entry)
+                elif should_delete:
+                    os.remove(entry)
+                elif is_dir:
+                    delete_extra_files(os.path.join(src, entry.name), entry.path)
 
-        with os.scandir(dst) as it:
-            for entry in it:
-                if entry.name not in desired_files:
-                    rmrf(entry)
+        shutil.copytree(src, dst, dirs_exist_ok=True, copy_function=shutil.copy)
+        delete_extra_files(src, dst)
 
 
 # TODO copy changed files directly in this handler, instead of relying on SaveStateVisitor on syncing directories
