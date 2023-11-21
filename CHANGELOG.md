@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.1] - 2023-11-21
+
+_Based on [LocalStack 3.0.0](https://github.com/localstack/localstack/releases/tag/v3.0.0)_
+
+### Fixed
+
+- Excessive memory usage when persisting S3 objects (https://github.com/GREsau/localstack-persist/issues/1)
+
 ## [3.0.0] - 2023-11-16
 
 _Based on [LocalStack 3.0.0](https://github.com/localstack/localstack/releases/tag/v3.0.0)_
