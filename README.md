@@ -17,14 +17,14 @@ localstack-persist is distributed as a docker image, made to be a drop-in replac
 version: "3.8"
 services:
   localstack:
-    image: gresau/localstack-persist # instead of localstack/localstack
+    image: gresau/localstack-persist:3 # instead of localstack/localstack:3
     ports:
       - "4566:4566"
     volumes:
       - "./my-localstack-data:/persisted-data"
 ```
 
-This will use the `latest` image, which is built daily from the `main` branch, and based on `localstack/localstack:latest` (the nightly LocalStack image). For other available tags, see the list on [Docker Hub](https://hub.docker.com/r/gresau/localstack-persist/tags) or the [GitHub releases](https://github.com/GREsau/localstack-persist/releases). The Major.Minor version of a localstack-persist image's tag will track the version of LocalStack that the image is based on - e.g. `gresau/localstack-persist:2.2.X` will always be based on `localstack/localstack:2.2.Y` (where X and Y may be different numbers).
+This will use the latest available image with semver-major version 3 - if you prefer, you can pin to a specific version e.g. `3.0.1`. For other available tags, see the list on [Docker Hub](https://hub.docker.com/r/gresau/localstack-persist/tags) or the [GitHub releases](https://github.com/GREsau/localstack-persist/releases). The Major.Minor version of a localstack-persist image's tag will track the version of LocalStack that the image is based on - e.g. `gresau/localstack-persist:2.2.X` will always be based on `localstack/localstack:2.2.Y` (where X and Y may be different numbers). You can also use the `latest` image, which is built daily from the `main` branch, and based on `localstack/localstack:latest` (the nightly LocalStack image), but please be aware that image may not be stable.
 
 Persisted data is saved inside the container at `/persisted-data`, so you'll typically want to mount a volume at that path - the example compose file above will keep persisted data in the `my-localstack-data` on the host.
 
