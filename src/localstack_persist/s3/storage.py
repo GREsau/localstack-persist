@@ -65,14 +65,15 @@ class PersistedS3StoredObject(S3StoredObject):
     def truncate(self, size: Optional[int] = None) -> int:
         return self._file.truncate(size)
 
-    def write(self, stream: IO[bytes] | S3StoredObject | LimitedStream) -> int:
+    def write(self, stream: Optional[IO[bytes] | S3StoredObject | LimitedStream]) -> int:
         self._file.truncate()
 
-        while data := stream.read(S3_CHUNK_SIZE):
-            self._file.write(data)
-            self._md5.update(data)
-            if self._checksum:
-                self._checksum.update(data)
+        if stream:
+            while data := stream.read(S3_CHUNK_SIZE):
+                self._file.write(data)
+                self._md5.update(data)
+                if self._checksum:
+                    self._checksum.update(data)
 
         self._etag = self.s3_object.etag = self._md5.hexdigest()
         if self._checksum:
