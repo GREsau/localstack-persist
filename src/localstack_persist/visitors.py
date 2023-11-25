@@ -18,23 +18,21 @@ from watchdog.events import FileSystemEventHandler
 from moto.core import BackendDict
 from moto.s3.models import s3_backends
 
+from .serialization import get_deserializer, get_serializers
 from .config import BASE_DIR
-from .serialization.jsonpickle.serializer import JsonPickleSerializer
 
 SerializableState: TypeAlias = BackendDict | AccountRegionBundle
 
 logging.getLogger("watchdog").setLevel(logging.INFO)
 LOG = logging.getLogger(__name__)
 
-serializer = JsonPickleSerializer()
 
-
-def get_json_file_path(
+def get_state_file_path_base(
     state_container: SerializableState,
 ):
     file_name = "backend" if isinstance(state_container, BackendDict) else "store"
 
-    return os.path.join(BASE_DIR, state_container.service_name, file_name + ".json")
+    return os.path.join(BASE_DIR, state_container.service_name, file_name)
 
 
 def get_asset_dir_path(state_container: AssetDirectory):
@@ -92,11 +90,12 @@ class LoadStateVisitor(StateVisitor):
     def _load_state(self, state_container: SerializableState):
         state_container_type = state_type(state_container)
 
-        file_path = get_json_file_path(state_container)
-        if not os.path.isfile(file_path):
+        file_path_base = get_state_file_path_base(state_container)
+        deserializer = get_deserializer(file_path_base)
+        if not deserializer:
             return
 
-        deserialized = serializer.deserialize(file_path)
+        deserialized = deserializer.deserialize()
 
         deserialized_type = state_type(deserialized)
 
@@ -158,10 +157,13 @@ class SaveStateVisitor(StateVisitor):
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
     def _save_state(self, state_container: SerializableState):
-        file_path = get_json_file_path(state_container)
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        file_path_base = get_state_file_path_base(state_container)
 
-        serializer.serialize(file_path, state_container)
+        os.makedirs(os.path.dirname(file_path_base), exist_ok=True)
+
+        serializers = get_serializers(file_path_base)
+        for serializer in serializers:
+            serializer.serialize(state_container)
 
     @staticmethod
     def _sync_directories(src: str, dst: str):

@@ -12,6 +12,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - DEBUG=1
+      - PERSIST_FORMAT=${PERSIST_FORMAT-}
     networks:
       default:
         aliases:

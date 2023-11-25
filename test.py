@@ -13,17 +13,23 @@ if os.path.exists("temp-persisted-data"):
     shutil.rmtree("temp-persisted-data")
 
 sh("docker compose build")
-sh("docker compose run --rm test setup")
 
-print("Ensure resources were created...", flush=True)
-sh("docker compose run --rm test verify")
-sh("docker compose stop")
-print("Ensure changes were persisted and can be loaded...", flush=True)
-sh("docker compose run --rm test verify")
-sh("docker compose stop")
+if not os.environ.get("SKIP_TEST_SETUP"):
+    sh("docker compose run --rm test setup")
 
-shutil.rmtree("temp-persisted-data")
-shutil.copytree("test-persisted-data/v2", "temp-persisted-data")
+    print("Ensure resources were created...", flush=True)
+    sh("docker compose run --rm test verify")
+    sh("docker compose stop")
+    print("Ensure changes were persisted and can be loaded...", flush=True)
+    sh("docker compose run --rm test verify")
+    sh("docker compose stop")
+
+    shutil.rmtree("temp-persisted-data")
+
+shutil.copytree(
+    "test-persisted-data/" + os.environ.get("TEST_PERSISTED_DATA_DIR", "v2"),
+    "temp-persisted-data",
+)
 
 if os.name != "nt":
     # Windows doesn't support colons in filenames, so they're checked-in to git with a replacement character (\uf03a).

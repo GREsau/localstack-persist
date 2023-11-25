@@ -18,6 +18,26 @@ on:
 jobs:
   test:
     name: Test
+    strategy:
+      matrix:
+        PERSIST_FORMAT: ["json", "binary", "json,binary"]
+    env:
+      PERSIST_FORMAT: ${{ matrix.PERSIST_FORMAT }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: sudo python3 test.py
+      - run: docker compose logs
+        if: ${{ failure() }}
+
+  test_backward_compatibility:
+    name: Test backward-compatibility
+    strategy:
+      matrix:
+        TEST_PERSISTED_DATA_DIR: ["v2", "v3", "v3_binary"]
+    env:
+      SKIP_TEST_SETUP: 1
+      TEST_PERSISTED_DATA_DIR: ${{ matrix.TEST_PERSISTED_DATA_DIR }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

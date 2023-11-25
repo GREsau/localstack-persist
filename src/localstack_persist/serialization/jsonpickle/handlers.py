@@ -2,7 +2,7 @@ from queue import PriorityQueue, Full
 from threading import Condition
 from typing import Any, cast
 import datetime
-import jsonpickle.handlers
+import jsonpickle
 import jsonpickle.tags
 from jsonpickle.handlers import DatetimeHandler as DefaultDatetimeHandler
 from moto.acm.models import CertBundle
