@@ -7,6 +7,18 @@ import jsonpickle.tags
 from jsonpickle.handlers import DatetimeHandler as DefaultDatetimeHandler
 from moto.acm.models import CertBundle
 
+from localstack_persist.utils import once
+
+
+@once
+def register_handlers():
+    CertBundleHandler.handles(CertBundle)
+    ConditionHandler.handles(Condition)
+    PriorityQueueHandler.handles(PriorityQueue)
+    DatetimeHandler.handles(datetime.datetime)
+    DatetimeHandler.handles(datetime.date)
+    DatetimeHandler.handles(datetime.time)
+
 
 class ConditionHandler(jsonpickle.handlers.BaseHandler):
     def flatten(self, obj, data: dict):
@@ -83,12 +95,3 @@ class DatetimeHandler(jsonpickle.handlers.BaseHandler):
             raise TypeError("DatetimeHandler: unexpected object type " + cls_name)
 
         return cls.fromisoformat(data["isoformat"])
-
-
-def register_handlers():
-    CertBundleHandler.handles(CertBundle)
-    ConditionHandler.handles(Condition)
-    PriorityQueueHandler.handles(PriorityQueue)
-    DatetimeHandler.handles(datetime.datetime)
-    DatetimeHandler.handles(datetime.date)
-    DatetimeHandler.handles(datetime.time)

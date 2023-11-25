@@ -3,7 +3,6 @@ import os
 import shutil
 from typing import Dict, Optional, Any, TypeAlias
 
-import jsonpickle
 import logging
 
 import localstack.config
@@ -20,22 +19,18 @@ from moto.core import BackendDict
 from moto.s3.models import s3_backends
 
 from .config import BASE_DIR
+from .serialization.jsonpickle.serializer import JsonPickleSerializer
 
-JsonSerializableState: TypeAlias = BackendDict | AccountRegionBundle
+SerializableState: TypeAlias = BackendDict | AccountRegionBundle
 
 logging.getLogger("watchdog").setLevel(logging.INFO)
 LOG = logging.getLogger(__name__)
 
-# Track version for future handling of backward (or forward) incompatible changes.
-# This is the "serialisation format" version, which is different to the localstack-persist version.
-SER_VERSION_KEY = "v"
-SER_VERSION = 1
-
-DATA_KEY = "data"
+serializer = JsonPickleSerializer()
 
 
 def get_json_file_path(
-    state_container: JsonSerializableState,
+    state_container: SerializableState,
 ):
     file_name = "backend" if isinstance(state_container, BackendDict) else "store"
 
@@ -75,7 +70,7 @@ class LoadStateVisitor(StateVisitor):
 
     def visit(self, state_container: StateContainer):
         if isinstance(state_container, BackendDict | AccountRegionBundle):
-            self._load_json(state_container)
+            self._load_state(state_container)
         elif isinstance(state_container, AssetDirectory):
             if state_container.path.startswith(BASE_DIR):
                 # nothing to do - assets are read directly from the volume
@@ -94,60 +89,49 @@ class LoadStateVisitor(StateVisitor):
         else:
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
-    def _load_json(self, state_container: JsonSerializableState):
+    def _load_state(self, state_container: SerializableState):
+        state_container_type = state_type(state_container)
+
         file_path = get_json_file_path(state_container)
         if not os.path.isfile(file_path):
             return
 
-        with open(file_path) as file:
-            envelope: dict = json.load(file)
+        deserialized = serializer.deserialize(file_path)
 
-        version = envelope.get(SER_VERSION_KEY, None)
-        if version != SER_VERSION:
-            LOG.warning(
-                "Persisted state at %s has unsupported version %s - trying to load it anyway...",
-                file_path,
-                version,
-            )
-
-        unpickler = jsonpickle.Unpickler(keys=True, safe=True, on_missing="error")
-        deserialised = unpickler.restore(envelope[DATA_KEY])
-
-        state_container_type = state_type(state_container)
-        deserialised_type = state_type(deserialised)
+        deserialized_type = state_type(deserialized)
 
         if (
             state_container_type == AccountRegionBundle[V3S3Store]
-            and deserialised_type == AccountRegionBundle[LegacyS3Store]
+            and deserialized_type == AccountRegionBundle[LegacyS3Store]
         ):
             try:
                 from .s3.migrate_to_v3 import migrate_to_v3
 
                 LOG.info("Migrating S3 state to V3 provider...")
-                self._load_json(s3_backends)
-                deserialised = migrate_to_v3(s3_backends)
+                self._load_state(s3_backends)
+                deserialized = migrate_to_v3(s3_backends)
             except:
                 LOG.exception("Error migrating S3 state to V3 provider")
                 return
-        elif not are_same_type(state_container_type, deserialised_type):
+        elif not are_same_type(state_container_type, deserialized_type):
             LOG.warning(
                 "Unexpected deserialised state_container type: %s, expected %s",
-                deserialised_type,
+                deserialized_type,
                 state_container_type,
             )
             return
 
         # Set Processing because after loading state, it will take some time for opensearch/elasticsearch to start.
-        if deserialised_type == AccountRegionBundle[OpenSearchStore]:
-            for region_bundle in deserialised.values():  # type: ignore
+        if deserialized_type == AccountRegionBundle[OpenSearchStore]:
+            for region_bundle in deserialized.values():  # type: ignore
                 store: OpenSearchStore
                 for store in region_bundle.values():
                     for domain in store.opensearch_domains.values():
                         domain["Processing"] = True
 
-        if isinstance(state_container, dict) and isinstance(deserialised, dict):
-            state_container.update(deserialised)
-        state_container.__dict__.update(deserialised.__dict__)
+        if isinstance(state_container, dict) and isinstance(deserialized, dict):
+            state_container.update(deserialized)
+        state_container.__dict__.update(deserialized.__dict__)
 
 
 class SaveStateVisitor(StateVisitor):
@@ -159,7 +143,7 @@ class SaveStateVisitor(StateVisitor):
 
     def visit(self, state_container: StateContainer):
         if isinstance(state_container, BackendDict | AccountRegionBundle):
-            self._save_json(state_container)
+            self._save_state(state_container)
         elif isinstance(state_container, AssetDirectory):
             if state_container.path.startswith(BASE_DIR):
                 # nothing to do - assets are written directly to the volume
@@ -173,17 +157,11 @@ class SaveStateVisitor(StateVisitor):
         else:
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
-    def _save_json(self, state_container: JsonSerializableState):
+    def _save_state(self, state_container: SerializableState):
         file_path = get_json_file_path(state_container)
-        pickler = jsonpickle.Pickler(keys=True, warn=True)
-        flattened = pickler.flatten(state_container)
-
-        envelope = {SER_VERSION_KEY: SER_VERSION, DATA_KEY: flattened}
-
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, "w") as file:
-            for chunk in self.json_encoder.iterencode(envelope):
-                file.write(chunk)
+
+        serializer.serialize(file_path, state_container)
 
     @staticmethod
     def _sync_directories(src: str, dst: str):

@@ -1,5 +1,4 @@
 import base64
-import json
 from typing import cast
 import jsonpickle
 
@@ -9,7 +8,9 @@ from localstack.services.s3.v3.storage.ephemeral import (
     LockedSpooledTemporaryFile,
 )
 from localstack.utils.files import mkdir
+
 from .storage import PersistedS3ObjectStore
+from ..serialization.jsonpickle.serializer import JsonPickleSerializer
 
 
 class LockedSpooledTemporaryFileHandler(jsonpickle.handlers.BaseHandler):
@@ -35,11 +36,8 @@ class StubS3Multipart:
 
 def migrate_ephemeral_object_store(file_path: str, store: PersistedS3ObjectStore):
     jsonpickle.register(LockedSpooledTemporaryFile, LockedSpooledTemporaryFileHandler)
-    with open(file_path) as file:
-        envelope: dict = json.load(file)
-
-    unpickler = jsonpickle.Unpickler(keys=True, safe=True)
-    ephemeral_store = cast(EphemeralS3ObjectStore, unpickler.restore(envelope["data"]))
+    serializer = JsonPickleSerializer()
+    ephemeral_store: EphemeralS3ObjectStore = serializer.deserialize(file_path)
 
     if not ephemeral_store._filesystem:
         # create the root directory to avoid trying to re-migrate empty store again in future

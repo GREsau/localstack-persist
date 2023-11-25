@@ -3,7 +3,9 @@ from collections.abc import Callable
 import os
 import sys
 from localstack.services.plugins import SERVICE_PLUGINS
+
 from .config import BASE_DIR
+from .utils import once
 
 
 def prepare_service(service_name: str):
@@ -11,18 +13,6 @@ def prepare_service(service_name: str):
         prepare_lambda()
     elif service_name == "s3":
         prepare_s3()
-
-
-def once(f: Callable):
-    has_run = False
-
-    def wrapper(*args, **kwargs):
-        nonlocal has_run
-        if not has_run:
-            has_run = True
-            return f(*args, **kwargs)
-
-    return wrapper
 
 
 @once
