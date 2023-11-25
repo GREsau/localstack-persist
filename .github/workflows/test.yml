@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: sudo -E python3 test.py
-      - run: docker compose logs
+      - run: sudo -E docker compose logs
         if: ${{ failure() }}
 
   test_backward_compatibility:
@@ -44,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: sudo -E python3 test.py
-      - run: docker compose logs
+      - run: sudo -E docker compose logs
         if: ${{ failure() }}
 
   type-check:
