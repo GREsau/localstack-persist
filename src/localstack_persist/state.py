@@ -137,6 +137,7 @@ class StateTracker:
             service.accept_state_visitor(LoadStateVisitor(service_name))
             if should_invoke_hooks:
                 service.lifecycle_hook.on_after_state_load()
+            LOG.debug("Finished loading persisted state of service %s", service_name)
         except:
             LOG.exception("Error while loading state of service %s", service_name)
 
@@ -151,6 +152,7 @@ class StateTracker:
         service.lifecycle_hook.on_before_state_save()
         service.accept_state_visitor(SaveStateVisitor(service_name))
         service.lifecycle_hook.on_after_state_save()
+        LOG.debug("Finished persisting state of service %s", service_name)
 
 
 STATE_TRACKER = StateTracker()
