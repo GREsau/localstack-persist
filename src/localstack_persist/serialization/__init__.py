@@ -33,5 +33,4 @@ def get_deserializer(file_path_base: str):
     if json_mtime > pkl_mtime:
         return JsonPickleDeserializer(json_file_path)
 
-    if pkl_mtime > json_mtime:
-        return PickleDeserializer(pkl_file_path)
+    return PickleDeserializer(pkl_file_path)
