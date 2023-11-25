@@ -1,9 +1,9 @@
 from typing import cast
 from localstack.services.stores import AccountRegionBundle
 from moto.s3.models import S3BackendDict, S3Backend, FakeKey
-from localstack.services.s3.v3.models import S3Store, S3Bucket, S3Object, StorageClass
+from localstack.services.s3.v3.models import S3Store, S3Bucket, S3Object
 from localstack.services.s3.utils import get_owner_for_account_id, get_canned_acl
-from localstack.aws.api.s3 import BucketCannedACL
+from localstack.aws.api.s3 import BucketCannedACL, StorageClass
 import io
 
 from .storage import PersistedS3ObjectStore

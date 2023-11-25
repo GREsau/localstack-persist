@@ -10,7 +10,7 @@ from localstack.services.s3.v3.storage.ephemeral import (
 from localstack.utils.files import mkdir
 
 from .storage import PersistedS3ObjectStore
-from ..serialization.jsonpickle.serializer import JsonPickleSerializer
+from ..serialization.jsonpickle.serializer import JsonPickleDeserializer
 
 
 class LockedSpooledTemporaryFileHandler(jsonpickle.handlers.BaseHandler):
@@ -36,8 +36,9 @@ class StubS3Multipart:
 
 def migrate_ephemeral_object_store(file_path: str, store: PersistedS3ObjectStore):
     jsonpickle.register(LockedSpooledTemporaryFile, LockedSpooledTemporaryFileHandler)
-    serializer = JsonPickleSerializer()
-    ephemeral_store: EphemeralS3ObjectStore = serializer.deserialize(file_path)
+    ephemeral_store: EphemeralS3ObjectStore = JsonPickleDeserializer(
+        file_path
+    ).deserialize()
 
     if not ephemeral_store._filesystem:
         # create the root directory to avoid trying to re-migrate empty store again in future
