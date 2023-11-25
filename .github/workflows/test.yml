@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: sudo python3 test.py
+      - run: sudo -E python3 test.py
       - run: docker compose logs
         if: ${{ failure() }}
 
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: sudo python3 test.py
+      - run: sudo -E python3 test.py
       - run: docker compose logs
         if: ${{ failure() }}
 
@@ -52,5 +52,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: pip3 install mypy localstack jsonpickle==3.0.2 watchdog==3.0.0
-      - run: npx -y pyright
+      - run: pip3 install localstack moto jsonpickle==3.0.2 watchdog==3.0.0
+      - run: npx -y pyright src
