@@ -30,6 +30,9 @@ jobs:
       - run: sudo -E python3 test.py
       - run: sudo -E docker compose logs
         if: ${{ failure() }}
+      - name: rename files with colon chars
+        run: export COLON_CHAR="$(printf '\uf03a')"; find temp-persisted-data -type d -name "*:*" | perl -nle "print \$_, ' ', s/:/$COLON_CHAR/rg" | sudo xargs -L 1 mv
+        if: ${{ failure() }}
       - uses: actions/upload-artifact@v3
         with:
           name: persisted-data
@@ -51,6 +54,9 @@ jobs:
       - uses: actions/checkout@v3
       - run: sudo -E python3 test.py
       - run: sudo -E docker compose logs
+        if: ${{ failure() }}
+      - name: rename files with colon chars
+        run: export COLON_CHAR="$(printf '\uf03a')"; find temp-persisted-data -type d -name "*:*" | perl -nle "print \$_, ' ', s/:/$COLON_CHAR/rg" | sudo xargs -L 1 mv
         if: ${{ failure() }}
       - uses: actions/upload-artifact@v3
         with:
