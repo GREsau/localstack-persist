@@ -15,7 +15,7 @@ from watchdog.observers import Observer
 from watchdog.observers.api import BaseObserver
 from watchdog.events import FileSystemEventHandler
 
-from moto.core import BackendDict
+from moto.core.base_backend import BackendDict
 from moto.s3.models import s3_backends
 
 from .serialization import get_deserializer, get_serializers
