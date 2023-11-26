@@ -61,7 +61,7 @@ class StateTracker:
         prepare_service(service_name)
 
         # Does the service need lazy loading of state?
-        if lazy_load(service_name):
+        if lazy_load(service_name) and service_name not in self.loaded_services:
             with self.cond:
                 if service_name not in self.loaded_services:
                     self._load_service_state(service_name)
@@ -121,8 +121,7 @@ class StateTracker:
             LOG.debug("Finished persisting %d services.", len(affected_services))
 
     def add_affected_service(self, service_name: str):
-        with self.cond:
-            self.affected_services.add(service_name)
+        self.affected_services.add(service_name)
 
     def _run(self):
         while self.is_running:
