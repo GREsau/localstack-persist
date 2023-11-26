@@ -1,36 +1,69 @@
 import os
+from typing import Any, Protocol
 from .jsonpickle.serializer import JsonPickleSerializer, JsonPickleDeserializer
 from .pickle.serializer import PickleSerializer, PickleDeserializer
-from ..config import PERSIST_FORMAT, SerializationFormat
+from ..config import SerializationFormat, PERSIST_FORMATS
 
-make_serializer = {
-    SerializationFormat.JSON: lambda path: JsonPickleSerializer(path + ".json"),
-    SerializationFormat.BINARY: lambda path: PickleSerializer(path + ".pkl"),
+
+class Serializer(Protocol):
+    def __init__(self, file_path: str):
+        ...
+
+    def serialize(self, data: Any):
+        ...
+
+
+class Deserializer(Protocol):
+    def __init__(self, file_path: str):
+        ...
+
+    def deserialize(self) -> Any:
+        ...
+
+
+serializer_types: dict[SerializationFormat, type[Serializer]] = {
+    SerializationFormat.JSON: JsonPickleSerializer,
+    SerializationFormat.BINARY: PickleSerializer,
+}
+
+deserializer_types: dict[SerializationFormat, type[Deserializer]] = {
+    SerializationFormat.JSON: JsonPickleDeserializer,
+    SerializationFormat.BINARY: PickleDeserializer,
 }
 
 
 def get_serializers(file_path_base: str):
-    formats = PERSIST_FORMAT or [SerializationFormat.JSON]
-    return [make_serializer[f](file_path_base) for f in formats]
+    return [
+        serializer_types[format](file_path_base + format.file_ext())
+        for format in PERSIST_FORMATS
+    ]
 
 
 def get_deserializer(file_path_base: str):
-    json_file_path = file_path_base + ".json"
-    try:
-        json_mtime = os.path.getmtime(json_file_path)
-    except:
-        json_mtime = 0
+    def get_score(format: SerializationFormat) -> list[float]:
+        try:
+            # Prefer most-recently updated file
+            mtime = os.path.getmtime(file_path_base + format.file_ext())
+        except:
+            return []
 
-    pkl_file_path = file_path_base + ".pkl"
-    try:
-        pkl_mtime = os.path.getmtime(pkl_file_path)
-    except:
-        pkl_mtime = 0
+        try:
+            # For files with identical mtime, prefer deserializer for enabled format.
+            # With multiple enabled formats, prefer last one (which typically gets written last).
+            return [mtime, PERSIST_FORMATS.index(format)]
+        except ValueError:
+            return [mtime]
 
-    if not json_mtime and not pkl_mtime:
+    best_score = []
+    best_format = None
+
+    for format in SerializationFormat:
+        score = get_score(format)
+        if score > best_score:
+            best_score = score
+            best_format = format
+
+    if not best_format:
         return None
 
-    if json_mtime > pkl_mtime:
-        return JsonPickleDeserializer(json_file_path)
-
-    return PickleDeserializer(pkl_file_path)
+    return deserializer_types[best_format](file_path_base + best_format.file_ext())

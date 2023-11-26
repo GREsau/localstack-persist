@@ -68,6 +68,8 @@ class StateTracker:
         ):
             return
 
+        # FIXME persistence may run after add_affected_service(), but before the request has actually be processed.
+        # This can cause changes to not be persisted!
         self.add_affected_service(service_name)
 
     def load_all_services_state(self):

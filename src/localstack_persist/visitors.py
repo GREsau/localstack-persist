@@ -19,7 +19,7 @@ from moto.core.base_backend import BackendDict
 from moto.s3.models import s3_backends
 
 from .serialization import get_deserializer, get_serializers
-from .config import BASE_DIR
+from .config import BASE_DIR, SerializationFormat, PERSIST_FORMATS
 
 SerializableState: TypeAlias = BackendDict | AccountRegionBundle
 
@@ -164,6 +164,11 @@ class SaveStateVisitor(StateVisitor):
         serializers = get_serializers(file_path_base)
         for serializer in serializers:
             serializer.serialize(state_container)
+
+        for disabled_format in set(SerializationFormat) - set(PERSIST_FORMATS):
+            path = file_path_base + disabled_format.file_ext()
+            if os.path.exists(path):
+                os.remove(path)
 
     @staticmethod
     def _sync_directories(src: str, dst: str):
