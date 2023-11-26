@@ -19,7 +19,7 @@ LOG = logging.getLogger(__name__)
 class JsonPickleSerializer:
     _json_encoder = json.JSONEncoder(check_circular=False, separators=(",", ":"))
 
-    def __init__(self, file_path: str) -> None:
+    def __init__(self, service_name: str, file_path: str) -> None:
         self.file_path = file_path
 
     def serialize(self, data: Any):
@@ -35,7 +35,7 @@ class JsonPickleSerializer:
 
 
 class JsonPickleDeserializer:
-    def __init__(self, file_path: str) -> None:
+    def __init__(self, service_name: str, file_path: str) -> None:
         self.file_path = file_path
 
     def deserialize(self) -> Any:

@@ -91,7 +91,7 @@ class LoadStateVisitor(StateVisitor):
         state_container_type = state_type(state_container)
 
         file_path_base = get_state_file_path_base(state_container)
-        deserializer = get_deserializer(file_path_base)
+        deserializer = get_deserializer(state_container.service_name, file_path_base)
         if not deserializer:
             return
 
@@ -161,7 +161,7 @@ class SaveStateVisitor(StateVisitor):
 
         os.makedirs(os.path.dirname(file_path_base), exist_ok=True)
 
-        serializers = get_serializers(file_path_base)
+        serializers = get_serializers(state_container.service_name, file_path_base)
         for serializer in serializers:
             serializer.serialize(state_container)
 

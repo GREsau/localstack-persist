@@ -6,7 +6,7 @@ from ..config import SerializationFormat, PERSIST_FORMATS
 
 
 class Serializer(Protocol):
-    def __init__(self, file_path: str):
+    def __init__(self, service_name: str, file_path: str):
         ...
 
     def serialize(self, data: Any):
@@ -14,7 +14,7 @@ class Serializer(Protocol):
 
 
 class Deserializer(Protocol):
-    def __init__(self, file_path: str):
+    def __init__(self, service_name: str, file_path: str):
         ...
 
     def deserialize(self) -> Any:
@@ -32,14 +32,14 @@ deserializer_types: dict[SerializationFormat, type[Deserializer]] = {
 }
 
 
-def get_serializers(file_path_base: str):
+def get_serializers(service_name: str, file_path_base: str):
     return [
-        serializer_types[format](file_path_base + format.file_ext())
+        serializer_types[format](service_name, file_path_base + format.file_ext())
         for format in PERSIST_FORMATS
     ]
 
 
-def get_deserializer(file_path_base: str):
+def get_deserializer(service_name: str, file_path_base: str):
     def get_score(format: SerializationFormat) -> list[float]:
         try:
             # Prefer most-recently updated file
@@ -66,4 +66,6 @@ def get_deserializer(file_path_base: str):
     if not best_format:
         return None
 
-    return deserializer_types[best_format](file_path_base + best_format.file_ext())
+    return deserializer_types[best_format](
+        service_name, file_path_base + best_format.file_ext()
+    )
