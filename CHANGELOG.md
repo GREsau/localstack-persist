@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.0.2] - 2023-11-26
+
+_Based on [LocalStack 3.0.1](https://github.com/localstack/localstack/releases/tag/v3.0.1)_
+
+### Fixed
+
+- Fixed a bug where, in rare cases, a service's state may be persisted after a request has been received but before the request has been processed - this would cause any state changes from the request to not be persisted
+- Fixed overzealous locking which previously caused requests to be blocked while resources are being persisted to disk
+
+### Added
+
+- Docker images now include [OCI Image Format Specification](https://github.com/opencontainers/image-spec/blob/master/annotations.md) labels including metadata such as build-time and version
+- _**Experimental**_: Files can now be persisted as a binary format instead of JSON, considerably improving performance. This is currently disabled by default, but can be enabled by setting the environment variable `PERSIST_FORMAT=binary`.
+
 ## [3.0.1] - 2023-11-21
 
 _Based on [LocalStack 3.0.0](https://github.com/localstack/localstack/releases/tag/v3.0.0)_
