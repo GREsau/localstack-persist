@@ -37,7 +37,7 @@ class StubS3Multipart:
 def migrate_ephemeral_object_store(file_path: str, store: PersistedS3ObjectStore):
     jsonpickle.register(LockedSpooledTemporaryFile, LockedSpooledTemporaryFileHandler)
     ephemeral_store: EphemeralS3ObjectStore = JsonPickleDeserializer(
-        file_path
+        "dynamodb", file_path
     ).deserialize()
 
     if not ephemeral_store._filesystem:
