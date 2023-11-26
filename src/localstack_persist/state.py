@@ -1,7 +1,10 @@
 import logging
 import os
 
-from localstack.aws.handlers import serve_custom_service_request_handlers
+from localstack.aws.handlers import (
+    serve_custom_service_request_handlers,
+    run_custom_response_handlers,
+)
 from localstack.services.plugins import SERVICE_PLUGINS
 from localstack.aws.api import RequestContext
 from threading import Thread, Condition
@@ -36,6 +39,7 @@ class StateTracker:
         assert not self.is_running
         self.is_running = True
         serve_custom_service_request_handlers.append(self.on_request)
+        run_custom_response_handlers.append(self.on_response)
         Thread(target=self._run).start()
 
     def stop(self):
@@ -46,7 +50,7 @@ class StateTracker:
             self.cond.notify()
 
     def on_request(self, _chain, context: RequestContext, _res):
-        if not context.service or not context.request or not context.operation:
+        if not context.service:
             return
 
         service_name = context.service.service_name
@@ -62,14 +66,21 @@ class StateTracker:
                 if service_name not in self.loaded_services:
                     self._load_service_state(service_name)
 
+    def on_response(self, _chain, context: RequestContext, _res):
+        if not context.service or not context.request or not context.operation:
+            return
+
+        service_name = context.service.service_name
+
+        if not is_persistence_enabled(service_name):
+            return
+
         op = context.operation.name.upper()
         if context.request.method in IDEMPOTENT_VERBS or any(
             op.startswith(v) for v in IDEMPOTENT_VERBS
         ):
             return
 
-        # FIXME persistence may run after add_affected_service(), but before the request has actually be processed.
-        # This can cause changes to not be persisted!
         self.add_affected_service(service_name)
 
     def load_all_services_state(self):
