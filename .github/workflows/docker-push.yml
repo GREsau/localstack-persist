@@ -42,17 +42,16 @@ jobs:
 
       - name: Set semver tags
         id: tags
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             gresau/localstack-persist
           flavor: |
             latest=false
           tags: |
-            type=semver,pattern={{version}},value=${{ env.LOCALSTACK_PERSIST_VERSION }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ env.LOCALSTACK_PERSIST_VERSION }}
-            type=semver,pattern={{major}},value=${{ env.LOCALSTACK_PERSIST_VERSION }}
-        if: ${{ env.LOCALSTACK_PERSIST_VERSION != 'latest' }}
+            type=raw,value=${{ env.LOCALSTACK_PERSIST_VERSION }},priority=1000
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.LOCALSTACK_PERSIST_VERSION }},enable=${{ env.LOCALSTACK_PERSIST_VERSION != 'latest' }}
+            type=semver,pattern={{major}},value=${{ env.LOCALSTACK_PERSIST_VERSION }},enable=${{ env.LOCALSTACK_PERSIST_VERSION != 'latest' }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -69,5 +68,6 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.tags.outputs.tags || 'gresau/localstack-persist:latest' }}
+          tags: ${{ steps.tags.outputs.tags }}
+          labels: ${{ steps.tags.outputs.labels }}
           build-args: LOCALSTACK_VERSION=${{ env.LOCALSTACK_VERSION }}
