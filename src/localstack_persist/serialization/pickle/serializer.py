@@ -24,6 +24,7 @@ class PickleSerializer:
             try:
                 pickler.dump(data)
             except:
+                # TODO remember types that must be pickled using dill
                 LOG.warning(
                     "Error while pickling state %s, falling back to slower 'dill' pickler",
                     type(data),

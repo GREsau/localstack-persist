@@ -31,31 +31,47 @@ class SerializationFormat(Enum):
     JSON = 1
     BINARY = 2
 
+    def file_ext(self):
+        match self:
+            case self.JSON:
+                return ".json"
+            case self.BINARY:
+                return ".pkl"
+
+    @classmethod
+    def default(cls) -> list["SerializationFormat"]:
+        return [cls.JSON]
+
 
 PERSISTED_SERVICES = {"default": True}
-PERSIST_FORMAT: list[SerializationFormat] = []
+PERSIST_FORMATS = SerializationFormat.default()
 
 
 def init():
+    global PERSISTED_SERVICES
+    global PERSIST_FORMATS
+
     for key, value in os.environ.items():
         if not key.lower().startswith("persist_") or not value.strip():
             continue
 
         if key.lower() == "persist_format":
-            PERSIST_FORMAT.clear()
+            new_formats: list[SerializationFormat] = []
             for x in value.split(","):
                 x = x.strip()
                 try:
                     format = SerializationFormat[x.upper()]
-                    if format not in PERSIST_FORMAT:
-                        PERSIST_FORMAT.append(format)
+                    if format not in new_formats:
+                        new_formats.append(format)
                 except:
                     LOG.warning(
                         "Environment variable %s has invalid value '%s' - it will be ignored",
                         key,
                         value,
                     )
-            return
+            if new_formats:
+                PERSIST_FORMATS = new_formats
+            continue
 
         # assume that `key` is the name of service
         service_name = normalise_service_name(key[len("persist_") :])
