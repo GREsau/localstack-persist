@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.0.3] - 2023-12-19
+
+_Based on [LocalStack 3.0.2](https://github.com/localstack/localstack/releases/tag/v3.0.2)_
+
+No changes are in this version other than update of localstack. This does, however, fix a bug which prevented persistence of SQS when sending requests with the legacy "query" protocol (https://github.com/GREsau/localstack-persist/issues/7).
+
 ## [3.0.2] - 2023-11-26
 
 _Based on [LocalStack 3.0.1](https://github.com/localstack/localstack/releases/tag/v3.0.1)_
