@@ -65,11 +65,11 @@ class PersistedS3StoredObject(S3StoredObject):
     def truncate(self, size: Optional[int] = None) -> int:
         return self._file.truncate(size)
 
-    def write(self, stream: Optional[IO[bytes] | S3StoredObject | LimitedStream]) -> int:
+    def write(self, s: Optional[IO[bytes] | S3StoredObject | LimitedStream]) -> int:
         self._file.truncate()
 
-        if stream:
-            while data := stream.read(S3_CHUNK_SIZE):
+        if s:
+            while data := s.read(S3_CHUNK_SIZE):
                 self._file.write(data)
                 self._md5.update(data)
                 if self._checksum:
@@ -149,10 +149,10 @@ class PersistedS3StoredObject(S3StoredObject):
 
 
 class PersistedS3StoredMultipart(S3StoredMultipart):
-    _s3_store: "PersistedS3ObjectStore"
+    _s3_store: "PersistedS3ObjectStore"  # pyright: ignore [reportIncompatibleVariableOverride]
     _dir: str
     # Hide unused attribute from base class
-    parts: None  # type: ignore[assignment]
+    parts: None  # pyright: ignore [reportIncompatibleVariableOverride]
 
     def __init__(
         self,
@@ -221,9 +221,8 @@ class PersistedS3ObjectStore(S3ObjectStore):
         file = self.open_file(path)
         return PersistedS3StoredObject(s3_object, self, file)
 
-    def remove(self, bucket: BucketName, s3_objects: S3Object | list[S3Object]):
-        if not isinstance(s3_objects, list):
-            s3_objects = [s3_objects]
+    def remove(self, bucket: BucketName, s3_object: S3Object | list[S3Object]):
+        s3_objects = s3_object if isinstance(s3_object, list) else [s3_object]
 
         for s3_object in s3_objects:
             path = self._object_path(bucket, s3_object)
@@ -244,11 +243,11 @@ class PersistedS3ObjectStore(S3ObjectStore):
         return self.open(dest_bucket, dest_object)
 
     def get_multipart(
-        self, bucket: BucketName, s3_multipart: S3Multipart | MultipartUploadId
+        self, bucket: BucketName, upload_id: S3Multipart | MultipartUploadId
     ) -> PersistedS3StoredMultipart:
         # type annotations on base class are incorrect!
-        assert isinstance(s3_multipart, S3Multipart)
-        return PersistedS3StoredMultipart(self, bucket, s3_multipart)
+        assert isinstance(upload_id, S3Multipart)
+        return PersistedS3StoredMultipart(self, bucket, upload_id)
 
     def remove_multipart(self, bucket: BucketName, s3_multipart: S3Multipart):
         rm_rf(self._multipart_path(bucket, s3_multipart.id))

@@ -25,8 +25,8 @@ class ConditionHandler(jsonpickle.handlers.BaseHandler):
         data["lock"] = self.context.flatten(obj._lock, reset=False)
         return data
 
-    def restore(self, data: dict):
-        lock = self.context.restore(data["lock"], reset=False)
+    def restore(self, obj: dict):
+        lock = self.context.restore(obj["lock"], reset=False)
         return Condition(lock)
 
 
@@ -36,9 +36,9 @@ class PriorityQueueHandler(jsonpickle.handlers.BaseHandler):
         data["queue"] = self.context.flatten(obj.queue, reset=False)
         return data
 
-    def restore(self, data: dict):
-        pq = PriorityQueue[Any](data["maxsize"])
-        for item in self.context.restore(data["queue"], reset=False):
+    def restore(self, obj: dict):
+        pq = PriorityQueue[Any](obj["maxsize"])
+        for item in self.context.restore(obj["queue"], reset=False):
             try:
                 pq.put_nowait(item)
             except Full:
@@ -57,18 +57,18 @@ class CertBundleHandler(jsonpickle.handlers.BaseHandler):
         )
         return data
 
-    def restore(self, data: dict):
-        obj = cast(CertBundle, CertBundle.__new__(CertBundle))
-        obj.__dict__.update(
+    def restore(self, obj: dict):
+        bundle = cast(CertBundle, CertBundle.__new__(CertBundle))
+        bundle.__dict__.update(
             {
                 k: self.context.restore(v, reset=False)
-                for k, v in data.items()
+                for k, v in obj.items()
                 if k not in jsonpickle.tags.RESERVED
             }
         )
-        obj._cert = obj.validate_certificate()
-        obj._key = obj.validate_pk()
-        return obj
+        bundle._cert = bundle.validate_certificate()
+        bundle._key = bundle.validate_pk()
+        return bundle
 
 
 class DatetimeHandler(jsonpickle.handlers.BaseHandler):
@@ -78,12 +78,12 @@ class DatetimeHandler(jsonpickle.handlers.BaseHandler):
         data["isoformat"] = obj.isoformat()
         return data
 
-    def restore(self, data: dict):
-        if "isoformat" not in data:
+    def restore(self, obj: dict):
+        if "isoformat" not in obj:
             # handle backward-compatibility
-            return DefaultDatetimeHandler(self.context).restore(data)
+            return DefaultDatetimeHandler(self.context).restore(obj)
 
-        cls_name: str = data[jsonpickle.tags.OBJECT]
+        cls_name: str = obj[jsonpickle.tags.OBJECT]
         cls: type[datetime.datetime | datetime.date | datetime.time]
         if cls_name.endswith("datetime"):
             cls = datetime.datetime
@@ -94,4 +94,4 @@ class DatetimeHandler(jsonpickle.handlers.BaseHandler):
         else:
             raise TypeError("DatetimeHandler: unexpected object type " + cls_name)
 
-        return cls.fromisoformat(data["isoformat"])
+        return cls.fromisoformat(obj["isoformat"])

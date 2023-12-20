@@ -19,19 +19,19 @@ class LockedSpooledTemporaryFileHandler(jsonpickle.handlers.BaseHandler):
             "LockedSpooledTemporaryFile should no longer be persisted"
         )
 
-    def restore(self, data: dict):
-        obj = LockedSpooledTemporaryFile()
-        if "text" in data:
-            obj.write(data["text"].encode())
+    def restore(self, obj: dict):
+        file = LockedSpooledTemporaryFile()
+        if "text" in obj:
+            file.write(obj["text"].encode())
         else:
-            obj.write(base64.b64decode(data["b64"]))
-        obj.seek(0)
-        return obj
+            file.write(base64.b64decode(obj["b64"]))
+        file.seek(0)
+        return file
 
 
 class StubS3Multipart:
     def __init__(self, id: str) -> None:
-        self.id = str
+        self.id = id
 
 
 def migrate_ephemeral_object_store(file_path: str, store: PersistedS3ObjectStore):

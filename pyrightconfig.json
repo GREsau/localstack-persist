@@ -1,0 +1,6 @@
+{
+  "include": [
+    "src"
+  ],
+  "typeCheckingMode": "standard"
+}
