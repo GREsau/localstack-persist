@@ -45,6 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: validation
     steps:
+      - uses: actions/checkout@v3
       - name: Set semver tags
         id: tags
         uses: docker/metadata-action@v5
