@@ -36,7 +36,7 @@ jobs:
           fi
         if: ${{ env.LOCALSTACK_PERSIST_VERSION != 'latest' }}
       - uses: actions/checkout@v3
-      - run: sudo python3 test.py
+      - run: sudo -E python3 test.py
       - run: docker compose logs
         if: ${{ failure() }}
 
