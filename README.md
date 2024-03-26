@@ -7,7 +7,7 @@
 
 ## Overview
 
-As of LocalStack 1.0, [persistence](https://docs.localstack.cloud/references/persistence-mechanism/) is a pro-only feature, so is unavailable when using Community Edition. [Community Cloud Pods](https://docs.localstack.cloud/user-guide/tools/cloud-pods/community/) are available, but these require manual saving/restoring of state. localstack-persist adds out-of-the-box persistence, which is saved whenever a resource is modified, and automatically restored on container startup.
+As of LocalStack 1.0, [persistence](https://docs.localstack.cloud/references/persistence-mechanism/) is a pro-only feature, so is unavailable when using Community Edition. localstack-persist adds out-of-the-box persistence, which is saved whenever a resource is modified, and automatically restored on container startup.
 
 ## Usage
 
