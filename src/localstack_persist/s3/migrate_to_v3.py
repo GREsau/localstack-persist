@@ -65,7 +65,7 @@ def migrate_to_v3(
                     owner=s3_bucket.owner,
                 )
 
-                with objects.open(fake_bucket.name, s3_object) as s3_stored_object:
+                with objects.open(fake_bucket.name, s3_object, "w") as s3_stored_object:
                     s3_stored_object.write(io.BytesIO(fake_key.value))
 
                 s3_bucket.objects.set(fake_key.name, s3_object)

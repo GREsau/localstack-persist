@@ -1,4 +1,3 @@
-from io import BufferedRandom
 import base64
 import hashlib
 import os
@@ -16,8 +15,12 @@ from localstack.services.s3.v3.models import S3Multipart, S3Object, S3Part
 from localstack.services.s3.utils import ChecksumHash, ObjectRange, get_s3_checksum
 from localstack.services.s3.constants import S3_CHUNK_SIZE
 from localstack.utils.files import mkdir, rm_rf
-from typing import IO, Iterator, Optional
+from typing import IO, BinaryIO, Iterator, Literal, Optional
 from ..config import BASE_DIR
+from inspect import signature
+
+# TODO remove once localstack 3.2.1+ is released
+back_compat_temp = "mode" not in signature(S3ObjectStore.open).parameters
 
 
 special_chars = re.compile(r"[\x00-\x1f\x7f\\/\":*?|<>$%]")
@@ -33,7 +36,7 @@ def encode_file_name(name: str) -> str:
 
 
 class PersistedS3StoredObject(S3StoredObject):
-    _file: BufferedRandom
+    _file: BinaryIO
     _size: Optional[int]
     _md5: "hashlib._Hash"
     _etag: Optional[str]
@@ -44,9 +47,13 @@ class PersistedS3StoredObject(S3StoredObject):
         self,
         s3_object: S3Object | S3Part,
         store: "PersistedS3ObjectStore",
-        file: BufferedRandom,
+        file: BinaryIO,
+        mode: Literal["r", "w"],
     ):
-        super().__init__(s3_object)
+        if back_compat_temp:
+            super().__init__(s3_object)
+        else:
+            super().__init__(s3_object, mode)  # type: ignore
         self._store = store
         self._file = file
         self._size = None
@@ -61,6 +68,7 @@ class PersistedS3StoredObject(S3StoredObject):
 
     def close(self):
         self._store.close_file(self._file)
+        self.closed = True
 
     def truncate(self, size: Optional[int] = None) -> int:
         return self._file.truncate(size)
@@ -121,6 +129,10 @@ class PersistedS3StoredObject(S3StoredObject):
 
         return self._etag
 
+    @property
+    def last_modified(self) -> int:
+        return os.stat(self._file.fileno()).st_mtime_ns
+
     def __iter__(self) -> Iterator[bytes]:
         while data := self.read(S3_CHUNK_SIZE):
             yield data
@@ -128,11 +140,18 @@ class PersistedS3StoredObject(S3StoredObject):
     def __del__(self):
         self.close()
 
+    # TODO remove with back_compat_temp
     def __enter__(self):
-        return self
+        if back_compat_temp:
+            return self
+        return super().__enter__()  # type: ignore
 
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.close()
+    # TODO remove with back_compat_temp
+    def __exit__(self, *args):
+        if back_compat_temp:
+            self.close()
+            return
+        return super().__exit__(*args)  # type: ignore
 
     def _compute_hashes(self):
         while data := self.read(S3_CHUNK_SIZE):
@@ -149,7 +168,9 @@ class PersistedS3StoredObject(S3StoredObject):
 
 
 class PersistedS3StoredMultipart(S3StoredMultipart):
-    _s3_store: "PersistedS3ObjectStore"  # pyright: ignore [reportIncompatibleVariableOverride]
+    _s3_store: (  # pyright: ignore [reportIncompatibleVariableOverride]
+        "PersistedS3ObjectStore"
+    )
     _dir: str
     # Hide unused attribute from base class
     parts: None  # pyright: ignore [reportIncompatibleVariableOverride]
@@ -164,19 +185,23 @@ class PersistedS3StoredMultipart(S3StoredMultipart):
         self._dir = s3_store._multipart_path(bucket, s3_multipart.id)
         mkdir(self._dir)
 
-    def open(self, s3_part: S3Part) -> PersistedS3StoredObject:
+    def open(
+        self, s3_part: S3Part, mode: Literal["r", "w"] = "r"
+    ) -> PersistedS3StoredObject:
         path = os.path.join(self._dir, f"part-{s3_part.part_number}")
-        file = self._s3_store.open_file(path)
-        return PersistedS3StoredObject(s3_part, self._s3_store, file)
+        file = self._s3_store.open_file(path, mode)
+        return PersistedS3StoredObject(s3_part, self._s3_store, file, mode)
 
     def remove_part(self, s3_part: S3Part):
         path = os.path.join(self._dir, f"part-{s3_part.part_number}")
         os.unlink(path)
 
-    def complete_multipart(
+    def complete_multipart(  # pyright: ignore [reportIncompatibleMethodOverride] - TODO remove with back_compat_temp
         self, parts: list[PartNumber] | list[S3Part]
-    ) -> PersistedS3StoredObject:
-        s3_stored_object = self._s3_store.open(self.bucket, self.s3_multipart.object)
+    ) -> None:
+        s3_stored_object = self._s3_store.open(
+            self.bucket, self.s3_multipart.object, "w"
+        )
         s3_stored_object.truncate()
 
         for s3_part in parts:
@@ -186,7 +211,8 @@ class PersistedS3StoredMultipart(S3StoredMultipart):
                 s3_stored_object.append(file)
 
         s3_stored_object.seek(0)
-        return s3_stored_object
+        if back_compat_temp:
+            return s3_stored_object  # type: ignore
 
     def close(self):
         pass
@@ -198,8 +224,8 @@ class PersistedS3StoredMultipart(S3StoredMultipart):
         src_s3_object: S3Object,
         range_data: Optional[ObjectRange],
     ) -> None:
-        with self._s3_store.open(src_bucket, src_s3_object) as src_stored_object:
-            with self.open(s3_part) as stored_part:
+        with self._s3_store.open(src_bucket, src_s3_object, "r") as src_stored_object:
+            with self.open(s3_part, "w") as stored_part:
                 src_stream = (
                     LimitedStream(src_stored_object, range_data=range_data)
                     if range_data
@@ -213,13 +239,18 @@ class PersistedS3ObjectStore(S3ObjectStore):
 
     def __init__(self) -> None:
         super().__init__()
-        self._open_files = set[BufferedRandom]()
+        self._open_files = set[BinaryIO]()
         self._open_files_lock = Lock()
 
-    def open(self, bucket: BucketName, s3_object: S3Object) -> PersistedS3StoredObject:
+    def open(
+        self,
+        bucket: BucketName,
+        s3_object: S3Object,
+        mode: Literal["r", "w"] = "r",
+    ) -> PersistedS3StoredObject:
         path = self._object_path(bucket, s3_object)
-        file = self.open_file(path)
-        return PersistedS3StoredObject(s3_object, self, file)
+        file = self.open_file(path, mode)
+        return PersistedS3StoredObject(s3_object, self, file, mode)
 
     def remove(self, bucket: BucketName, s3_object: S3Object | list[S3Object]):
         s3_objects = s3_object if isinstance(s3_object, list) else [s3_object]
@@ -240,7 +271,7 @@ class PersistedS3ObjectStore(S3ObjectStore):
         if src_path != dest_path:
             shutil.copy(src_path, dest_path)
 
-        return self.open(dest_bucket, dest_object)
+        return self.open(dest_bucket, dest_object, "r")
 
     def get_multipart(
         self, bucket: BucketName, upload_id: S3Multipart | MultipartUploadId
@@ -258,14 +289,17 @@ class PersistedS3ObjectStore(S3ObjectStore):
     def delete_bucket(self, bucket: BucketName):
         rm_rf(self._bucket_path(bucket))
 
-    def open_file(self, path: str) -> BufferedRandom:
-        file = open(path, "a+b")
-        file.seek(0)
+    def open_file(self, path: str, mode: Literal["r", "w"]) -> BinaryIO:
+        if back_compat_temp:
+            file = open(path, "a+b")
+            file.seek(0)
+        else:
+            file = open(path, mode + "b")
         with self._open_files_lock:
             self._open_files.add(file)
         return file
 
-    def close_file(self, file: BufferedRandom):
+    def close_file(self, file: BinaryIO):
         with self._open_files_lock:
             file.close()
             self._open_files.discard(file)

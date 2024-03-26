@@ -49,7 +49,9 @@ def migrate_ephemeral_object_store(file_path: str, store: PersistedS3ObjectStore
         store.create_bucket(bucket)
         for key, obj_data in files["keys"].items():
             [key, version] = key.rsplit("?", 1)
-            with store.open(bucket, S3Object(key, version_id=version)) as new_object:
+            with store.open(
+                bucket, S3Object(key, version_id=version), "w"
+            ) as new_object:
                 new_object.write(obj_data)
 
         for id, multipart in files["multiparts"].items():
