@@ -17,11 +17,6 @@ from localstack.services.s3.constants import S3_CHUNK_SIZE
 from localstack.utils.files import mkdir, rm_rf
 from typing import IO, BinaryIO, Iterator, Literal, Optional
 from ..config import BASE_DIR
-from inspect import signature
-
-# TODO remove once localstack 3.2.1+ is released
-back_compat_temp = "mode" not in signature(S3ObjectStore.open).parameters
-
 
 special_chars = re.compile(r"[\x00-\x1f\x7f\\/\":*?|<>$%]")
 
@@ -50,10 +45,7 @@ class PersistedS3StoredObject(S3StoredObject):
         file: BinaryIO,
         mode: Literal["r", "w"],
     ):
-        if back_compat_temp:
-            super().__init__(s3_object)
-        else:
-            super().__init__(s3_object, mode)  # type: ignore
+        super().__init__(s3_object, mode)
         self._store = store
         self._file = file
         self._size = None
@@ -140,19 +132,6 @@ class PersistedS3StoredObject(S3StoredObject):
     def __del__(self):
         self.close()
 
-    # TODO remove with back_compat_temp
-    def __enter__(self):
-        if back_compat_temp:
-            return self
-        return super().__enter__()  # type: ignore
-
-    # TODO remove with back_compat_temp
-    def __exit__(self, *args):
-        if back_compat_temp:
-            self.close()
-            return
-        return super().__exit__(*args)  # type: ignore
-
     def _compute_hashes(self):
         while data := self.read(S3_CHUNK_SIZE):
             self._md5.update(data)
@@ -196,9 +175,7 @@ class PersistedS3StoredMultipart(S3StoredMultipart):
         path = os.path.join(self._dir, f"part-{s3_part.part_number}")
         os.unlink(path)
 
-    def complete_multipart(  # pyright: ignore [reportIncompatibleMethodOverride] - TODO remove with back_compat_temp
-        self, parts: list[PartNumber] | list[S3Part]
-    ) -> None:
+    def complete_multipart(self, parts: list[PartNumber] | list[S3Part]) -> None:
         s3_stored_object = self._s3_store.open(
             self.bucket, self.s3_multipart.object, "w"
         )
@@ -211,8 +188,6 @@ class PersistedS3StoredMultipart(S3StoredMultipart):
                 s3_stored_object.append(file)
 
         s3_stored_object.seek(0)
-        if back_compat_temp:
-            return s3_stored_object  # type: ignore
 
     def close(self):
         pass
@@ -290,11 +265,7 @@ class PersistedS3ObjectStore(S3ObjectStore):
         rm_rf(self._bucket_path(bucket))
 
     def open_file(self, path: str, mode: Literal["r", "w"]) -> BinaryIO:
-        if back_compat_temp:
-            file = open(path, "a+b")
-            file.seek(0)
-        else:
-            file = open(path, mode + "b")
+        file = open(path, mode + "b")
         with self._open_files_lock:
             self._open_files.add(file)
         return file
