@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.3.0] - 2024-04-03
+
+_Based on [LocalStack 3.3.0](https://github.com/localstack/localstack/releases/tag/v3.3.0)_
+
+No changes are in this version other than update of localstack.
+
+## [3.2.0] - 2024-04-03
+
+_Based on [LocalStack 3.2.0](https://github.com/localstack/localstack/releases/tag/v3.2.0)_
+
+No changes are in this version other than update of localstack.
+
 ## [3.1.0] - 2024-01-26
 
 _Based on [LocalStack 3.1.0](https://github.com/localstack/localstack/releases/tag/v3.1.0)_
