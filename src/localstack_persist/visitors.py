@@ -11,6 +11,7 @@ from localstack.state import AssetDirectory, StateContainer, StateVisitor
 from localstack.services.s3.v3.models import S3Store as V3S3Store
 from localstack.services.s3.models import S3Store as LegacyS3Store
 from localstack.services.opensearch.models import OpenSearchStore
+from localstack.services.lambda_.invocation.models import LambdaStore
 from watchdog.observers import Observer
 from watchdog.observers.api import BaseObserver
 from watchdog.events import FileSystemEventHandler
@@ -122,11 +123,22 @@ class LoadStateVisitor(StateVisitor):
 
         # Set Processing because after loading state, it will take some time for opensearch/elasticsearch to start.
         if deserialized_type == AccountRegionBundle[OpenSearchStore]:
-            for region_bundle in deserialized.values():  # type: ignore
-                store: OpenSearchStore
-                for store in region_bundle.values():
-                    for domain in store.opensearch_domains.values():
+            for region_bundle in deserialized.values():
+                os_store: OpenSearchStore
+                for os_store in region_bundle.values():
+                    for domain in os_store.opensearch_domains.values():
                         domain["Processing"] = True
+
+        if are_same_type(deserialized_type, AccountRegionBundle[LambdaStore]):
+            for region_bundle in deserialized.values():
+                lambda_store: LambdaStore
+                for lambda_store in region_bundle.values():
+                    for function in lambda_store.functions.values():
+                        for function_version in function.versions.values():
+                            if not hasattr(function_version.config, "logging_config"):
+                                object.__setattr__(
+                                    function_version.config, "logging_config", {}
+                                )
 
         if isinstance(state_container, dict) and isinstance(deserialized, dict):
             state_container.update(deserialized)
