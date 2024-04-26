@@ -1,14 +1,17 @@
 import logging
 import os
+from typing import cast
 
 from localstack.aws.handlers import (
     serve_custom_service_request_handlers,
     run_custom_response_handlers,
+    run_custom_finalizers,
 )
 from localstack.services.plugins import SERVICE_PLUGINS
 from localstack.aws.api import RequestContext
+from collections import defaultdict
 from threading import Thread, Condition
-
+from readerwriterlock.rwlock import RWLockWrite, Lockable
 from .visitors import LoadStateVisitor, SaveStateVisitor
 from .config import BASE_DIR, is_persistence_enabled
 from .prepare_service import prepare_service
@@ -34,12 +37,14 @@ class StateTracker:
         self.loaded_services = set()
         self.cond = Condition()
         self.is_running = False
+        self.rwlocks = defaultdict[str, RWLockWrite](RWLockWrite)
 
     def start(self):
         assert not self.is_running
         self.is_running = True
         serve_custom_service_request_handlers.append(self.on_request)
         run_custom_response_handlers.append(self.on_response)
+        run_custom_finalizers.append(self.on_finalize)
         Thread(target=self._run).start()
 
     def stop(self):
@@ -66,6 +71,11 @@ class StateTracker:
                 if service_name not in self.loaded_services:
                     self._load_service_state(service_name)
 
+        # Prevent persistence from running for this service while handling this request
+        rlock = self.rwlocks[service_name].gen_rlock()
+        setattr(context, "localstack-persist_rlock", rlock)
+        rlock.acquire()
+
     def on_response(self, _chain, context: RequestContext, _res):
         if not context.service or not context.request or not context.operation:
             return
@@ -82,6 +92,10 @@ class StateTracker:
             return
 
         self.add_affected_service(service_name)
+
+    def on_finalize(self, _chain, context: RequestContext, _res):
+        if rlock := getattr(context, "localstack-persist_rlock", None):
+            cast(Lockable, rlock).release()
 
     def load_all_services_state(self):
         LOG.info("Loading persisted state of all services...")
@@ -154,17 +168,17 @@ class StateTracker:
             LOG.exception("Error while loading state of service %s", service_name)
 
     def _save_service_state(self, service_name: str):
-        LOG.info("Persisting state of service %s...", service_name)
-
         service = SERVICE_PLUGINS.get_service(service_name)
         if not service:
             LOG.error("No service %s found in service manager", service_name)
             return
 
-        service.lifecycle_hook.on_before_state_save()
-        service.accept_state_visitor(SaveStateVisitor(service_name))
-        service.lifecycle_hook.on_after_state_save()
-        LOG.debug("Finished persisting state of service %s", service_name)
+        with self.rwlocks[service_name].gen_wlock():
+            LOG.info("Persisting state of service %s...", service_name)
+            service.lifecycle_hook.on_before_state_save()
+            service.accept_state_visitor(SaveStateVisitor(service_name))
+            service.lifecycle_hook.on_after_state_save()
+            LOG.debug("Finished persisting state of service %s", service_name)
 
 
 STATE_TRACKER = StateTracker()
