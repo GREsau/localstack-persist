@@ -70,5 +70,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: pip3 install --upgrade pip && pip3 install localstack moto jsonpickle==3.0.2 watchdog==3.0.0 boto3-stubs[essential,acm,es,iam]
+      - run: pip3 install --upgrade pip && pip3 install localstack moto readerwriterlock jsonpickle==3.0.2 watchdog==3.0.0 boto3-stubs[essential,acm,es,iam]
       - run: npx -y pyright src
