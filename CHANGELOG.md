@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.4.0] - 2024-04-27
+
+_Based on [LocalStack 3.4.0](https://github.com/localstack/localstack/releases/tag/v3.4.0)_
+
+### Fixed
+
+- Fixed a race condition that could occur when a request is served while data is being persisted to disk (https://github.com/GREsau/localstack-persist/issues/11)
+
 ## [3.3.0] - 2024-04-03
 
 _Based on [LocalStack 3.3.0](https://github.com/localstack/localstack/releases/tag/v3.3.0)_
