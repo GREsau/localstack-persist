@@ -1,5 +1,4 @@
 from importlib import import_module
-from collections.abc import Callable
 import os
 import sys
 from localstack.services.plugins import SERVICE_PLUGINS
@@ -17,11 +16,29 @@ def prepare_service(service_name: str):
 
 @once
 def prepare_lambda():
+    from localstack.services.lambda_.invocation.lambda_models import Function
+
     # Define localstack.services.awslambda as a backward-compatible alias for localstack.services.lambda_
     sys.modules.setdefault(
         "localstack.services.awslambda",
         import_module("localstack.services.lambda_"),
     )
+    sys.modules.setdefault(
+        "localstack.services.awslambda.invocation.lambda_models",
+        import_module("localstack.services.lambda_.invocation.lambda_models"),
+    )
+    sys.modules.setdefault(
+        "localstack.services.awslambda.invocation.models",
+        import_module("localstack.services.lambda_.invocation.models"),
+    )
+
+    # workaround for https://github.com/jsonpickle/jsonpickle/issues/500
+    if hasattr(Function, "__getstate__") and not hasattr(Function, "__setstate__"):
+
+        def __setstate__(self: Function, state: dict):
+            self.__dict__.update(state)
+
+        setattr(Function, "__setstate__", __setstate__)
 
 
 @once

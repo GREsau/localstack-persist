@@ -54,14 +54,6 @@ def state_type(state: Any) -> type:
     )
 
 
-def are_same_type(t1: type, t2: type) -> bool:
-    return t1 == t2 or (
-        t1.__name__ == t2.__name__
-        and str(t1).replace(".awslambda.", ".lambda_.")
-        == str(t2).replace(".awslambda.", ".lambda_.")
-    )
-
-
 class LoadStateVisitor(StateVisitor):
     def __init__(self, service_name: str) -> None:
         super().__init__()
@@ -113,7 +105,7 @@ class LoadStateVisitor(StateVisitor):
             except:
                 LOG.exception("Error migrating S3 state to V3 provider")
                 return
-        elif not are_same_type(state_container_type, deserialized_type):
+        elif state_container_type != deserialized_type:
             LOG.warning(
                 "Unexpected deserialised state_container type: %s, expected %s",
                 deserialized_type,
@@ -129,11 +121,13 @@ class LoadStateVisitor(StateVisitor):
                     for domain in os_store.opensearch_domains.values():
                         domain["Processing"] = True
 
-        if are_same_type(deserialized_type, AccountRegionBundle[LambdaStore]):
+        if deserialized_type == AccountRegionBundle[LambdaStore]:
             for region_bundle in deserialized.values():
                 lambda_store: LambdaStore
                 for lambda_store in region_bundle.values():
                     for function in lambda_store.functions.values():
+                        if hasattr(function, "__post_init__"):
+                            function.__post_init__()  # type: ignore
                         for function_version in function.versions.values():
                             if not hasattr(function_version.config, "logging_config"):
                                 object.__setattr__(
