@@ -126,8 +126,13 @@ class LoadStateVisitor(StateVisitor):
                 lambda_store: LambdaStore
                 for lambda_store in region_bundle.values():
                     for function in lambda_store.functions.values():
+                        # Workarounds for restoring state of old lambda functions
+                        # 1. Call `__post_init__()` to populate `instance_id` field. This is done by `__setstate__`, but that's
+                        #    only called if the `Function` had a `__getstate__` when serialized, which was not always the case.
                         if hasattr(function, "__post_init__"):
                             function.__post_init__()  # type: ignore
+                        # 2. Populate the required `logging_config` field with a default value in case the field wasn't present
+                        #    when the `Function` was serialized.
                         for function_version in function.versions.values():
                             if not hasattr(function_version.config, "logging_config"):
                                 object.__setattr__(

@@ -32,14 +32,6 @@ def prepare_lambda():
         import_module("localstack.services.lambda_.invocation.models"),
     )
 
-    # workaround for https://github.com/jsonpickle/jsonpickle/issues/500
-    if hasattr(Function, "__getstate__") and not hasattr(Function, "__setstate__"):
-
-        def __setstate__(self: Function, state: dict):
-            self.__dict__.update(state)
-
-        setattr(Function, "__setstate__", __setstate__)
-
 
 @once
 def prepare_s3():
