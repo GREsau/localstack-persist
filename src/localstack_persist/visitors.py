@@ -16,7 +16,8 @@ from watchdog.observers import Observer
 from watchdog.observers.api import BaseObserver
 from watchdog.events import FileSystemEventHandler
 
-from moto.core.base_backend import BackendDict
+import moto.utilities.utils
+from moto.core.base_backend import BackendDict, BaseBackend
 from moto.s3.models import s3_backends
 
 from .serialization import get_deserializer, get_serializers
@@ -54,6 +55,13 @@ def state_type(state: Any) -> type:
     )
 
 
+def add_affected_service(service_name: str):
+    # circular dependency :(
+    from .state import STATE_TRACKER
+
+    STATE_TRACKER.add_affected_service(service_name)
+
+
 class LoadStateVisitor(StateVisitor):
     def __init__(self, service_name: str) -> None:
         super().__init__()
@@ -81,6 +89,7 @@ class LoadStateVisitor(StateVisitor):
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
     def _load_state(self, state_container: SerializableState):
+        state_migrated = False
         state_container_type = state_type(state_container)
 
         file_path_base = get_state_file_path_base(state_container)
@@ -102,6 +111,7 @@ class LoadStateVisitor(StateVisitor):
                 LOG.info("Migrating S3 state to V3 provider...")
                 self._load_state(s3_backends)
                 deserialized = migrate_to_v3(s3_backends)
+                state_migrated = True
             except:
                 LOG.exception("Error migrating S3 state to V3 provider")
                 return
@@ -138,10 +148,27 @@ class LoadStateVisitor(StateVisitor):
                                 object.__setattr__(
                                     function_version.config, "logging_config", {}
                                 )
+                                state_migrated = True
+
+        if isinstance(deserialized, BackendDict):
+            for account_backend in deserialized.values():
+                if account_backend.regions == ["global"]:
+                    account_backend.regions = moto.utilities.utils.PARTITION_NAMES
+
+                    global_backend: BaseBackend | None
+                    if global_backend := account_backend.pop("global", None):
+                        setattr(global_backend, "partition", "aws")
+                        global_backend.region_name = "aws"
+                        account_backend["aws"] = global_backend
+
+                    state_migrated = True
 
         if isinstance(state_container, dict) and isinstance(deserialized, dict):
             state_container.update(deserialized)
         state_container.__dict__.update(deserialized.__dict__)
+
+        if state_migrated:
+            add_affected_service(self.service_name)
 
 
 class SaveStateVisitor(StateVisitor):
@@ -221,10 +248,7 @@ class AffectedServiceHandler(FileSystemEventHandler):
         self._handle_event()
 
     def _handle_event(self):
-        # circular dependency :(
-        from .state import STATE_TRACKER
-
-        STATE_TRACKER.add_affected_service(self.service_name)
+        add_affected_service(self.service_name)
 
 
 path_watchers: Dict[str, AffectedServiceHandler] = {}
