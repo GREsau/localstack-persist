@@ -150,7 +150,9 @@ class LoadStateVisitor(StateVisitor):
                                 )
                                 state_migrated = True
 
-        if isinstance(deserialized, BackendDict):
+        if isinstance(deserialized, BackendDict) and hasattr(
+            moto.utilities.utils, "PARTITION_NAMES"
+        ):
             for account_backend in deserialized.values():
                 if account_backend.regions == ["global"]:
                     account_backend.regions = moto.utilities.utils.PARTITION_NAMES
