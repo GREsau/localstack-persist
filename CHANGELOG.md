@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.5.0] - 2024-06-13
+
+_Based on [LocalStack 3.5.0](https://github.com/localstack/localstack/releases/tag/v3.5.0)_
+
+### Changed
+
+- Update versions of jsonpickle and watchdog
+
 ## [3.4.0] - 2024-04-27
 
 _Based on [LocalStack 3.4.0](https://github.com/localstack/localstack/releases/tag/v3.4.0)_
