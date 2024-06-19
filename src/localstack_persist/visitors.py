@@ -8,8 +8,12 @@ import logging
 import localstack.config
 from localstack.services.stores import AccountRegionBundle
 from localstack.state import AssetDirectory, StateContainer, StateVisitor
-from localstack.services.s3.v3.models import S3Store as V3S3Store
-from localstack.services.s3.models import S3Store as LegacyS3Store
+
+# TODO remove with localstack 3.5.1
+try:
+    from localstack.services.s3.v3.models import S3Store as V3S3Store
+except ModuleNotFoundError:
+    from localstack.services.s3.models import S3Store as V3S3Store
 from localstack.services.opensearch.models import OpenSearchStore
 from localstack.services.lambda_.invocation.models import LambdaStore
 from watchdog.observers import Observer
@@ -62,6 +66,13 @@ def add_affected_service(service_name: str):
     STATE_TRACKER.add_affected_service(service_name)
 
 
+def is_legacy_s3_store(arb: AccountRegionBundle) -> bool:
+    for _, _, store in arb.iter_stores():
+        return "bucket_lifecycle_configuration" in store._global
+
+    return False
+
+
 class LoadStateVisitor(StateVisitor):
     def __init__(self, service_name: str) -> None:
         super().__init__()
@@ -103,7 +114,8 @@ class LoadStateVisitor(StateVisitor):
 
         if (
             state_container_type == AccountRegionBundle[V3S3Store]
-            and deserialized_type == AccountRegionBundle[LegacyS3Store]
+            and isinstance(deserialized, AccountRegionBundle)
+            and is_legacy_s3_store(deserialized)
         ):
             try:
                 from .s3.migrate_to_v3 import migrate_to_v3
@@ -116,7 +128,7 @@ class LoadStateVisitor(StateVisitor):
                 LOG.exception("Error migrating S3 state to V3 provider")
                 return
         elif state_container_type != deserialized_type:
-            LOG.warning(
+            LOG.error(
                 "Unexpected deserialised state_container type: %s, expected %s",
                 deserialized_type,
                 state_container_type,

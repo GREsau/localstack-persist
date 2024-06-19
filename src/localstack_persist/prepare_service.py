@@ -16,8 +16,6 @@ def prepare_service(service_name: str):
 
 @once
 def prepare_lambda():
-    from localstack.services.lambda_.invocation.lambda_models import Function
-
     # Define localstack.services.awslambda as a backward-compatible alias for localstack.services.lambda_
     sys.modules.setdefault(
         "localstack.services.awslambda",
@@ -35,6 +33,19 @@ def prepare_lambda():
 
 @once
 def prepare_s3():
+    # Define localstack.services.s3.v3.models as a backward-compatible alias for localstack.services.s3.models
+    try:
+        import_module("localstack.services.s3.v3")
+    except ModuleNotFoundError:
+        sys.modules.setdefault(
+            "localstack.services.s3.v3",
+            import_module("localstack.services.s3"),
+        )
+        sys.modules.setdefault(
+            "localstack.services.s3.v3.models",
+            import_module("localstack.services.s3.models"),
+        )
+
     from .s3.storage import PersistedS3ObjectStore
 
     service = SERVICE_PLUGINS.get_service("s3")

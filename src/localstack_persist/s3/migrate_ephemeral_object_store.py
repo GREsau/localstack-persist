@@ -2,6 +2,7 @@ import base64
 from typing import cast
 import jsonpickle
 
+# TODO update imports for localstack 3.5.1
 from localstack.services.s3.v3.models import S3Object, S3Multipart, S3Part
 from localstack.services.s3.v3.storage.ephemeral import (
     EphemeralS3ObjectStore,
