@@ -9,11 +9,7 @@ import localstack.config
 from localstack.services.stores import AccountRegionBundle
 from localstack.state import AssetDirectory, StateContainer, StateVisitor
 
-# TODO remove with localstack 3.5.1
-try:
-    from localstack.services.s3.v3.models import S3Store as V3S3Store
-except ModuleNotFoundError:
-    from localstack.services.s3.models import S3Store as V3S3Store
+from localstack.services.s3.models import S3Store as V3S3Store
 from localstack.services.opensearch.models import OpenSearchStore
 from localstack.services.lambda_.invocation.models import LambdaStore
 from watchdog.observers import Observer

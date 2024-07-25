@@ -8,9 +8,8 @@ from localstack.aws.api.s3 import BucketName, MultipartUploadId, PartNumber
 from localstack.services.s3.constants import S3_CHUNK_SIZE
 from localstack.services.s3.utils import ChecksumHash, ObjectRange, get_s3_checksum
 
-# TODO update imports for localstack 3.5.1
-from localstack.services.s3.v3.models import S3Multipart, S3Object, S3Part
-from localstack.services.s3.v3.storage import (
+from localstack.services.s3.models import S3Multipart, S3Object, S3Part
+from localstack.services.s3.storage import (
     S3ObjectStore,
     S3StoredMultipart,
     S3StoredObject,

@@ -34,17 +34,14 @@ def prepare_lambda():
 @once
 def prepare_s3():
     # Define localstack.services.s3.v3.models as a backward-compatible alias for localstack.services.s3.models
-    try:
-        import_module("localstack.services.s3.v3")
-    except ModuleNotFoundError:
-        sys.modules.setdefault(
-            "localstack.services.s3.v3",
-            import_module("localstack.services.s3"),
-        )
-        sys.modules.setdefault(
-            "localstack.services.s3.v3.models",
-            import_module("localstack.services.s3.models"),
-        )
+    sys.modules.setdefault(
+        "localstack.services.s3.v3",
+        import_module("localstack.services.s3"),
+    )
+    sys.modules.setdefault(
+        "localstack.services.s3.v3.models",
+        import_module("localstack.services.s3.models"),
+    )
 
     from .s3.storage import PersistedS3ObjectStore
 
