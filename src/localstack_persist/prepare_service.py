@@ -42,6 +42,14 @@ def prepare_s3():
         "localstack.services.s3.v3.models",
         import_module("localstack.services.s3.models"),
     )
+    sys.modules.setdefault(
+        "localstack.services.s3.v3.storage",
+        import_module("localstack.services.s3.storage"),
+    )
+    sys.modules.setdefault(
+        "localstack.services.s3.v3.storage.ephemeral",
+        import_module("localstack.services.s3.storage.ephemeral"),
+    )
 
     from .s3.storage import PersistedS3ObjectStore
 
