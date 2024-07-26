@@ -1,10 +1,12 @@
-import json
 import logging
-import dill
-import pickle
 from typing import Any, Tuple
 
-from .handlers import CustomPickler, CustomDillPickler
+from .handlers import (
+    CustomPickler,
+    CustomDillPickler,
+    CustomUnpickler,
+    CustomDillUnpickler,
+)
 
 PICKLE_MARKER = b"p"
 DILL_PICKLE_MARKER = b"d"
@@ -52,13 +54,13 @@ class PickleDeserializer:
         with open(self.file_path, "rb") as file:
             marker = file.read(1)
             if marker == PICKLE_MARKER:
-                return pickle.load(file)
+                return CustomUnpickler(file).load()
             elif marker == DILL_PICKLE_MARKER:
-                return dill.load(file)
+                return CustomDillUnpickler(file).load()
             else:
                 LOG.warning(
                     "Persisted state at %s has unexpected marker %s - trying to load it anyway...",
                     self.file_path,
                     marker,
                 )
-            return dill.load(file)
+                return CustomDillUnpickler(file).load()

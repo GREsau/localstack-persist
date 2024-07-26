@@ -1,13 +1,16 @@
 from queue import PriorityQueue, Full
 from threading import Condition
-from typing import Any, cast
+from typing import Any, Callable, cast
 import datetime
 import jsonpickle
 import jsonpickle.tags
+import jsonpickle.util
 from jsonpickle.handlers import DatetimeHandler as DefaultDatetimeHandler
 from moto.acm.models import CertBundle
+from localstack.utils.patch import patch
 
 from localstack_persist.utils import once
+from ..utils import compat_module_path
 
 
 @once
@@ -18,6 +21,12 @@ def register_handlers():
     DatetimeHandler.handles(datetime.datetime)
     DatetimeHandler.handles(datetime.date)
     DatetimeHandler.handles(datetime.time)
+
+    # jsonpickle doesn't expose a hook like Unpickler.find_class(),
+    # so we patch untranslate_module_name for the same effect.
+    @patch(jsonpickle.util.untranslate_module_name)
+    def patched_untranslate_module_name(orig: Callable[[str], str], module: str) -> str:
+        return orig(compat_module_path(module))
 
 
 class ConditionHandler(jsonpickle.handlers.BaseHandler):

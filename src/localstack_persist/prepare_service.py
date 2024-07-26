@@ -1,6 +1,4 @@
-from importlib import import_module
 import os
-import sys
 from localstack.services.plugins import SERVICE_PLUGINS
 
 from .config import BASE_DIR
@@ -8,48 +6,12 @@ from .utils import once
 
 
 def prepare_service(service_name: str):
-    if service_name == "lambda":
-        prepare_lambda()
-    elif service_name == "s3":
+    if service_name == "s3":
         prepare_s3()
 
 
 @once
-def prepare_lambda():
-    # Define localstack.services.awslambda as a backward-compatible alias for localstack.services.lambda_
-    sys.modules.setdefault(
-        "localstack.services.awslambda",
-        import_module("localstack.services.lambda_"),
-    )
-    sys.modules.setdefault(
-        "localstack.services.awslambda.invocation.lambda_models",
-        import_module("localstack.services.lambda_.invocation.lambda_models"),
-    )
-    sys.modules.setdefault(
-        "localstack.services.awslambda.invocation.models",
-        import_module("localstack.services.lambda_.invocation.models"),
-    )
-
-
-@once
 def prepare_s3():
-    # Define localstack.services.s3.v3.models as a backward-compatible alias for localstack.services.s3.models
-    sys.modules.setdefault(
-        "localstack.services.s3.v3",
-        import_module("localstack.services.s3"),
-    )
-    sys.modules.setdefault(
-        "localstack.services.s3.v3.models",
-        import_module("localstack.services.s3.models"),
-    )
-    sys.modules.setdefault(
-        "localstack.services.s3.v3.storage",
-        import_module("localstack.services.s3.storage"),
-    )
-    sys.modules.setdefault(
-        "localstack.services.s3.v3.storage.ephemeral",
-        import_module("localstack.services.s3.storage.ephemeral"),
-    )
 
     from .s3.storage import PersistedS3ObjectStore
 

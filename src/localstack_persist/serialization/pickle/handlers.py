@@ -6,6 +6,8 @@ import pickle
 import dill
 import copyreg
 
+from ..utils import compat_module_path
+
 # This module, and all of the unpickle_* functions in it, must not be moved/renamed,
 # because pickle-serialized data must be able to load them.
 
@@ -64,3 +66,13 @@ class CustomDillPickler(dill.Pickler):
 
 class CustomPickler(pickle.Pickler):
     dispatch_table = copyreg.dispatch_table | custom_dispatch_table
+
+
+class CustomDillUnpickler(dill.Unpickler):
+    def find_class(self, module, name):
+        return super().find_class(compat_module_path(module), name)
+
+
+class CustomUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        return super().find_class(compat_module_path(module), name)
