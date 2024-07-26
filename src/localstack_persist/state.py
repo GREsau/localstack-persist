@@ -54,7 +54,7 @@ class StateTracker:
             self.save_all_services_state()
             self.cond.notify()
 
-    def on_request(self, _chain, context: RequestContext, _res):
+    def on_request(self, chain, context: RequestContext, response):
         if not context.service:
             return
 
@@ -76,7 +76,7 @@ class StateTracker:
         setattr(context, "localstack-persist_rlock", rlock)
         rlock.acquire()
 
-    def on_response(self, _chain, context: RequestContext, _res):
+    def on_response(self, chain, context: RequestContext, response):
         if not context.service or not context.request or not context.operation:
             return
 
@@ -93,7 +93,7 @@ class StateTracker:
 
         self.add_affected_service(service_name)
 
-    def on_finalize(self, _chain, context: RequestContext, _res):
+    def on_finalize(self, chain, context: RequestContext, response):
         if rlock := getattr(context, "localstack-persist_rlock", None):
             cast(Lockable, rlock).release()
 
