@@ -38,7 +38,7 @@ def get_state_file_path_base(
 
 
 def get_asset_dir_path(state_container: AssetDirectory):
-    assert state_container.path.startswith(localstack.config.dirs.data)
+    assert str(state_container.path).startswith(localstack.config.dirs.data)
     relpath = os.path.relpath(state_container.path, localstack.config.dirs.data)
 
     if relpath.startswith(state_container.service_name):
@@ -78,7 +78,7 @@ class LoadStateVisitor(StateVisitor):
         if isinstance(state_container, BackendDict | AccountRegionBundle):
             self._load_state(state_container)
         elif isinstance(state_container, AssetDirectory):
-            if state_container.path.startswith(BASE_DIR):
+            if str(state_container.path).startswith(BASE_DIR):
                 # nothing to do - assets are read directly from the volume
                 return
             dir_path = get_asset_dir_path(state_container)
@@ -90,7 +90,7 @@ class LoadStateVisitor(StateVisitor):
                     copy_function=shutil.copy,
                 )
             os.makedirs(state_container.path, exist_ok=True)
-            start_watcher(self.service_name, state_container.path)
+            start_watcher(self.service_name, str(state_container.path))
 
         else:
             LOG.warning("Unexpected state_container type: %s", type(state_container))
@@ -191,7 +191,7 @@ class SaveStateVisitor(StateVisitor):
         if isinstance(state_container, BackendDict | AccountRegionBundle):
             self._save_state(state_container)
         elif isinstance(state_container, AssetDirectory):
-            if state_container.path.startswith(BASE_DIR):
+            if str(state_container.path).startswith(BASE_DIR):
                 # nothing to do - assets are written directly to the volume
                 return
             dir_path = get_asset_dir_path(state_container)
@@ -199,7 +199,7 @@ class SaveStateVisitor(StateVisitor):
                 self._sync_directories(state_container.path, dir_path)
             else:
                 os.makedirs(state_container.path, exist_ok=True)
-            start_watcher(self.service_name, state_container.path)
+            start_watcher(self.service_name, str(state_container.path))
         else:
             LOG.warning("Unexpected state_container type: %s", type(state_container))
 
@@ -218,8 +218,8 @@ class SaveStateVisitor(StateVisitor):
                 os.remove(path)
 
     @staticmethod
-    def _sync_directories(src: str, dst: str):
-        def delete_extra_files(src: str, dst: str):
+    def _sync_directories(src: str | os.PathLike, dst: str | os.PathLike):
+        def delete_extra_files(src: str | os.PathLike, dst: str | os.PathLike):
             desired_files = set(os.listdir(src))
             with os.scandir(dst) as it:
                 dst_entries = list(it)
