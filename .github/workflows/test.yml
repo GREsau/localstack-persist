@@ -26,14 +26,14 @@ jobs:
       PERSIST_FORMAT: ${{ matrix.PERSIST_FORMAT }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: sudo -E python3 test.py
       - run: sudo -E docker compose logs
         if: ${{ failure() }}
       - name: rename files with colon chars
         run: export COLON_CHAR="$(printf '\uf03a')"; find temp-persisted-data -type d -name "*:*" | perl -nle "print \$_, ' ', s/:/$COLON_CHAR/rg" | sudo xargs -L 1 mv
         if: ${{ failure() }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: persisted-data
           path: temp-persisted-data/
@@ -51,14 +51,14 @@ jobs:
       TEST_PERSISTED_DATA_DIR: ${{ matrix.TEST_PERSISTED_DATA_DIR }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: sudo -E python3 test.py
       - run: sudo -E docker compose logs
         if: ${{ failure() }}
       - name: rename files with colon chars
         run: export COLON_CHAR="$(printf '\uf03a')"; find temp-persisted-data -type d -name "*:*" | perl -nle "print \$_, ' ', s/:/$COLON_CHAR/rg" | sudo xargs -L 1 mv
         if: ${{ failure() }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: persisted-data
           path: temp-persisted-data/
@@ -69,6 +69,6 @@ jobs:
     name: Type check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: pip3 install --upgrade pip && pip3 install localstack moto readerwriterlock jsonpickle==3.2.1 watchdog==4.0.1 boto3-stubs[essential,acm,es,iam]
       - run: npx -y pyright src
