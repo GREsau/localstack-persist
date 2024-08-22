@@ -8,6 +8,8 @@ from .utils import once
 def prepare_service(service_name: str):
     if service_name == "s3":
         prepare_s3()
+    elif service_name == "acm":
+        prepare_acm()
 
 
 @once
@@ -25,3 +27,11 @@ def prepare_s3():
         from .s3.migrate_ephemeral_object_store import migrate_ephemeral_object_store
 
         migrate_ephemeral_object_store(old_objects_path, store)
+
+
+@once
+def prepare_acm():
+    from moto.acm.models import CertBundle
+
+    # HACK for CertBundles that were persisted without the `cert_authority_arn` property
+    setattr(CertBundle, "cert_authority_arn", None)
