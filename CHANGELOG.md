@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.1] - 2024-08-28
+
+_Based on [LocalStack 3.6.0](https://github.com/localstack/localstack/releases/tag/v3.6.0)_
+
+### Fixed
+
+- Fixed not being able to store S3 objects with keys longer than ~250 characters (https://github.com/GREsau/localstack-persist/issues/14)
+
 ## [3.6.0] - 2024-07-26
 
 _Based on [LocalStack 3.6.0](https://github.com/localstack/localstack/releases/tag/v3.6.0)_
