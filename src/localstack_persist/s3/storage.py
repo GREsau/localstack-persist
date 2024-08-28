@@ -28,7 +28,15 @@ def encode_file_name_char(match: re.Match):
 
 
 def encode_file_name(name: str) -> str:
-    return special_chars.sub(encode_file_name_char, name)
+    # Most filesystems allow filenames up to 255 chars, but docker environments may support fewer,
+    # particularly for mounts. We limit the filename to 240 chars to be safe.
+    max_length = 240
+    encoded = special_chars.sub(encode_file_name_char, name)
+    if len(encoded) > max_length:
+        hash = hashlib.sha256(name.encode("utf-8")).hexdigest()
+        return encoded[: (max_length - 1 - len(hash))] + "~" + hash
+    else:
+        return encoded
 
 
 class PersistedS3StoredObject(S3StoredObject):
