@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.7.0] - 2024-08-29
+
+_Based on [LocalStack 3.7.0](https://github.com/localstack/localstack/releases/tag/v3.7.0)_
+
+No changes are in this version other than update of localstack.
+
 ## [3.6.1] - 2024-08-28
 
 _Based on [LocalStack 3.6.0](https://github.com/localstack/localstack/releases/tag/v3.6.0)_
