@@ -16,6 +16,7 @@ def prepare_service(service_name: str):
 def prepare_s3():
 
     from .s3.storage import PersistedS3ObjectStore
+    from localstack.services.s3.models import S3Object
 
     service = SERVICE_PLUGINS.get_service("s3")
     store = PersistedS3ObjectStore()
@@ -27,6 +28,11 @@ def prepare_s3():
         from .s3.migrate_ephemeral_object_store import migrate_ephemeral_object_store
 
         migrate_ephemeral_object_store(old_objects_path, store)
+
+    # HACK for CertBundles that were persisted without the `internal_last_modified`/`sse_key_hash`/`precondition` properties
+    setattr(S3Object, "internal_last_modified", None)
+    setattr(S3Object, "sse_key_hash", None)
+    setattr(S3Object, "precondition", None)
 
 
 @once
