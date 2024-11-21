@@ -275,7 +275,7 @@ def start_watcher(service_name: str, path: str):
     path_watchers[path] = AffectedServiceHandler(service_name)
 
     for watcher_path, watcher in path_watchers.items():
-        observer.schedule(watcher, watcher_path, True)
+        observer.schedule(watcher, watcher_path, recursive=True)
 
     observer.start()
     if old_observer:
