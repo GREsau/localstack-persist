@@ -87,6 +87,7 @@ elif command == "verify":
 
     queue = sqs.Queue("test-queue")
     assert_equal(queue.attributes["DelaySeconds"], "123")
+    assert_equal(queue.attributes["ApproximateNumberOfMessages"], "0")
 
     table = dynamodb.Table("test-table")
     item = table.get_item(Key={"id": 123})["Item"]

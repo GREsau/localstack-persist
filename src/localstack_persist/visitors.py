@@ -12,6 +12,7 @@ from localstack.state import AssetDirectory, StateContainer, StateVisitor
 from localstack.services.s3.models import S3Store as V3S3Store
 from localstack.services.opensearch.models import OpenSearchStore
 from localstack.services.lambda_.invocation.models import LambdaStore
+from localstack.services.sqs.models import SqsStore
 from watchdog.observers import Observer
 from watchdog.observers.api import BaseObserver
 from watchdog.events import FileSystemEventHandler
@@ -157,6 +158,17 @@ class LoadStateVisitor(StateVisitor):
                                     function_version.config, "logging_config", {}
                                 )
                                 state_migrated = True
+
+        if deserialized_type == AccountRegionBundle[SqsStore]:
+            for region_bundle in deserialized.values():
+                sqs_store: SqsStore
+                for sqs_store in region_bundle.values():
+                    for queue in sqs_store.queues.values():
+                        # Computed attributes don't get serialized to JSON, so restore them from `default_attributes()`
+                        queue.attributes = {
+                            **queue.default_attributes(),
+                            **queue.attributes,
+                        }
 
         if isinstance(deserialized, BackendDict):
             deserialized._additional_regions = state_container._additional_regions  # type: ignore
