@@ -17,7 +17,7 @@ localstack-persist is distributed as a docker image, made to be a drop-in replac
 version: "3.8"
 services:
   localstack:
-    image: gresau/localstack-persist:3 # instead of localstack/localstack:3
+    image: gresau/localstack-persist:4 # instead of localstack/localstack:4
     ports:
       - "4566:4566"
     volumes:
