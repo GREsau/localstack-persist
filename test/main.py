@@ -15,6 +15,7 @@ def wait_until_es_ready(domain_name: str):
     for _ in range(180):
         es_domain = elasticsearch.describe_elasticsearch_domain(DomainName=domain_name)
         if not es_domain["DomainStatus"].get("Processing", True):
+            sleep(1)
             return es_domain
         sleep(1)
     raise Exception(f"ElasticSearch domain {domain_name} was not ready after 180s")
