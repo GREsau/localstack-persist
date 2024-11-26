@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.2] - 2024-11-26
+
+_Based on [LocalStack 4.0.2](https://github.com/localstack/localstack/releases/tag/v4.0.2)_
+
+### Fixed
+
+- Restore SQS queue computed attributes on state load (https://github.com/GREsau/localstack-persist/issues/15)
+
 ## [4.0.1] - 2024-11-22
 
 _Based on [LocalStack 4.0.1](https://github.com/localstack/localstack/releases/tag/v4.0.1)_
