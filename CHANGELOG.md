@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.3] - 2024-12-04
+
+_Based on [LocalStack 4.0.3](https://github.com/localstack/localstack/releases/tag/v4.0.3)_
+
+No changes are in this version other than update of localstack.
+
 ## [4.0.2] - 2024-11-26
 
 _Based on [LocalStack 4.0.2](https://github.com/localstack/localstack/releases/tag/v4.0.2)_
