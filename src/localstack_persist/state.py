@@ -13,7 +13,7 @@ from collections import defaultdict
 from threading import Thread, Condition
 from readerwriterlock.rwlock import RWLockWrite, Lockable
 from .visitors import LoadStateVisitor, SaveStateVisitor
-from .config import BASE_DIR, is_persistence_enabled, PERSIST_FREQUENCY
+from .config import BASE_DIR, is_persistence_enabled, is_restoration_enabled, PERSIST_FREQUENCY
 from .prepare_service import prepare_service
 
 LOG = logging.getLogger(__name__)
@@ -60,7 +60,9 @@ class StateTracker:
 
         service_name = context.service.service_name
 
-        if not is_persistence_enabled(service_name):
+        requires_restoration = service_name not in self.loaded_services and is_restoration_enabled(service_name)
+
+        if not (is_persistence_enabled(service_name) or requires_restoration):
             return
 
         prepare_service(service_name)
@@ -104,7 +106,7 @@ class StateTracker:
 
         with os.scandir(BASE_DIR) as it:
             for entry in it:
-                if is_persistence_enabled(entry.name) and not lazy_load(entry.name):
+                if (is_persistence_enabled(entry.name) or is_restoration_enabled(entry.name)) and not lazy_load(entry.name):
                     if not entry.is_dir():
                         LOG.warning("Expected %s to be a directory", entry.path)
                         continue
