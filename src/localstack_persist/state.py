@@ -13,7 +13,7 @@ from collections import defaultdict
 from threading import Thread, Condition
 from readerwriterlock.rwlock import RWLockWrite, Lockable
 from .visitors import LoadStateVisitor, SaveStateVisitor
-from .config import BASE_DIR, is_persistence_enabled
+from .config import BASE_DIR, is_persistence_enabled, PERSIST_FREQUENCY
 from .prepare_service import prepare_service
 
 LOG = logging.getLogger(__name__)
@@ -141,7 +141,7 @@ class StateTracker:
         while self.is_running:
             with self.cond:
                 self.save_all_services_state()
-                self.cond.wait(10)
+                self.cond.wait(PERSIST_FREQUENCY)
 
     def _load_service_state(self, service_name: str):
         LOG.info("Loading persisted state of service %s...", service_name)

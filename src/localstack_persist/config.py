@@ -45,11 +45,13 @@ class SerializationFormat(Enum):
 
 PERSISTED_SERVICES = {"default": True}
 PERSIST_FORMATS = SerializationFormat.default()
+PERSIST_FREQUENCY = 10
 
 
 def init():
     global PERSISTED_SERVICES
     global PERSIST_FORMATS
+    global PERSIST_FREQUENCY
 
     for key, value in os.environ.items():
         if not key.lower().startswith("persist_") or not value.strip():
@@ -71,6 +73,17 @@ def init():
                     )
             if new_formats:
                 PERSIST_FORMATS = new_formats
+            continue
+
+        if key.lower() == "persist_frequency":
+            try:
+                PERSIST_FREQUENCY = float(value.strip())
+            except:
+                LOG.warning(
+                    "Environment variable %s has invalid value '%s' - it will be ignored",
+                    key,
+                    value,
+                )
             continue
 
         # assume that `key` is the name of service
