@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.4] - 2024-12-15
+
+_Based on [LocalStack 4.0.3](https://github.com/localstack/localstack/releases/tag/v4.0.3)_
+
+### Added
+
+- Allow overriding the persist frequency via the `PERSIST_FREQUENCY` environment variable, specifying frequency in seconds - default remains 10 seconds. (https://github.com/GREsau/localstack-persist/issues/17)
+
 ## [4.0.3] - 2024-12-04
 
 _Based on [LocalStack 4.0.3](https://github.com/localstack/localstack/releases/tag/v4.0.3)_
