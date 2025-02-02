@@ -47,6 +47,13 @@ By default, all services will persist their resources to disk. To disable persis
 
 You can still set any of [LocalStack's configuration options](https://docs.localstack.cloud/references/configuration/) in the usual way - however, you do NOT need to set `PERSISTENCE=1`, as that just controls LocalStack's built-in persistence which does not function in Community Edition.
 
+Other configuration options specific to localstack-persist:
+
+- `PERSIST_FORMAT` - sets the serialization format for (most) persisted files. Possible values are:
+  - `json` (default) - serializes to JSON
+  - `binary` - serializes to a non-readable binary format, which is typically faster and has smaller file size
+- `PERSIST_FREQUENCY` - how frequently, in seconds, to persist change to disk (default `10`)
+
 ## Supported Services
 
 localstack-persist uses largely the same hooks as the official persistence mechanism, so all (non-pro) services supported by official persistence should work with localstack-persist - [see the list here](https://docs.localstack.cloud/references/persistence-mechanism/#supported--tested).
