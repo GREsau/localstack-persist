@@ -37,7 +37,7 @@ class StateTracker:
         self.loaded_services = set()
         self.cond = Condition()
         self.is_running = False
-        self.rwlocks = defaultdict[str, RWLockWrite](RWLockWrite)
+        self.rwlocks = defaultdict[str, RWLockWrite](lambda: RWLockWrite())
 
     def start(self):
         assert not self.is_running
