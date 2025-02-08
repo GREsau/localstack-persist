@@ -43,6 +43,7 @@ class SerializationFormat(Enum):
         return [cls.JSON]
 
 
+PERSIST_RESTORED_SERVICES = {"default": False}
 PERSISTED_SERVICES = {"default": True}
 PERSIST_FORMATS = SerializationFormat.default()
 PERSIST_FREQUENCY = 10
@@ -52,6 +53,7 @@ def init():
     global PERSISTED_SERVICES
     global PERSIST_FORMATS
     global PERSIST_FREQUENCY
+    global PERSIST_RESTORED_SERVICES
 
     for key, value in os.environ.items():
         if not key.lower().startswith("persist_") or not value.strip():
@@ -86,6 +88,23 @@ def init():
                 )
             continue
 
+        if key.lower().startswith("persist_restore_"):
+            service_name = normalise_service_name(key[len("persist_restore_") :])
+
+            if value == "1" or value.lower() == "true":
+                PERSIST_RESTORED_SERVICES[service_name] = True
+                for dependency in resolve_apis([service_name]):
+                    PERSIST_RESTORED_SERVICES.setdefault(dependency, True)
+            elif value == "0" or value.lower() == "false":
+                PERSIST_RESTORED_SERVICES[service_name] = False
+            else:
+                LOG.warning(
+                    "Environment variable %s has invalid value '%s' - it will be ignored",
+                    key,
+                    value,
+                )
+            continue
+
         # assume that `key` is the name of service
         service_name = normalise_service_name(key[len("persist_") :])
 
@@ -107,5 +126,8 @@ def is_persistence_enabled(service_name: str):
     service_name = normalise_service_name(service_name)
     return PERSISTED_SERVICES.get(service_name, PERSISTED_SERVICES["default"])
 
+def is_restoration_enabled(service_name: str):
+    service_name = normalise_service_name(service_name)
+    return PERSIST_RESTORED_SERVICES.get(service_name, PERSIST_RESTORED_SERVICES["default"])
 
 init()
