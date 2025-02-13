@@ -1,12 +1,12 @@
 from enum import Enum
 import os
-
 import logging
 from localstack.utils.bootstrap import resolve_apis
 
 LOG = logging.getLogger(__name__)
 
-BASE_DIR = "/persisted-data"
+DEFAULT_BASE_DIR = "/persisted-data"
+BASE_DIR = os.environ.get("LOCALSTACK_PERSIST_BASE_DIR", DEFAULT_BASE_DIR)
 
 
 def normalise_service_name(n: str):
