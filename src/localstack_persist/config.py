@@ -1,12 +1,9 @@
 from enum import Enum
 import os
-
 import logging
 from localstack.utils.bootstrap import resolve_apis
 
 LOG = logging.getLogger(__name__)
-
-BASE_DIR = "/persisted-data"
 
 
 def normalise_service_name(n: str):
@@ -46,12 +43,14 @@ class SerializationFormat(Enum):
 PERSISTED_SERVICES = {"default": True}
 PERSIST_FORMATS = SerializationFormat.default()
 PERSIST_FREQUENCY = 10
+BASE_DIR = "/persisted-data"
 
 
 def init():
     global PERSISTED_SERVICES
     global PERSIST_FORMATS
     global PERSIST_FREQUENCY
+    global BASE_DIR
 
     for key, value in os.environ.items():
         if not key.lower().startswith("persist_") or not value.strip():
@@ -84,6 +83,10 @@ def init():
                     key,
                     value,
                 )
+            continue
+
+        if key.lower() == "persist_base_dir":
+            BASE_DIR = value.strip()
             continue
 
         # assume that `key` is the name of service
