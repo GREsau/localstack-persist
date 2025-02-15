@@ -53,6 +53,7 @@ Other configuration options specific to localstack-persist:
   - `json` (default) - serializes to JSON
   - `binary` - serializes to a non-readable binary format, which is typically faster and has smaller file size
 - `PERSIST_FREQUENCY` - how frequently, in seconds, to persist change to disk (default `10`)
+- `PERSIST_BASE_DIR` - the directory in which to save and load persisted data (default `/persisted-data`)
 
 ## Supported Services
 
