@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.1] - 2025-02-15
+
+_Based on [LocalStack 4.1.1](https://github.com/localstack/localstack/releases/tag/v4.1.1)_
+
+### Added
+
+- Allow overriding the directory for saving/loading persisted data via the `PERSIST_BASE_DIR` environment variable. (https://github.com/GREsau/localstack-persist/pull/21 / https://github.com/GREsau/localstack-persist/pull/22)
+
 ## [4.1.0] - 2025-02-02
 
 _Based on [LocalStack 4.1.0](https://github.com/localstack/localstack/releases/tag/v4.1.0)_
