@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from localstack.services.plugins import SERVICE_PLUGINS
 
 from .config import BASE_DIR
@@ -10,6 +11,8 @@ def prepare_service(service_name: str):
         prepare_s3()
     elif service_name == "acm":
         prepare_acm()
+    elif service_name == "iam":
+        prepare_iam()
 
 
 @once
@@ -41,3 +44,28 @@ def prepare_acm():
 
     # HACK for CertBundles that were persisted without the `cert_authority_arn` property
     setattr(CertBundle, "cert_authority_arn", None)
+
+
+@once
+def prepare_iam():
+    from moto.iam.models import Role
+
+    def set_permissions_boundary(self: Role, arn: Optional[str]):
+        self.permissions_boundary_arn = arn
+
+    # In moto <5.1.6 (localstack <4.5.0,) `Role` had a `permissions_boundary` attribute, but this
+    # was renamed to `permissions_boundary_arn` in moto 5.1.6, and `permissions_boundary` remained
+    # as a getter-only property.
+    # So, we make it settable so that it can be restored from state that was peristed with
+    # `permissions_boundary`:
+    if (
+        (permissions_boundary := getattr(Role, "permissions_boundary", None))
+        and isinstance(permissions_boundary, property)
+        and permissions_boundary.fset is None
+    ):
+        setattr(
+            Role,
+            "permissions_boundary",
+            permissions_boundary.setter(set_permissions_boundary),
+        )
+    pass
