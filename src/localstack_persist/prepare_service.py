@@ -68,4 +68,3 @@ def prepare_iam():
             "permissions_boundary",
             permissions_boundary.setter(set_permissions_boundary),
         )
-    pass
