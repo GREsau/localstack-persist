@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.6.0] - 2025-07-06
+
+_Based on [LocalStack 4.6.0](https://github.com/localstack/localstack/releases/tag/v4.6.0)_
+
+No changes are in this version other than update of localstack.
+
+## [4.5.0] - 2025-07-06
+
+_Based on [LocalStack 4.5.0](https://github.com/localstack/localstack/releases/tag/v4.5.0)_
+
+### Changed
+
+- Update version of jsonpickle
+
 ## [4.4.0] - 2025-05-08
 
 _Based on [LocalStack 4.4.0](https://github.com/localstack/localstack/releases/tag/v4.4.0)_
