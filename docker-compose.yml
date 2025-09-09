@@ -15,6 +15,7 @@ services:
       default:
         aliases:
           - s3.localhost.localstack.cloud
+          - localhost.localstack.cloud
 
   test:
     build:
