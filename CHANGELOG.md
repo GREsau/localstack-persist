@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.8.1] - 2025-09-28
+
+_Based on [LocalStack 4.8.1](https://github.com/localstack/localstack/releases/tag/v4.8.1)_
+
+No changes are in this version other than update of localstack.
+
+## [4.8.0] - 2025-09-28
+
+_Based on [LocalStack 4.8.0](https://github.com/localstack/localstack/releases/tag/v4.8.0)_
+
+No changes are in this version other than update of localstack.
+
+## [4.7.0] - 2025-09-28
+
+_Based on [LocalStack 4.7.0](https://github.com/localstack/localstack/releases/tag/v4.7.0)_
+
+No changes are in this version other than update of localstack.
+
 ## [4.6.0] - 2025-07-06
 
 _Based on [LocalStack 4.6.0](https://github.com/localstack/localstack/releases/tag/v4.6.0)_
