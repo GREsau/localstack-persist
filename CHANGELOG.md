@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.9.0] - 2025-10-05
+
+_Based on [LocalStack 4.9.1](https://github.com/localstack/localstack/releases/tag/v4.9.1)_
+
+### Fixed
+
+- Improve stabililty of loading SQS queues from persisted state when using `binary` serialization format
+
 ## [4.8.1] - 2025-09-28
 
 _Based on [LocalStack 4.8.1](https://github.com/localstack/localstack/releases/tag/v4.8.1)_
