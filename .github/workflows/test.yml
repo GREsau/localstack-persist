@@ -44,7 +44,7 @@ jobs:
     name: Test backward-compatibility
     strategy:
       matrix:
-        TEST_PERSISTED_DATA_DIR: ["v2", "v3", "v3_binary"]
+        TEST_PERSISTED_DATA_DIR: ["v2", "v3", "v3_binary", "v4", "v4_binary"]
       fail-fast: false
     env:
       SKIP_TEST_SETUP: 1
