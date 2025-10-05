@@ -164,11 +164,12 @@ class LoadStateVisitor(StateVisitor):
                 sqs_store: SqsStore
                 for sqs_store in region_bundle.values():
                     for queue in sqs_store.queues.values():
-                        # Computed attributes don't get serialized to JSON, so restore them from `default_attributes()`
-                        queue.attributes = {
-                            **queue.default_attributes(),
-                            **queue.attributes,
-                        }
+                        # Computed attributes don't get serialized to JSON and are unreliably serialized by dill, so restore them from `default_attributes()`
+                        for k, v in queue.default_attributes().items():
+                            if k not in queue.attributes or callable(
+                                queue.attributes[k]
+                            ):
+                                queue.attributes[k] = v
 
         if isinstance(deserialized, BackendDict):
             deserialized._additional_regions = state_container._additional_regions  # type: ignore
