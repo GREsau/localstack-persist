@@ -1,0 +1,1 @@
+{"v":1,"data":{"py/object":"moto.core.base_backend.BackendDict","__dict__":{"backend":{"py/type":"moto.es.models.ElasticsearchServiceBackend"},"service_name":"es","_use_boto3_regions":true,"_additional_regions":null,"_id":"2edddec1-3073-4292-9d6f-8658992ab7fc"}}}

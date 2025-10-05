@@ -1,0 +1,1 @@
+{"v":1,"data":{"py/object":"localstack.services.stores.AccountRegionBundle","__dict__":{"service_name":"cloudwatch","store":{"py/type":"localstack.services.cloudwatch.models.CloudWatchStore"},"validate":true,"lock":{"py/object":"_thread.RLock"},"_universal":{}}}}
