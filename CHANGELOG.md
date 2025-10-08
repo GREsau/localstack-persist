@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.9.1] - 2025-10-08
+
+_Based on [LocalStack 4.9.2](https://github.com/localstack/localstack/releases/tag/v4.9.2)_
+
+### Fixed
+
+- Fix tagging of objects that were loaded from pre-v4.3 persisted state (https://github.com/GREsau/localstack-persist/issues/25)
+
 ## [4.9.0] - 2025-10-05
 
 _Based on [LocalStack 4.9.1](https://github.com/localstack/localstack/releases/tag/v4.9.1)_
