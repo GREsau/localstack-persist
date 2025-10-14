@@ -43,6 +43,15 @@ def prepare_acm():
 
     # HACK for CertBundles that were persisted without the `cert_authority_arn` property
     setattr(CertBundle, "cert_authority_arn", None)
+    # HACK for CertBundles that were persisted without the `cert_options` property
+    setattr(
+        CertBundle,
+        "cert_options",
+        {
+            "CertificateTransparencyLoggingPreference": "ENABLED",
+            "Export": "DISABLED",
+        },
+    )
 
 
 @once
