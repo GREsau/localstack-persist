@@ -7,7 +7,9 @@
 
 ## Overview
 
-As of LocalStack 1.0, [persistence](https://docs.localstack.cloud/references/persistence-mechanism/) is a pro-only feature, so is unavailable when using Community Edition. localstack-persist adds out-of-the-box persistence, which is saved whenever a resource is modified, and automatically restored on container startup.
+As of LocalStack 1.0, [persistence](https://docs.localstack.cloud/aws/capabilities/state-management/persistence/) is a pro-only feature,
+so is unavailable when using Community Edition. localstack-persist adds out-of-the-box persistence, which is saved whenever a resource is
+modified, and automatically restored on container startup.
 
 ## Usage
 
@@ -57,7 +59,9 @@ Other configuration options specific to localstack-persist:
 
 ## Supported Services
 
-localstack-persist uses largely the same hooks as the official persistence mechanism, so all (non-pro) services supported by official persistence should work with localstack-persist - [see the list here](https://docs.localstack.cloud/references/persistence-mechanism/#supported--tested).
+localstack-persist uses largely the same hooks as the official persistence mechanism, so all (non-pro) services supported by
+official persistence should work with localstack-persist -
+[see the list here](https://docs.localstack.cloud/aws/capabilities/state-management/persistence/#persistence-coverage-overview).
 
 The following services have basic save/restore functionality verified by automated tests:
 
@@ -71,4 +75,5 @@ The following services have basic save/restore functionality verified by automat
 
 ## License
 
-localstack-persist is released under the [Apache License 2.0](LICENSE). LocalStack is used under the [Apache License 2.0](https://github.com/localstack/localstack/blob/master/LICENSE.txt).
+localstack-persist is released under the [Apache License 2.0](LICENSE). LocalStack is used under the
+[Apache License 2.0](https://github.com/localstack/localstack/blob/main/LICENSE.txt).
