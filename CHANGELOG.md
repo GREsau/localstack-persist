@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.10.0] - 2025-11-03
+
+_Based on [LocalStack 4.10.0](https://github.com/localstack/localstack/releases/tag/v4.10.0)_
+
+No changes are in this version other than update of localstack.
+
 ## [4.9.1] - 2025-10-08
 
 _Based on [LocalStack 4.9.2](https://github.com/localstack/localstack/releases/tag/v4.9.2)_
