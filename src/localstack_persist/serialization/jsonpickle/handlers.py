@@ -8,6 +8,10 @@ import jsonpickle.util
 from jsonpickle.handlers import DatetimeHandler as DefaultDatetimeHandler
 from moto.acm.models import CertBundle
 from localstack.utils.patch import patch
+from localstack.services.cloudformation.engine.v2.change_set_model import (
+    Nothing,
+    NothingType,
+)
 
 from localstack_persist.utils import once
 from ..utils import compat_module_path
@@ -21,6 +25,7 @@ def register_handlers():
     DatetimeHandler.handles(datetime.datetime)
     DatetimeHandler.handles(datetime.date)
     DatetimeHandler.handles(datetime.time)
+    NothingHandler.handles(NothingType)
 
     # jsonpickle doesn't expose a hook like Unpickler.find_class(),
     # so we patch untranslate_module_name for the same effect.
@@ -104,3 +109,11 @@ class DatetimeHandler(jsonpickle.handlers.BaseHandler):
             raise TypeError("DatetimeHandler: unexpected object type " + cls_name)
 
         return cls.fromisoformat(obj["isoformat"])
+
+
+class NothingHandler(jsonpickle.handlers.BaseHandler):
+    def flatten(self, obj: NothingType, data: dict):
+        return data
+
+    def restore(self, obj: dict):
+        return Nothing

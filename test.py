@@ -24,24 +24,27 @@ if not os.environ.get("SKIP_TEST_SETUP"):
     sh("docker compose run --rm test verify")
     sh("docker compose stop")
 
-    shutil.rmtree("temp-persisted-data")
+if test_persisted_data_dir := os.environ.get("TEST_PERSISTED_DATA_DIR"):
+    if os.path.exists("temp-persisted-data"):
+        shutil.rmtree("temp-persisted-data")
 
-shutil.copytree(
-    "test-persisted-data/" + os.environ.get("TEST_PERSISTED_DATA_DIR", "v2"),
-    "temp-persisted-data",
-)
+    shutil.copytree(
+        "test-persisted-data/" + test_persisted_data_dir,
+        "temp-persisted-data",
+    )
 
-if os.name != "nt":
-    # Windows doesn't support colons in filenames, so they're checked-in to git with a replacement character (\uf03a).
-    # So when running tests on unix-like systems, we need to change that character back to a colon.
-    for dir in glob.glob("temp-persisted-data/**/*\uf03a*", recursive=True):
-        shutil.move(dir, dir.replace("\uf03a", ":"))
+    if os.name != "nt":
+        # Windows doesn't support colons in filenames, so they're checked-in to git with a replacement character (\uf03a).
+        # So when running tests on unix-like systems, we need to change that character back to a colon.
+        for dir in glob.glob("temp-persisted-data/**/*\uf03a*", recursive=True):
+            shutil.move(dir, dir.replace("\uf03a", ":"))
 
-print(
-    "Ensure changes from previous runs can be loaded (backward-compatibility)...",
-    flush=True,
-)
-sh("docker compose run --rm test verify")
+    print(
+        "Ensure changes from previous runs can be loaded (backward-compatibility)...",
+        flush=True,
+    )
+    sh("docker compose run --rm test verify " + test_persisted_data_dir)
+
 sh("docker compose down")
 
 print("Tests passed!")
