@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.12.1] - 2026-01-18
+
+_Based on [LocalStack 4.12.0](https://github.com/localstack/localstack/releases/tag/v4.12.0)_
+
+### Fixed
+
+- Fix restoring CloudFormation state (https://github.com/GREsau/localstack-persist/issues/29)
+
 ## [4.12.0] - 2025-12-14
 
 _Based on [LocalStack 4.12.0](https://github.com/localstack/localstack/releases/tag/v4.12.0)_
