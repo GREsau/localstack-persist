@@ -22,6 +22,7 @@ def wait_until_es_ready(domain_name: str):
 
 
 command = sys.argv[1] if len(sys.argv) > 1 else "verify"
+back_compat_dir = sys.argv[2] if len(sys.argv) > 2 else None
 
 endpoint_url = "http://localstack-persist:4566"
 
@@ -32,9 +33,11 @@ iam = boto3.resource("iam", endpoint_url=endpoint_url)
 lambda_client = boto3.client("lambda", endpoint_url=endpoint_url)
 acm = boto3.client("acm", endpoint_url=endpoint_url)
 elasticsearch = boto3.client("es", endpoint_url=endpoint_url)
+cloudformation = boto3.client("cloudformation", endpoint_url=endpoint_url)
 
 cert = open("cert.pem", "r").read()
 cert_key = open("key.pem", "r").read()
+cfn_template = open("cfn_template.yaml", "r").read()
 
 if command == "setup":
     print("Setting up AWS resources...")
@@ -76,6 +79,19 @@ if command == "setup":
 
     acm.import_certificate(Certificate=cert, PrivateKey=cert_key)
 
+    cloudformation.create_change_set(
+        StackName="test-stack",
+        ChangeSetName="test-change-set",
+        ChangeSetType="CREATE",
+        TemplateBody=cfn_template,
+        Parameters=[
+            {
+                "ParameterKey": "BucketName",
+                "ParameterValue": "cloudformation-bucket",
+            },
+        ],
+    )
+
     wait_until_es_ready("test-es-domain")
     put_index_req = urllib.request.Request(
         endpoint_url + "/test-es-domain-endpoint/test-es-index", method="PUT"
@@ -116,6 +132,30 @@ elif command == "verify":
 
     certs = acm.list_certificates()
     assert_equal(certs["CertificateSummaryList"][0].get("DomainName", None), "test")
+
+    # cloudformation state was only setup in localstack-persist v4
+    if not back_compat_dir or back_compat_dir.startswith("v4"):
+        change_set = cloudformation.describe_change_set(
+            ChangeSetName="test-change-set", StackName="test-stack"
+        )
+        assert_equal(change_set["Status"], "CREATE_COMPLETE")
+        assert_equal(
+            change_set["Changes"],
+            [
+                {
+                    "Type": "Resource",
+                    "ResourceChange": {
+                        "Action": "Add",
+                        "LogicalResourceId": "Bucket",
+                        "ResourceType": "AWS::S3::Bucket",
+                    },
+                }
+            ],
+        )
+        assert_equal(
+            change_set["Parameters"],
+            [{"ParameterKey": "BucketName", "ParameterValue": "cloudformation-bucket"}],
+        )
 
     wait_until_es_ready("test-es-domain")
     es_index_url = endpoint_url + "/test-es-domain-endpoint/test-es-index"
