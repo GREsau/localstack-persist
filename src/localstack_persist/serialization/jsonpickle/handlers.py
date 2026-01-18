@@ -68,7 +68,7 @@ class CertBundleHandler(jsonpickle.handlers.BaseHandler):
 
     def restore(self, obj: dict):
         bundle = cast(CertBundle, CertBundle.__new__(CertBundle))
-        bundle.__dict__.update(
+        cast(object, bundle).__dict__.update(
             {
                 k: self.context.restore(v, reset=False)
                 for k, v in obj.items()

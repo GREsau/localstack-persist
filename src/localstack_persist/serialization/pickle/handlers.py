@@ -39,7 +39,7 @@ def reduce_cert_bundle(bundle: CertBundle):
 
 def unpickle_cert_bundle(state: dict) -> CertBundle:
     obj = cast(CertBundle, CertBundle.__new__(CertBundle))
-    obj.__dict__.update(state)
+    cast(object, obj).__dict__.update(state)
     obj._cert = obj.validate_certificate()
     obj._key = obj.validate_pk()
     return obj
