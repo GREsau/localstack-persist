@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.13.1] - 2026-02-03
+
+_Based on [LocalStack 4.13.1](https://github.com/localstack/localstack/releases/tag/v4.13.1)_
+
+No changes are in this version other than update of localstack.
+
 ## [4.13.0] - 2026-02-01
 
 _Based on [LocalStack 4.13.0](https://github.com/localstack/localstack/releases/tag/v4.13.0)_
