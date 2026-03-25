@@ -19,8 +19,8 @@ on:
         type: string
         required: true
         default: latest
-  schedule:
-    - cron: "30 18 * * *"
+#  schedule:
+#    - cron: "30 18 * * *"
 
 jobs:
   validation:
