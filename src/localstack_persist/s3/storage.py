@@ -4,7 +4,7 @@ import os
 import re
 import shutil
 from threading import Lock
-from localstack.aws.api.s3 import BucketName, MultipartUploadId, PartNumber
+from localstack.aws.api.s3 import BucketName, MultipartUploadId, PartNumber, Parts
 from localstack.services.s3.constants import S3_CHUNK_SIZE
 from localstack.services.s3.utils import ChecksumHash, ObjectRange, get_s3_checksum
 
@@ -16,7 +16,7 @@ from localstack.services.s3.storage import (
     LimitedStream,
 )
 from localstack.utils.files import mkdir, rm_rf
-from typing import IO, BinaryIO, Iterator, Literal, Optional
+from typing import IO, BinaryIO, Iterator, Literal, Optional, Sequence, TypeVar
 from ..config import BASE_DIR
 
 special_chars = re.compile(r"[\x00-\x1f\x7f\\/\":*?|<>$%]")
@@ -184,14 +184,25 @@ class PersistedS3StoredMultipart(S3StoredMultipart):
         path = os.path.join(self._dir, f"part-{s3_part.part_number}")
         os.unlink(path)
 
-    def complete_multipart(self, parts: list[PartNumber] | list[S3Part]) -> None:
+    def complete_multipart(
+        self, parts: list[PartNumber] | list[S3Part] | list[Parts] | Parts
+    ) -> None:
+
         s3_stored_object = self._s3_store.open(
             self.bucket, self.s3_multipart.object, "w"
         )
         s3_stored_object.truncate()
 
-        for s3_part in parts:
-            part_number = s3_part if isinstance(s3_part, int) else s3_part.part_number
+        for s3_part in flatten(parts):
+            part_number = (
+                s3_part
+                if isinstance(s3_part, int)
+                else (
+                    s3_part.part_number
+                    if isinstance(s3_part, S3Part)
+                    else s3_part.get("PartNumber")
+                )
+            )
             path = os.path.join(self._dir, f"part-{part_number}")
             with open(path, "rb") as file:
                 s3_stored_object.append(file)
@@ -302,3 +313,16 @@ class PersistedS3ObjectStore(S3ObjectStore):
         upload_id: str,
     ) -> str:
         return os.path.join(self._bucket_path(bucket), "multiparts", upload_id)
+
+
+T = TypeVar("T")
+
+
+def flatten(nested_list: Sequence[T | Sequence[T]]) -> list[T]:
+    result = []
+    for item in nested_list:
+        if isinstance(item, Sequence):
+            result.extend(item)
+        else:
+            result.append(item)
+    return result
