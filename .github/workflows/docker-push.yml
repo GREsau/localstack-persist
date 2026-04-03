@@ -1,10 +1,10 @@
 name: Docker push
-run-name: Push docker tag ${{ inputs.version || 'latest (scheduled)' }}
+run-name: Push docker tag ${{ inputs.version }}
 permissions:
   contents: read
 env:
-  LOCALSTACK_VERSION: ${{ inputs.localstack-version || 'latest' }}
-  LOCALSTACK_PERSIST_VERSION: ${{ inputs.version || 'latest' }}
+  LOCALSTACK_VERSION: ${{ inputs.localstack-version }}
+  LOCALSTACK_PERSIST_VERSION: ${{ inputs.version }}
 
 on:
   workflow_dispatch:
@@ -18,9 +18,6 @@ on:
         description: Version of localstack to use as base image tag
         type: string
         required: true
-        default: latest
-#  schedule:
-#    - cron: "30 18 * * *"
 
 jobs:
   validation:
@@ -35,7 +32,7 @@ jobs:
             exit 1
           fi
         if: ${{ env.LOCALSTACK_PERSIST_VERSION != 'latest' }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: sudo -E python3 test.py
       - run: sudo -E docker compose logs
         if: ${{ failure() }}
@@ -45,31 +42,29 @@ jobs:
     runs-on: ubuntu-latest
     needs: validation
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set semver tags
         id: tags
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: |
             gresau/localstack-persist
-          flavor: |
-            latest=false
           tags: |
             type=raw,value=${{ env.LOCALSTACK_PERSIST_VERSION }},priority=1000
             type=semver,pattern={{major}}.{{minor}},value=${{ env.LOCALSTACK_PERSIST_VERSION }},enable=${{ env.LOCALSTACK_PERSIST_VERSION != 'latest' }}
             type=semver,pattern={{major}},value=${{ env.LOCALSTACK_PERSIST_VERSION }},enable=${{ env.LOCALSTACK_PERSIST_VERSION != 'latest' }}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           platforms: linux/amd64,linux/arm64
