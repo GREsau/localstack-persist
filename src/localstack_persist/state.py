@@ -10,7 +10,7 @@ from localstack.aws.handlers import (
 from localstack.services.plugins import SERVICE_PLUGINS
 from localstack.aws.api import RequestContext
 from collections import defaultdict
-from threading import Thread, Condition
+from threading import Thread, Condition, Timer
 from readerwriterlock.rwlock import RWLockWrite, Lockable
 from .visitors import LoadStateVisitor, SaveStateVisitor
 from .config import BASE_DIR, is_persistence_enabled, PERSIST_FREQUENCY
@@ -71,10 +71,16 @@ class StateTracker:
                 if service_name not in self.loaded_services:
                     self._load_service_state(service_name)
 
-        # Prevent persistence from running for this service while handling this request
+        # Prevent persistence from running for this service while handling this request...
         rlock = self.rwlocks[service_name].gen_rlock()
         setattr(context, "localstack-persist_rlock", rlock)
         rlock.acquire()
+        # ...unless the request takes over 1 second, in which case we force release the lock to
+        # prevent long-running requests from blocking persistence which would in turn block other
+        # requests
+        timer = Timer(1, try_release, [rlock])
+        setattr(context, "localstack-persist_rlock_timer", timer)
+        timer.start()
 
     def on_response(self, chain, context: RequestContext, response):
         if not context.service or not context.request or not context.operation:
@@ -94,8 +100,15 @@ class StateTracker:
         self.add_affected_service(service_name)
 
     def on_finalize(self, chain, context: RequestContext, response):
-        if rlock := getattr(context, "localstack-persist_rlock", None):
-            cast(Lockable, rlock).release()
+        if rlock := cast(
+            Lockable | None, getattr(context, "localstack-persist_rlock", None)
+        ):
+            try_release(rlock)
+
+        if timer := cast(
+            Timer | None, getattr(context, "localstack-persist_rlock_timer", None)
+        ):
+            timer.cancel()
 
     def load_all_services_state(self):
         LOG.info("Loading persisted state of all services...")
@@ -182,3 +195,11 @@ class StateTracker:
 
 
 STATE_TRACKER = StateTracker()
+
+
+def try_release(lock: Lockable):
+    if lock and lock.locked():
+        try:
+            lock.release()
+        except:
+            pass
