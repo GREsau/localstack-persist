@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.14.0] - 2026-04-11
+
+> [!IMPORTANT]
+> [LocalStack has now transitioned to a closed-source development model](https://blog.localstack.cloud/the-road-ahead-for-localstack/).
+> With that change, it's unlikely that localstack-persist will continue receiving updates.
+>
+> Major bugs relating to persistence may still be fixed, but localstack-persist will probably not be updated with future releases of LocalStack.
+
+_Based on [LocalStack 4.14.0](https://github.com/localstack/localstack/releases/tag/v4.14.0)_
+
+### Fixed
+
+- Prevent long-running requests from blocking persistence, which would in turn block other requests (https://github.com/GREsau/localstack-persist/issues/33)
+
 ## [4.13.1] - 2026-02-03
 
 _Based on [LocalStack 4.13.1](https://github.com/localstack/localstack/releases/tag/v4.13.1)_
