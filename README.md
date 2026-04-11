@@ -1,3 +1,9 @@
+> [!IMPORTANT]
+> In March 2026, [LocalStack transitioned to a closed-source development model](https://blog.localstack.cloud/the-road-ahead-for-localstack/).
+> With that change, it's unlikely that localstack-persist will continue receiving updates.
+>
+> Major bugs relating to persistence may still be fixed, but localstack-persist will probably not be updated with future releases of LocalStack.
+
 # localstack-persist
 
 [LocalStack](https://github.com/localstack/localstack) Community Edition with support for persisted resources.
