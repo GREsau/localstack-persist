@@ -24,6 +24,8 @@ services:
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=dummy
       - AWS_SECRET_ACCESS_KEY=dummy
+    volumes:
+      - "./test:/usr/test"
     depends_on:
       localstack-persist:
         condition: service_healthy

@@ -107,8 +107,8 @@ elif command == "verify":
     assert_equal(queue.attributes["ApproximateNumberOfMessages"], "0")
 
     table = dynamodb.Table("test-table")
-    item = table.get_item(Key={"id": 123})["Item"]
-    assert_equal(item["foo"], "bar")
+    item = table.get_item(Key={"id": 123}).get("Item", {})
+    assert_equal(item.get("foo"), "bar")
 
     bucket = s3.Bucket("test-bucket")
     obj = bucket.Object("test-object")
